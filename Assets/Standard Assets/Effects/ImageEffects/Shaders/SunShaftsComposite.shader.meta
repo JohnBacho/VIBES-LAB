@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: d3b1c8c1036784176946f5cfbfb7fe4c
+ShaderImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ImageEffects/Shaders/SunShaftsComposite.shader
+  uploadId: 77290

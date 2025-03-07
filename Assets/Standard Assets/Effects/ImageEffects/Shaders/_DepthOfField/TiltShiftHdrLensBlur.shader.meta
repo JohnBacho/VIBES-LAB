@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: bf34d2a25450349699e8ae6456fa7ca9
+ShaderImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ImageEffects/Shaders/_DepthOfField/TiltShiftHdrLensBlur.shader
+  uploadId: 77290

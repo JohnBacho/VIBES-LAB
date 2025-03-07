@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 06893cec523208643a91b7a393737700
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/TessellationShaders/Materials/TesselatedBumpSpecularSmooth.mat
+  uploadId: 77290

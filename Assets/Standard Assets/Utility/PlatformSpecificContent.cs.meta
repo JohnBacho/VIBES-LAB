@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: b27507c5d0efbbd47ac8c1de9a1a0a35
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Utility/PlatformSpecificContent.cs
+  uploadId: 77290

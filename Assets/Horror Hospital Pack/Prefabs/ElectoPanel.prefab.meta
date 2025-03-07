@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 516fd0d5b53125c48abf9d5a06873180
+timeCreated: 1439757304
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Horror Hospital Pack/Prefabs/ElectoPanel.prefab
+  uploadId: 77290

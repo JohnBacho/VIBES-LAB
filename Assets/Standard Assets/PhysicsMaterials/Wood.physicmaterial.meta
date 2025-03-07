@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3aeb7dadc0c69d54d9e5777e9d5631f1
+timeCreated: 1427463081
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/PhysicsMaterials/Wood.physicmaterial
+  uploadId: 77290

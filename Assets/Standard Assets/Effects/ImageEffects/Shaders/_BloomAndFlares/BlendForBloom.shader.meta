@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 7856cbff0a0ca45c787d5431eb805bb0
+ShaderImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ImageEffects/Shaders/_BloomAndFlares/BlendForBloom.shader
+  uploadId: 77290

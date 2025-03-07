@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 017ca72b9e8a749058d13ebd527e98fa
+ShaderImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ImageEffects/Shaders/_Antialiasing/DLAA.shader
+  uploadId: 77290

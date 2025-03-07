@@ -1,0 +1,24 @@
+{
+    "name": "com.simpleomnia.simplexr.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "Unity.XR.Management",
+        "Unity.InputSystem",
+        "Unity.TextMeshPro",
+        "Unity.VisualScripting.Core",
+        "ViveSR",
+        "Unity.XR.OpenVR",
+        "Unity.XR.Interaction.Toolkit",
+        "Unity.XR.CoreUtils",
+        "Unity.Mathematics"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

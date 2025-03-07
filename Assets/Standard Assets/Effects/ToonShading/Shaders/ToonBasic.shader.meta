@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: d84268709d11078d11005b9844295342
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ToonShading/Shaders/ToonBasic.shader
+  uploadId: 77290

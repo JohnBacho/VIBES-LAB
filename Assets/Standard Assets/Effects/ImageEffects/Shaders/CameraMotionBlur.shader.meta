@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 85a88efa8c871af4a9d17c64791b6f4f
+ShaderImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ImageEffects/Shaders/CameraMotionBlur.shader
+  uploadId: 77290

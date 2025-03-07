@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ba92fb44336020f40bdf294bb66bc9da
+timeCreated: 1427463081
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/PhysicsMaterials/Ice.physicmaterial
+  uploadId: 77290

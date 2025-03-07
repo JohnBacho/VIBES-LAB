@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 57cdacf9b217546aaa18edf39a6151c0
+ShaderImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ImageEffects/Shaders/_DepthOfField/Bokeh34.shader
+  uploadId: 77290

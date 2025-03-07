@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 70d8568987ac0499f952b54c7c13e265
+ShaderImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ImageEffects/Shaders/GlobalFog.shader
+  uploadId: 77290

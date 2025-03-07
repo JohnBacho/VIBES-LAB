@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e52fb17f9b1e7fd48b8955f1391d3688
+timeCreated: 1427463081
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/PhysicsMaterials/MaxFriction.physicMaterial
+  uploadId: 77290

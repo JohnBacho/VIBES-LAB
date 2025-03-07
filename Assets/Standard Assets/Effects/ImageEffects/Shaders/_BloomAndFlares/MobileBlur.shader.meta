@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: f9d5fa183cd6b45eeb1491f74863cd91
+ShaderImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ImageEffects/Shaders/_BloomAndFlares/MobileBlur.shader
+  uploadId: 77290

@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 459fe69d2f6d74ddb92f04dbf45a866b
+ShaderImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ImageEffects/Shaders/_BloomAndFlares/LensFlareCreate.shader
+  uploadId: 77290

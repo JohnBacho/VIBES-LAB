@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: c182fa94a5a0a4c02870641efcd38cd5
+ShaderImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ImageEffects/Shaders/_Antialiasing/FXAAPreset3.shader
+  uploadId: 77290

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 643c971818f68d3439e84b5d8bdafe07
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Utility/ObjectResetter.cs
+  uploadId: 77290

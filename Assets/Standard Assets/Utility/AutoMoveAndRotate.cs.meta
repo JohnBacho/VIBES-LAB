@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: a1347817507220a4384f3ff6f7c24546
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Utility/AutoMoveAndRotate.cs
+  uploadId: 77290

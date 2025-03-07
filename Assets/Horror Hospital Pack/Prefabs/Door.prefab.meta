@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9c25864566bc2a7489bef25ecb47dd6c
+timeCreated: 1439757216
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Horror Hospital Pack/Prefabs/Door.prefab
+  uploadId: 77290

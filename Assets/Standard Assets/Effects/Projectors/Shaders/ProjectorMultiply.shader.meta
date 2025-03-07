@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 01a668cc78047034a8a0c5ca2d24c6f7
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/Projectors/Shaders/ProjectorMultiply.shader
+  uploadId: 77290

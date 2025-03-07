@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: da310021e2a4142429d95c537846dc38
+ShaderImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ImageEffects/Shaders/ShowAlphaChannel.shader
+  uploadId: 77290

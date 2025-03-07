@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 42823df6e1b204a468f32120ecbe51f6
+timeCreated: 1439757231
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Horror Hospital Pack/Prefabs/DoorWay.prefab
+  uploadId: 77290

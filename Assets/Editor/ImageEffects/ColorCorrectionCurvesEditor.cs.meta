@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: a4a9489f73e4f0344ab3fc97bdf5170b
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Editor/ImageEffects/ColorCorrectionCurvesEditor.cs
+  uploadId: 77290

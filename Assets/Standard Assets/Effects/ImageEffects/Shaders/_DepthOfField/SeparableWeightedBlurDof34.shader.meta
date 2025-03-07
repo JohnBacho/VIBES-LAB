@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: bb4af680337344a4abad65a4e8873c50
+ShaderImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ImageEffects/Shaders/_DepthOfField/SeparableWeightedBlurDof34.shader
+  uploadId: 77290

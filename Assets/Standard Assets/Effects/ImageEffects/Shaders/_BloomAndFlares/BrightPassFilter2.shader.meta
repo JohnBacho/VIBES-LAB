@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 0aeaa4cb29f5d4e9c8455f04c8575c8c
+ShaderImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ImageEffects/Shaders/_BloomAndFlares/BrightPassFilter2.shader
+  uploadId: 77290

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 01571ba68fb2dad46aa03094ab219579
+timeCreated: 1427463081
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/PhysicsMaterials/Metal.physicmaterial
+  uploadId: 77290

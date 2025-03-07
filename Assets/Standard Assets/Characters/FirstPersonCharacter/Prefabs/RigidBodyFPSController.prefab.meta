@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: c6453f8e1f814744d8b94e5a6d1f9942
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Characters/FirstPersonCharacter/Prefabs/RigidBodyFPSController.prefab
+  uploadId: 77290

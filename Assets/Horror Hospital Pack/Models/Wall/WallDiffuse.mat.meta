@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b4f289f5dfeab2a4e95f745560cfe1da
+timeCreated: 1438451825
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Horror Hospital Pack/Models/Wall/WallDiffuse.mat
+  uploadId: 77290

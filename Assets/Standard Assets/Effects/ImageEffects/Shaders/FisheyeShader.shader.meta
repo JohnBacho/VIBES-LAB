@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 874ceab4425f64bccb1d14032f4452b1
+ShaderImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ImageEffects/Shaders/FisheyeShader.shader
+  uploadId: 77290

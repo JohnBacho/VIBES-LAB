@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: b0249d8c935344451aa4de6db76f0688
+ShaderImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 44045
+  packageName: Hospital Horror Pack
+  packageVersion: 1.0
+  assetPath: Assets/Standard Assets/Effects/ImageEffects/Shaders/NoiseAndGrain.shader
+  uploadId: 77290
