@@ -2354,7 +2354,7 @@ Transform:
   m_GameObject: {fileID: 512416002}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.887, y: 1.1, z: -0.94}
+  m_LocalPosition: {x: -4.887, y: -0.376, z: -0.94}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3884,12 +3884,12 @@ PrefabInstance:
     - {fileID: 7639460284321699814, guid: 34c12b16e3cad5542bd2d6f0a98ee900, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 697777116264440785, guid: 34c12b16e3cad5542bd2d6f0a98ee900, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1562413353}
     - targetCorrespondingSourceObject: {fileID: 3295782610802991644, guid: 34c12b16e3cad5542bd2d6f0a98ee900, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1516494459}
-    - targetCorrespondingSourceObject: {fileID: 3295782610802991644, guid: 34c12b16e3cad5542bd2d6f0a98ee900, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1516494461}
   m_SourcePrefab: {fileID: 100100000, guid: 34c12b16e3cad5542bd2d6f0a98ee900, type: 3}
 --- !u!1001 &1041020193
 PrefabInstance:
@@ -4722,7 +4722,7 @@ Transform:
   m_GameObject: {fileID: 1364685025}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.67, y: 1.23, z: 0.164}
+  m_LocalPosition: {x: -7.67, y: -0.328, z: 0.164}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4834,6 +4834,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1466477390
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1466477391}
+  m_Layer: 0
+  m_Name: WavePoint3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1466477391
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466477390}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -16.79, y: -0.2448, z: -0.757}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1516494451 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3295782610802991644, guid: 34c12b16e3cad5542bd2d6f0a98ee900, type: 3}
@@ -4866,26 +4897,6 @@ MonoBehaviour:
   shaderFXAAPreset3: {fileID: 4800000, guid: c182fa94a5a0a4c02870641efcd38cd5, type: 3}
   shaderFXAAII: {fileID: 4800000, guid: cd5b323dcc592457790ff18b528f5e67, type: 3}
   shaderFXAAIII: {fileID: 4800000, guid: c547503fff0e8482ea5793727057041c, type: 3}
---- !u!114 &1516494461
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1516494451}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 832402e790a907141a705c86fa1c6b90, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  waypoints:
-  - {fileID: 512416003}
-  - {fileID: 1364685026}
-  moveSpeed: 0.5
-  rotationSpeed: 5
-  startWaitTime: 7
-  waitTimes:
-  - 5
 --- !u!1 &1518491384
 GameObject:
   m_ObjectHideFlags: 0
@@ -5151,6 +5162,33 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.6334428, y: 2.769274, z: 0.71987706}
   m_Center: {x: -0.0028192997, y: 0.00000017881392, z: 0.2904736}
+--- !u!1 &1562413350 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 697777116264440785, guid: 34c12b16e3cad5542bd2d6f0a98ee900, type: 3}
+  m_PrefabInstance: {fileID: 1029316387}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1562413353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1562413350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 832402e790a907141a705c86fa1c6b90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waypoints:
+  - {fileID: 512416003}
+  - {fileID: 1364685026}
+  - {fileID: 1466477391}
+  moveSpeed: 0.5
+  rotationSpeed: 0.2
+  startWaitTime: 8
+  waitTimes:
+  - 0
+  - 5
 --- !u!1001 &1568867533
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7235,3 +7273,4 @@ SceneRoots:
   - {fileID: 270095815}
   - {fileID: 512416003}
   - {fileID: 1364685026}
+  - {fileID: 1466477391}
