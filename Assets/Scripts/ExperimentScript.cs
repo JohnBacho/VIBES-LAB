@@ -1,5 +1,4 @@
-﻿using sxr_internal;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SampleExperimentScene
 {
@@ -15,7 +14,6 @@ namespace SampleExperimentScene
                 case 0: // Start Screen Phase
                     sxr.StartRecordingCameraPos();
                     sxr.StartRecordingEyeTrackerInfo();
-                    sxr.DisplayImage("loading", sxr_internal.UI_Position.FullScreen1);
                     break;
 
                 case 1: // Instruction Phase
@@ -23,32 +21,10 @@ namespace SampleExperimentScene
                     {
                         case 0:
                             sxr.HideImagesUI();
-                            sxr.DisplayImage("trigger");
-
-                            if (sxr.GetTrigger())
-                            {
-                                sxr.HideImagesUI();
-                                sxr.NextStep();
-                            }
+                          
                             break;
 
                         case 1:
-                            sxr.DisplayText("In this experiment, you will walk to the end of the hall (Trigger to continue)");
-
-                            if (sxr.GetTrigger())
-                            {
-                                sxr.HideAllText();
-                                sxr.NextStep();
-                            }
-                            break;
-
-                        case 2:
-                            sxr.DisplayImage("Vive_Controller_Move");
-                            if (sxr.GetJoystickDirection() != JoyStickDirection.None)
-                            {
-                                sxr.HideImagesUI();
-                                sxr.NextPhase();
-                            }
                             break;
                     }
                     break;
