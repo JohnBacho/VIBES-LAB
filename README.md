@@ -37,12 +37,12 @@ Open the project in Unity (recommended version: 2023).
 
 Ensure that the HTC VIVE Pro Eye is properly set up and recognized by SteamVR.
 
-Install SimpleOmnia package following the instructions provided by Justin Kasowski.
+[Install](https://github.com/simpleOmnia/sXR/wiki/Installation) SimpleOmnia package following the instructions provided by Justin Kasowski.
 
 Run the project and start experimenting!
 
 ## Contributors
-Dr. Thomas - Psycology Professor, Baldwin Wallace University
+Dr. Brian Thomas- Professor of Psycology, Baldwin Wallace University
 
 John Bacho – Computer Science, Baldwin Wallace University
 
