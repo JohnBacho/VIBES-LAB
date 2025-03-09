@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: a64c40f22fb83f041b7c584055b61c8f
+timeCreated: 1530976527
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124055
+  packageName: Apartment Kit
+  packageVersion: 4.2
+  assetPath: Assets/Brick Project Studio/_BPS Basic Assets/Common/Materials/Basic
+    Assets/BA_Wood 03.mat
+  uploadId: 594248

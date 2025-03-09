@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 099e69089d2c47044b06273bff53533d
+timeCreated: 1531250601
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: -1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124055
+  packageName: Apartment Kit
+  packageVersion: 4.2
+  assetPath: Assets/Brick Project Studio/_BPS Basic Assets/Common/Materials/Legacy/Brick
+    mute 02.mat
+  uploadId: 594248

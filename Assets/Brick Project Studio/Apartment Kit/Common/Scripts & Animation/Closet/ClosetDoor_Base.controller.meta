@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6a53b8c24a752874da87800383dbdf1e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124055
+  packageName: Apartment Kit
+  packageVersion: 4.2
+  assetPath: Assets/Brick Project Studio/Apartment Kit/Common/Scripts & Animation/Closet/ClosetDoor_Base.controller
+  uploadId: 594248
