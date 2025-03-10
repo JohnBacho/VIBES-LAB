@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 899a71306a1974c4c887d977bab22ef8
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124055
+  packageName: Apartment Kit
+  packageVersion: 4.2
+  assetPath: Assets/Brick Project Studio/Apartment Kit/Scenes/Quitgame.cs
+  uploadId: 594248

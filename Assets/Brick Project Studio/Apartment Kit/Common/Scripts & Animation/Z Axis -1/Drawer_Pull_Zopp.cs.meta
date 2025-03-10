@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: e1a01b1ef84add0458f524da98451c86
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124055
+  packageName: Apartment Kit
+  packageVersion: 4.2
+  assetPath: Assets/Brick Project Studio/Apartment Kit/Common/Scripts & Animation/Z
+    Axis -1/Drawer_Pull_Zopp.cs
+  uploadId: 594248

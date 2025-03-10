@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a78403c5152a9024b9029ea9f39b3592
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124055
+  packageName: Apartment Kit
+  packageVersion: 4.2
+  assetPath: Assets/Brick Project Studio/_BPS Basic Assets/Common/Scripts and Animations/Doors/openandclose1.controller
+  uploadId: 594248

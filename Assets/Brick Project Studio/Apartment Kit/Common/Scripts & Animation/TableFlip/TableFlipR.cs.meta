@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 7623a6b81839bee4e8ba39905f3df1b0
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124055
+  packageName: Apartment Kit
+  packageVersion: 4.2
+  assetPath: Assets/Brick Project Studio/Apartment Kit/Common/Scripts & Animation/TableFlip/TableFlipR.cs
+  uploadId: 594248

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 44a6083341b144c4f9f33731e8b8d0aa
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124055
+  packageName: Apartment Kit
+  packageVersion: 4.2
+  assetPath: Assets/Brick Project Studio/Apartment Kit/Common/Scripts & Animation/TableFlip/FlipL.controller
+  uploadId: 594248

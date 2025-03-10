@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: d4189f6b82d537b45b085891d0ec97f4
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 124055
+  packageName: Apartment Kit
+  packageVersion: 4.2
+  assetPath: Assets/Brick Project Studio/_BPS Basic Assets/Common/Scripts and Animations/First
+    Person Player/SceneSwitchGen.cs
+  uploadId: 594248
