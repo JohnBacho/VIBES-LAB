@@ -34,7 +34,7 @@ This project is a collaborative research initiative between the Psychology, Neur
     
   - cd VR-Lab
     
-  - Open the project in Unity (recommended version: 2023).
+  - Open the project in Unity (recommended version: 2023.1.5f1).
 
   - Ensure that the HTC VIVE Pro Eye is properly set up and recognized by SteamVR.
 
