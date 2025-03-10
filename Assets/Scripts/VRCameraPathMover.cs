@@ -12,6 +12,7 @@ public class VRCameraPathMover : MonoBehaviour
     private int currentWaypointIndex = 0;
     private bool isWaiting = false;
     private Transform xrRigTransform; // The parent XR Rig transform
+    private bool hasStopped = false;
 
     void Start()
     {
@@ -21,7 +22,7 @@ public class VRCameraPathMover : MonoBehaviour
 
     void Update()
     {
-        if (waypoints.Length == 0 || isWaiting) return;
+        if (waypoints.Length == 0 || isWaiting || hasStopped) return;
 
         MoveAlongPath();
     }
@@ -65,7 +66,7 @@ public class VRCameraPathMover : MonoBehaviour
 
         if (currentWaypointIndex >= waypoints.Length)
         {
-            currentWaypointIndex = 0; // Restart the path
+            hasStopped = true; // Stop moving at the final waypoint
         }
 
         isWaiting = false;

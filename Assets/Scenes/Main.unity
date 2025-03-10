@@ -2656,7 +2656,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8857fcd322990e64988f1f6ea1267379, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.4717994
+      value: -7.912
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8857fcd322990e64988f1f6ea1267379, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2664,11 +2664,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8857fcd322990e64988f1f6ea1267379, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.32983974
+      value: -0.529
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8857fcd322990e64988f1f6ea1267379, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.72535115
+      value: 0.707089
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8857fcd322990e64988f1f6ea1267379, type: 3}
       propertyPath: m_LocalRotation.x
@@ -2676,7 +2676,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8857fcd322990e64988f1f6ea1267379, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.68837905
+      value: 0.7071246
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8857fcd322990e64988f1f6ea1267379, type: 3}
       propertyPath: m_LocalRotation.z
@@ -2688,7 +2688,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8857fcd322990e64988f1f6ea1267379, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 87.004
+      value: 90.003
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8857fcd322990e64988f1f6ea1267379, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -4519,7 +4519,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 638c98c66510d334197814179fe0927e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destroyOnTriggerEnter: 0
   tagFilter: 
   onTriggerEnterEvent:
     m_PersistentCalls:
@@ -4527,6 +4526,9 @@ MonoBehaviour:
   onTriggerExitEvent:
     m_PersistentCalls:
       m_Calls: []
+  audioSource: {fileID: 1710226194}
+  triggerSound: {fileID: 8300000, guid: ae3184fca8f6bad4f8dfd7e25d566cde, type: 3}
+  initialAudioDuration: 8
   delayedEvent:
     m_PersistentCalls:
       m_Calls:
@@ -4554,9 +4556,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-  audioSource: {fileID: 1710226194}
-  triggerSound: {fileID: 8300000, guid: ae3184fca8f6bad4f8dfd7e25d566cde, type: 3}
-  delay: 1
+  delayBetweenActions: 0.3
+  objectToDestroy: {fileID: 989997553}
+  destroyAfterTime: 2.5
 --- !u!65 &1346119254
 BoxCollider:
   m_ObjectHideFlags: 0
