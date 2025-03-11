@@ -22,6 +22,8 @@ This project is a collaborative research initiative between the Psychology, Neur
 
 - Data Collection: [SimpleOmnia](https://github.com/simpleOmnia/sXR?tab=readme-ov-file)
 
+- SDKs & Libraries: SteamVr, [SRanipal](https://docs.vrcft.io/docs/v4.0/hardware/VIVE/sranipal)
+
 - Programming Languages: C#, Unity Scripts
 
 ## Collaboration: GitHub for version control and project management
@@ -36,7 +38,7 @@ This project is a collaborative research initiative between the Psychology, Neur
     
   - Open the project in Unity (recommended version: 2023.1.5f1).
 
-  - Ensure that the HTC VIVE Pro Eye is properly set up and recognized by SteamVR.
+  - Ensure that the HTC VIVE Pro Eye is properly set up and recognized by SteamVR and SRanipal if using eyetracking.
 
   - Install SimpleOmnia package following the [instructions](https://github.com/simpleOmnia/sXR/wiki/Installation) provided by Justin Kasowski.
 
