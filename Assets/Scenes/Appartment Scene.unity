@@ -4501,7 +4501,7 @@ GameObject:
   - component: {fileID: 1626098065}
   - component: {fileID: 1626098066}
   m_Layer: 0
-  m_Name: EyeTracker
+  m_Name: ExperimentScript
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
