@@ -10,6 +10,9 @@ namespace SampleExperimentScene
 
         void Start() // set to true in the inspector if you would like to auto launch SRanipal
         {
+
+                            sxr.StartRecordingCameraPos();
+                    sxr.StartRecordingEyeTrackerInfo();
             if (EyeCalibration)
             {
                 sxr.DebugLog("Launching Eye Calibration");
@@ -37,15 +40,15 @@ namespace SampleExperimentScene
 
         void Update()
         {
-            var gazeInfo = sxr.GetFullGazeInfo();
-            sxr.ChangeExperimenterTextbox(4, "Gaze Info: " + gazeInfo);
+
+        
+                    var gazeInfo = sxr.GetFullGazeInfo();
+                    sxr.ChangeExperimenterTextbox(4, "Gaze Info: " + gazeInfo);
 
             switch (sxr.GetPhase())
             {
                 case 0: // Start Screen Phase
-                    sxr.StartRecordingCameraPos();
-                    sxr.StartRecordingEyeTrackerInfo();
-                    sxr.ChangeExperimenterTextbox(5, ""); // gazeinfo was overlapping with textbox 5
+                sxr.ChangeExperimenterTextbox(5, ""); // gazeinfo was overlapping with textbox 5
                     break;
 
                 case 1: // Instruction Phase
