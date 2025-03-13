@@ -2514,11 +2514,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: 34c12b16e3cad5542bd2d6f0a98ee900, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: 34c12b16e3cad5542bd2d6f0a98ee900, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: 34c12b16e3cad5542bd2d6f0a98ee900, type: 3}
       propertyPath: m_SizeDelta.y
@@ -2526,11 +2526,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: 34c12b16e3cad5542bd2d6f0a98ee900, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 150.00002
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: 34c12b16e3cad5542bd2d6f0a98ee900, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -20
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5584235359435593051, guid: 34c12b16e3cad5542bd2d6f0a98ee900, type: 3}
       propertyPath: m_AnchorMax.y
@@ -5178,6 +5178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 559f0d260ad86c547bd1f14848a8cb0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  EyeCalibration: 0
 --- !u!1 &1626100714
 GameObject:
   m_ObjectHideFlags: 0
