@@ -4,7 +4,7 @@ namespace SampleExperimentScene
 {
     public class ExperimentScript : MonoBehaviour
     {
-        public bool EyeCalibration;
+        public bool EyeCalibration; // toggle for eye tracking
         int trialCounter = 0;
         bool hasStarted = false; // Flag to track if movement should start in vr mover script
 
@@ -49,7 +49,6 @@ namespace SampleExperimentScene
                     break;
 
                 case 1: // Instruction Phase
-                    hasStarted = true;
 
                     if (trialCounter < 1)
                     {
