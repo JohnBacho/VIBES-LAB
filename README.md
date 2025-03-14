@@ -26,6 +26,8 @@ This project is a collaborative research initiative between the Psychology, Neur
 
 - Programming Languages: C#, Unity Scripts
 
+<img src="https://github.com/user-attachments/assets/25181e6c-d4bd-42f2-bacc-719134e4decb" width="500"/>
+
 ## Collaboration: GitHub for version control and project management
 
 - Installation & Setup
