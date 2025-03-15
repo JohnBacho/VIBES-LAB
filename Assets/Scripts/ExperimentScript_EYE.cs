@@ -53,20 +53,20 @@ namespace SampleExperimentScene
             else return;
 
             currentFocus = focusInfo.collider.gameObject.name;
-            sxr.ChangeExperimenterTextbox(6, "Current Game Object: " + currentFocus);
+            sxr.ChangeExperimenterTextbox(4, "Current Game Object: " + currentFocus);
 
         }
         void Update()
         {
 
+
             CheckFocus();
             var gazeInfo = sxr.GetFullGazeInfo();
-            sxr.ChangeExperimenterTextbox(4, "Gaze Info: " + gazeInfo);
+            sxr.ChangeExperimenterTextbox(5, "Gaze Info: " + gazeInfo);
 
             switch (sxr.GetPhase())
             {
                 case 0: // Start Screen Phase
-                    sxr.ChangeExperimenterTextbox(5, ""); // gazeinfo was overlapping with textbox 5
                     break;
 
                 case 1: // Instruction Phase
