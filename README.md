@@ -59,10 +59,11 @@ This project is a collaborative research initiative between the Psychology, Neur
 
 - Marissa Brigger - Neuroscientist, Baldwin Wallace University
 
-- Justin Kasowski – Developer of SimpleOmnia
 
 ## Acknowledgments
 
+- Justin Kasowski – Developer of SimpleOmnia
+  
 - Unity Asset Store for providing high-quality assets that enhance our VR environments.
 
 
