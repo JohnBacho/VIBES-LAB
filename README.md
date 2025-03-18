@@ -59,6 +59,8 @@ This project is a collaborative research initiative between the Psychology, Neur
 
 - Marissa Brigger - Neuroscientist, Baldwin Wallace University
 
+- Sophia Ott - Neuroscientist, Baldwin Wallace University
+
 
 ## Acknowledgments
 
