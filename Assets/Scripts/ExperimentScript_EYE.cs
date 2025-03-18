@@ -20,23 +20,7 @@ namespace SampleExperimentScene
             sxr.StartRecordingEyeTrackerInfo();
             if (EyeCalibration)
             {
-                sxr.DebugLog("Launching Eye Calibration");
                 sxr.LaunchEyeCalibration();
-                bool calibrationSuccess = sxr.LaunchEyeCalibration();
-
-                if (calibrationSuccess) // checks the SRanipal api to see (pun intended) if eye calibration was successful
-                {
-                    sxr.DebugLog("Eye Calibration Successful");
-                }
-                else
-                {
-                    sxr.DebugLog("Eye Calibration Failed");
-                    Debug.Break(); // if calibration fails unity project will pause to stop project from going on without eyetracking data
-                }
-            }
-            else
-            {
-                sxr.DebugLog("Skipping Eye Calibration");
             }
 
         }
