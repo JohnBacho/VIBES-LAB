@@ -22,11 +22,11 @@ namespace SampleExperimentScene
             {
                 sxr.DebugLog("Launching Eye Calibration");
                 sxr.LaunchEyeCalibration();
+                bool calibrationSuccess = sxr.LaunchEyeCalibration();
 
-                if (sxr.LaunchEyeCalibration()) // checks the SRanipal api to see (pun intended) if eye calibration was successful
+                if (calibrationSuccess) // checks the SRanipal api to see (pun intended) if eye calibration was successful
                 {
                     sxr.DebugLog("Eye Calibration Successful");
-                    return;
                 }
                 else
                 {
@@ -37,7 +37,6 @@ namespace SampleExperimentScene
             else
             {
                 sxr.DebugLog("Skipping Eye Calibration");
-                return;
             }
 
         }
