@@ -68,4 +68,11 @@ This project is a collaborative research initiative between the Psychology, Neur
   
 - Unity Asset Store for providing high-quality assets that enhance our VR environments.
 
+## License & Attribution
 
+This project includes materials licensed under the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) license.
+
+    The repository makes use of simpleOmnia by Justin Kasowski, licensed under CC BY-NC 4.0.
+    Original repository: https://github.com/simpleOmnia/sXR?tab=readme-ov-file
+
+For more details on the license, see [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.en).
