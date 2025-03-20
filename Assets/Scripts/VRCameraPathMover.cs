@@ -3,21 +3,20 @@ using System.Collections;
 
 public class VRCameraPathMover : MonoBehaviour
 {
-    public Transform[] waypoints; // Array of waypoints
-    public float moveSpeed = 2.0f; // Speed of movement
-    public float rotationSpeed = 5.0f; // Speed of rotation towards next waypoint
-    public float startWaitTime = 2.0f; // Time to wait at the start
-    public float[] waitTimes; // Time to wait at specific waypoints
+    public Transform[] waypoints;
+    public float moveSpeed = 2.0f;
+    public float rotationSpeed = 5.0f;
+    public float startWaitTime = 2.0f;
+    public float[] waitTimes;
 
     private int currentWaypointIndex = 0;
     private bool isWaiting = false;
-    private Transform xrRigTransform; // The parent XR Rig transform
-    private bool hasStopped = false;
+    private Transform xrRigTransform;
+    private bool hasStopped = true;
 
     void Start()
     {
-        xrRigTransform = transform; // Move the XR Rig, not the camera
-        StartCoroutine(WaitAtStart());
+        xrRigTransform = transform;
     }
 
     void Update()
@@ -27,14 +26,18 @@ public class VRCameraPathMover : MonoBehaviour
         MoveAlongPath();
     }
 
+    public void StartMoving() // this event is triggered in the experiment script
+    {
+        hasStopped = false; 
+        StartCoroutine(WaitAtStart());
+    }
+
     void MoveAlongPath()
     {
         Transform targetWaypoint = waypoints[currentWaypointIndex];
 
-        // Move the XR Rig (not the camera)
         xrRigTransform.position = Vector3.MoveTowards(xrRigTransform.position, targetWaypoint.position, moveSpeed * Time.deltaTime);
 
-        // Rotate the XR Rig towards the waypoint
         Vector3 direction = (targetWaypoint.position - xrRigTransform.position).normalized;
         if (direction != Vector3.zero)
         {
@@ -42,7 +45,6 @@ public class VRCameraPathMover : MonoBehaviour
             xrRigTransform.rotation = Quaternion.Slerp(xrRigTransform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
 
-        // Check if we reached the waypoint
         if (Vector3.Distance(xrRigTransform.position, targetWaypoint.position) < 0.1f)
         {
             StartCoroutine(WaitAtWaypoint());
@@ -56,7 +58,7 @@ public class VRCameraPathMover : MonoBehaviour
         isWaiting = false;
     }
 
-    IEnumerator WaitAtWaypoint()
+    IEnumerator WaitAtWaypoint() 
     {
         isWaiting = true;
         float waitTime = (currentWaypointIndex < waitTimes.Length) ? waitTimes[currentWaypointIndex] : 0f;
@@ -66,7 +68,7 @@ public class VRCameraPathMover : MonoBehaviour
 
         if (currentWaypointIndex >= waypoints.Length)
         {
-            hasStopped = true; // Stop moving at the final waypoint
+            hasStopped = true;
         }
 
         isWaiting = false;

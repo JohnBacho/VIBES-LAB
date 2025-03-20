@@ -2211,7 +2211,7 @@ GameObject:
   m_Component:
   - component: {fileID: 512416003}
   m_Layer: 0
-  m_Name: WavePoint1
+  m_Name: WayPoint1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2826,19 +2826,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 444442, guid: b01fa194940f0624ca7e3df13bed1969, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.6268386
+      value: 0.6509582
       objectReference: {fileID: 0}
     - target: {fileID: 444442, guid: b01fa194940f0624ca7e3df13bed1969, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.62683874
+      value: -0.6509116
       objectReference: {fileID: 0}
     - target: {fileID: 444442, guid: b01fa194940f0624ca7e3df13bed1969, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.32722056
+      value: 0.2761402
       objectReference: {fileID: 0}
     - target: {fileID: 444442, guid: b01fa194940f0624ca7e3df13bed1969, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.32722056
+      value: 0.2762503
+      objectReference: {fileID: 0}
+    - target: {fileID: 444442, guid: b01fa194940f0624ca7e3df13bed1969, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 444442, guid: b01fa194940f0624ca7e3df13bed1969, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 444442, guid: b01fa194940f0624ca7e3df13bed1969, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 45.99
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3634,7 +3646,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: 34c12b16e3cad5542bd2d6f0a98ee900, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 150.00002
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: 34c12b16e3cad5542bd2d6f0a98ee900, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -3837,7 +3849,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 6468c9a8e17142b4ca0f0ec3570361ee, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.239
+      value: 0.265
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 6468c9a8e17142b4ca0f0ec3570361ee, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4605,7 +4617,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1364685026}
   m_Layer: 0
-  m_Name: WavePoint2
+  m_Name: WayPoint2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4742,7 +4754,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1466477391}
   m_Layer: 0
-  m_Name: WavePoint3
+  m_Name: WayPoint3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5259,27 +5271,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1626098065}
-  - component: {fileID: 1626098064}
   - component: {fileID: 1626098066}
   m_Layer: 0
-  m_Name: EyeTracker
+  m_Name: ExperimentScript
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1626098064
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1626098063}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fdbbe4051a7d10479e800b8458f0c64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1626098065
 Transform:
   m_ObjectHideFlags: 0
@@ -5307,6 +5306,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 559f0d260ad86c547bd1f14848a8cb0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  EyeCalibration: 0
 --- !u!1001 &1641953603
 PrefabInstance:
   m_ObjectHideFlags: 0
