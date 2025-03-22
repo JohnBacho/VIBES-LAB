@@ -1464,7 +1464,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: c46e02d0ed5b845818a5706becfc038d, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 0b57664a898cc41c5b836353d6ac7897, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.85
   m_Pitch: 1
@@ -3569,7 +3569,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   audioSource: {fileID: 1706565784}
-  triggerSound: {fileID: 8300000, guid: ae3184fca8f6bad4f8dfd7e25d566cde, type: 3}
+  triggerSound: {fileID: 8300000, guid: 7e98f97939f864b6d96ffeb9f8647d2d, type: 3}
   initialAudioDuration: 8
   delayedEvent:
     m_PersistentCalls:
@@ -3610,9 +3610,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-  delayBetweenActions: 0.5
+  delayBetweenActions: 0
   objectToDestroy: {fileID: 989997553}
-  destroyAfterTime: 0.8
+  destroyAfterTime: 0.5
 --- !u!65 &1346119254
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5487,7 +5487,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: ae3184fca8f6bad4f8dfd7e25d566cde, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 7e98f97939f864b6d96ffeb9f8647d2d, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.097
   m_Pitch: 1
