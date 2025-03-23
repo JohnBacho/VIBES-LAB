@@ -2,39 +2,37 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class TriggerWithDelay : MonoBehaviour
+public class FearConditioningTrigger : MonoBehaviour
 {
     [SerializeField] private string tagFilter;
 
-    [Header("Initial Trigger Events")]
+    [Header("CS+ (Conditioned Stimulus)")]
+    [SerializeField] private GameObject CSObject; // CS+ Object (Visual Cue)
+    [SerializeField] private float CSDuration = 8f; // CS+ total duration
+
+    [Header("US (Unconditioned Stimuli)")]
+    [SerializeField] private float USStartDelay = 6f; // Time before US starts (during CS+)
+    [SerializeField] private float USDuration = 2f; // US duration
+    [SerializeField] private UnityEvent OnUSStart; // Event triggered when US starts
+    [SerializeField] private UnityEvent OnUSStop; // Event triggered when US ends
+
+    [Header("Events")]
     [SerializeField] private UnityEvent onTriggerEnterEvent;
     [SerializeField] private UnityEvent onTriggerExitEvent;
-
-    [Header("Audio Settings")]
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip triggerSound;
-    [SerializeField] private float initialAudioDuration = 8f; // Time before next action
-
-    [Header("Delayed Actions")]
     [SerializeField] private UnityEvent delayedEvent;
-    [SerializeField] private float delayBetweenActions = 0.3f; // Fine-tuning event timing
-
-    [Header("Object Destruction")]
-    [SerializeField] private GameObject objectToDestroy;
-    [SerializeField] private float destroyAfterTime = 5f; // Time before object disappears
 
     private void OnTriggerEnter(Collider other)
     {
         if (!string.IsNullOrEmpty(tagFilter) && !other.gameObject.CompareTag(tagFilter)) return;
 
-        // Play initial sound
-        if (audioSource != null && triggerSound != null)
+        onTriggerEnterEvent.Invoke();
+        
+        if (CSObject != null)
         {
-            audioSource.PlayOneShot(triggerSound);
+            CSObject.SetActive(true);
         }
 
-        // Start the event sequence
-        StartCoroutine(DelayedActionsRoutine());
+        StartCoroutine(ConditioningSequence());
     }
 
     private void OnTriggerExit(Collider other)
@@ -44,23 +42,27 @@ public class TriggerWithDelay : MonoBehaviour
         onTriggerExitEvent.Invoke();
     }
 
-    private IEnumerator DelayedActionsRoutine()
+    private IEnumerator ConditioningSequence()
     {
-        yield return new WaitForSeconds(initialAudioDuration);
+        yield return new WaitForSeconds(USStartDelay);
 
-        // Trigger first delayed event
-        onTriggerEnterEvent.Invoke();
-        
-        yield return new WaitForSeconds(delayBetweenActions);
+        OnUSStart.Invoke();
 
-        // Trigger second delayed event
-        delayedEvent.Invoke();
+        yield return new WaitForSeconds(USDuration);
 
-        // Destroy object after a set time
-        if (objectToDestroy != null)
+        OnUSStop.Invoke();
+
+        float remainingCSDuration = CSDuration - USStartDelay - USDuration;
+        if (remainingCSDuration > 0)
         {
-            yield return new WaitForSeconds(destroyAfterTime);
-            Destroy(objectToDestroy);
+            yield return new WaitForSeconds(remainingCSDuration);
         }
+
+        if (CSObject != null)
+        {
+            CSObject.SetActive(false);
+        }
+
+        delayedEvent.Invoke();
     }
 }
