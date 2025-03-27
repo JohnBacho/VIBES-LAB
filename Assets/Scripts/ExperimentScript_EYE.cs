@@ -38,14 +38,20 @@ namespace SampleExperimentScene
             currentFocus = focusInfo.collider.gameObject.name;
             sxr.ChangeExperimenterTextbox(4, "Current Game Object: " + currentFocus);
 
+            Vector3 gazeHitPoint = focusInfo.point;
+            sxr.ChangeExperimenterTextbox(5, "Gaze Hit Position: " + gazeHitPoint);
+
+            // Vector3 screenPoint = Camera.main.WorldToScreenPoint(gazeHitPoint);
+            // Debug.Log("Screen coordinates: " + screenPoint);
         }
+
         void Update()
         {
 
 
             CheckFocus();
-            var gazeInfo = sxr.GetFullGazeInfo();
-            sxr.ChangeExperimenterTextbox(5, "Gaze Info: " + gazeInfo);
+            //var gazeInfo = sxr.GetFullGazeInfo();
+            //sxr.ChangeExperimenterTextbox(5, "Gaze Info: " + gazeInfo);
 
             switch (sxr.GetPhase())
             {
