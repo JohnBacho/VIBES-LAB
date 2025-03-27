@@ -13,6 +13,8 @@ namespace SampleExperimentScene
         private Ray testRay;
         private FocusInfo focusInfo;
 
+        private Vector3 gazeHitPoint;
+
         void Start() // set to true in the inspector if you would like to auto launch SRanipal
         {
 
@@ -23,9 +25,7 @@ namespace SampleExperimentScene
                 sxr.LaunchEyeCalibration();
             }
 
-            sxr.WriteHeaderToTaggedFile("mainFile", "GazePositionX");
-            sxr.WriteHeaderToTaggedFile("mainFile", "GazePositionY");
-            sxr.WriteHeaderToTaggedFile("mainFile", "GazePositionZ");
+            sxr.WriteHeaderToTaggedFile("mainFile", "GazeHitPoint");
 
         }
 
@@ -42,7 +42,7 @@ namespace SampleExperimentScene
             currentFocus = focusInfo.collider.gameObject.name;
             sxr.ChangeExperimenterTextbox(4, "Current Game Object: " + currentFocus);
 
-            Vector3 gazeHitPoint = focusInfo.point;
+            gazeHitPoint = focusInfo.point;
             sxr.ChangeExperimenterTextbox(5, "Gaze Hit Position: " + gazeHitPoint);
 
             sxr.WriteToTaggedFile("mainFile", gazeHitPoint.ToString());

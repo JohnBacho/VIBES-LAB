@@ -5,14 +5,14 @@ from mpl_toolkits.mplot3d import Axes3D
 from scipy.stats import gaussian_kde
 
 # Load data
-df = pd.read_csv("/Users/johnbacho/Documents/GitHub/VR-LAB/Python Scripts/2025_3_27_1134_0_eyetracker.csv", delimiter=",")
+df = pd.read_csv("/Users/johnbacho/Documents/GitHub/VR-LAB/Python Scripts/2025_3_27_1518__mainFile.csv", delimiter=",")
 
 print(df.columns)
 
 # Extract coordinates
-x = df["gazeFixationX"]
-y = df["gazeFixationY"]
-z = df["gazeFixationZ"]
+x = df["GazePositionX"]
+y = df["GazePositionY"]
+z = df["GazePositionZ"]
 
 # Compute density for hotspot visualization
 xyz = np.vstack([x, y, z])
