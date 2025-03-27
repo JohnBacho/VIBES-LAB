@@ -23,6 +23,10 @@ namespace SampleExperimentScene
                 sxr.LaunchEyeCalibration();
             }
 
+            sxr.WriteHeaderToTaggedFile("mainFile", "GazePositionX");
+            sxr.WriteHeaderToTaggedFile("mainFile", "GazePositionY");
+            sxr.WriteHeaderToTaggedFile("mainFile", "GazePositionZ");
+
         }
 
         void CheckFocus()
@@ -40,6 +44,8 @@ namespace SampleExperimentScene
 
             Vector3 gazeHitPoint = focusInfo.point;
             sxr.ChangeExperimenterTextbox(5, "Gaze Hit Position: " + gazeHitPoint);
+
+            sxr.WriteToTaggedFile("mainFile", gazeHitPoint.ToString());
 
             // Vector3 screenPoint = Camera.main.WorldToScreenPoint(gazeHitPoint);
             // Debug.Log("Screen coordinates: " + screenPoint);
