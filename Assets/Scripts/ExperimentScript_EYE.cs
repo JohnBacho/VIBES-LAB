@@ -25,9 +25,6 @@ namespace SampleExperimentScene
             {
                 sxr.LaunchEyeCalibration();
             }
-
-            
-
         }
 
         void CheckFocus()
@@ -81,6 +78,7 @@ namespace SampleExperimentScene
                     
                     if(sxr.CheckTimer()){
                         sxr.HideAllText();
+                        sxr.MoveObjectTo("sXR_prefab", 23.0f, 0f, 0f);
                     }
 
                     switch (sxr.GetStepInTrial())
