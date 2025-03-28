@@ -1,12 +1,22 @@
 ﻿using UnityEngine;
 using ViveSR.anipal.Eye;
 ﻿using sxr_internal;
+using System.Collections; // Required for IEnumerator
+
 
 namespace SampleExperimentScene
 {
     public class ExperimentScript_EYE : MonoBehaviour
     {
         public bool EyeCalibration; // toggle for eye tracking
+        public float trialTimeBefore; // Enter time for trial for before the CS
+        public float trialTimeAfter; // Enter time for trial for After the CS
+        public float tolerance; // Enter Tolerance to trigger CS
+        public GameObject CS_plus_Object;
+        public GameObject CS_plus_Sound;
+        public float CS_plus_Sound_Delay;
+
+
         int trialCounter = 0;
         bool hasStarted = false; // Flag to track if movement should start in vr mover script
 
@@ -25,6 +35,20 @@ namespace SampleExperimentScene
             {
                 sxr.LaunchEyeCalibration();
             }
+        }
+
+        IEnumerator PlaySoundAfterDelay(float CS_plus_Sound_Delay)
+        {
+            yield return new WaitForSeconds(CS_plus_Sound_Delay);
+            AudioSource audioSource = CS_plus_Sound.GetComponent<AudioSource>();
+            audioSource.Play();
+        }
+
+        // Coroutine to disable the object after a delay
+        IEnumerator DisableObjects(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            CS_plus_Object.SetActive(false);
         }
 
         void CheckFocus()
@@ -59,38 +83,55 @@ namespace SampleExperimentScene
             //var gazeInfo = sxr.GetFullGazeInfo();
             //sxr.ChangeExperimenterTextbox(5, "Gaze Info: " + gazeInfo);
 
-            switch (sxr.GetPhase())
-            {
-                case 0: // Start Screen Phase
-                
-                    break;
+           switch (sxr.GetPhase()){
+            case 0: // Start Screen Phase
+                break; 
 
-                case 1: // Instruction Phase
-                 StartEyeTracker = true;
-                 sxr.StartRecordingCameraPos();
-                 sxr.StartRecordingEyeTrackerInfo();
-                    if(!hasExecuted){
+            case 1: // Instruction Phase
+                StartEyeTracker = true;
+                sxr.StartRecordingCameraPos();
+                sxr.StartRecordingEyeTrackerInfo();
+                if (!hasExecuted)
+                {
                     sxr.WriteHeaderToTaggedFile("mainFile", headers);
                     sxr.StartTimer(20);
                     sxr.DisplayText("In this experiment, you will see different colored shapes in the 3d environment. Please look at the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored shapes and the loud sounds.");
                     hasExecuted = true;
-                    }
-                    
-                    if(sxr.CheckTimer()){
-                        sxr.HideAllText();
-                        sxr.MoveObjectTo("sXR_prefab", 23.0f, 0f, 0f);
-                    }
+                }
 
-                    switch (sxr.GetStepInTrial())
-                    {
-                        case 0:
-                            sxr.HideImagesUI();
-                            break;
-                        case 1:
-                            break;
-                    }
-                    break;
-            }
-        }
-    }
-}
+                if (sxr.CheckTimer())
+                {
+                    sxr.HideAllText();
+                    sxr.NextPhase();
+                    hasExecuted = false;
+                }
+                break; 
+
+            case 2: // Habituation Phase
+                switch (sxr.GetTrial())
+                {
+                    case 0:
+                        if (!hasExecuted)
+                        {
+                            sxr.MoveObjectTo("sXR_prefab", 23.0f, 0f, 0f); // Moves player to the CS+ environment
+                            sxr.StartTimer(trialTimeBefore + trialTimeAfter);
+                            hasExecuted = true;
+                        }
+                                    if (Mathf.Abs((sxr.TimeRemaining() - Mathf.Abs((trialTimeAfter + trialTimeBefore) - trialTimeBefore))) <= tolerance)
+                                    {
+                                        CS_plus_Object.SetActive(true); // Activate object
+
+                                        StartCoroutine(PlaySoundAfterDelay(7f)); // Wait 7s, then play sound
+                                        StartCoroutine(DisableObjects(8f)); // Wait 8s, then disable object
+                                    }
+
+                        break; 
+
+                    // You can add more cases for trial if necessary
+                }
+                break; // Add a break here to end the main case 2
+              }
+
+         }
+     }
+ }
