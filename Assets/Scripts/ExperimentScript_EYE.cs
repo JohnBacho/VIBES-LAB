@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using ViveSR.anipal.Eye;
+﻿using sxr_internal;
 
 namespace SampleExperimentScene
 {
@@ -12,20 +13,20 @@ namespace SampleExperimentScene
         private string currentFocus = "";
         private Ray testRay;
         private FocusInfo focusInfo;
-
         private Vector3 gazeHitPoint;
+        private bool hasExecuted = false;
+        private bool StartEyeTracker = false;
+        private string headers = "GazeHitPointX,GazeHitPointY,GazeHitPointZ";
 
         void Start() // set to true in the inspector if you would like to auto launch SRanipal
         {
 
-            sxr.StartRecordingCameraPos();
-            sxr.StartRecordingEyeTrackerInfo();
             if (EyeCalibration)
             {
                 sxr.LaunchEyeCalibration();
             }
 
-            sxr.WriteHeaderToTaggedFile("mainFile", "GazeHitPoint");
+            
 
         }
 
@@ -54,23 +55,32 @@ namespace SampleExperimentScene
         void Update()
         {
 
-
+            if(StartEyeTracker){
             CheckFocus();
+            }
+
             //var gazeInfo = sxr.GetFullGazeInfo();
             //sxr.ChangeExperimenterTextbox(5, "Gaze Info: " + gazeInfo);
 
             switch (sxr.GetPhase())
             {
                 case 0: // Start Screen Phase
+                
                     break;
 
                 case 1: // Instruction Phase
-
-                    if (trialCounter < 1)
-                    {
-                        FindObjectOfType<VRCameraPathMover>().StartMoving(); // talks to the VRCameraPathMover script and triggers the StartMoving Function
-                        sxr.StartTimer(50); // Start a 50s trial timer
-                        trialCounter++;
+                 StartEyeTracker = true;
+                 sxr.StartRecordingCameraPos();
+                 sxr.StartRecordingEyeTrackerInfo();
+                    if(!hasExecuted){
+                    sxr.WriteHeaderToTaggedFile("mainFile", headers);
+                    sxr.StartTimer(20);
+                    sxr.DisplayText("In this experiment, you will see different colored shapes in the 3d environment. Please look at the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored shapes and the loud sounds.");
+                    hasExecuted = true;
+                    }
+                    
+                    if(sxr.CheckTimer()){
+                        sxr.HideAllText();
                     }
 
                     switch (sxr.GetStepInTrial())
