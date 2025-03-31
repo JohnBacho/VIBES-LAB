@@ -34,5 +34,7 @@ ax.set_xlabel("gazeFixationX")
 ax.set_ylabel("gazeFixationY")
 ax.set_zlabel("gazeFixationZ")
 ax.set_title("Gaze Fixation Hotspots")
+ax.set_xlim(max(x), min(x))  # Reverse x-axis
 
+plt.tight_layout()
 plt.show()
