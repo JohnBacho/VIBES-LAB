@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028292, g: 0.22571306, b: 0.30692118, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2131,8 +2131,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EyeCalibration: 0
-  trialTimeBefore: 8
-  trialTimeAfter: 10
+  TimeBeforeCS: 8
+  TimeAfterCS: 10
   tolerance: 0.05
   CS_plus_Object: {fileID: 792466238}
   CS_plus_Sound: {fileID: 2124453806}
