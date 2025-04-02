@@ -23,14 +23,14 @@ namespace SampleExperimentScene
         public float CS_minus_Sound_Delay; // Enter time for sound delay to play after CS- object is activated.
         public float CS_minus_Object_Interval; // Enter time for CS- object to stay active
 
-        private string currentFocus = ""; // used for Sranipal
+        private string FocusedGameObject = ""; // used for Sranipal
         private Ray testRay; // used for Sranipal
         private FocusInfo focusInfo; // used for Sranipal
         private Vector3 gazeHitPoint; // used in calculating eye tracking data with collisions
         private bool hasExecuted = false; //  used as a way to execute one block of code only once
         private bool StartEyeTracker = false; //used to start the CheckFocus(); function which calculates the eye 
         // tracking data ensuring that all three cameratrack / eyetracker / mainfile are all started at the exact same time
-        private string headers = "GazeHitPointX,GazeHitPointY,GazeHitPointZ"; // used to write headers to the mainfile
+        private string headers = "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus"; // used to write headers to the mainfile
         private float timeElapsed; //Used to calculate when the CS starts 
         private float TotalTrialTime; //Used to calculate the total time of the trial
 
@@ -78,24 +78,24 @@ namespace SampleExperimentScene
         void CheckFocus()
         {
 
-            currentFocus = "";
+            FocusedGameObject = "";
 
             if (SRanipal_Eye.Focus(GazeIndex.COMBINE, out testRay, out focusInfo)) { }
             else if (SRanipal_Eye.Focus(GazeIndex.LEFT, out testRay, out focusInfo)) { }
             else if (SRanipal_Eye.Focus(GazeIndex.RIGHT, out testRay, out focusInfo)) { }
             else return;
 
-            currentFocus = focusInfo.collider.gameObject.name;
-            sxr.ChangeExperimenterTextbox(4, "Current Game Object: " + currentFocus);
+            FocusedGameObject = focusInfo.collider.gameObject.name;
+            sxr.ChangeExperimenterTextbox(4, "Current Game Object: " + FocusedGameObject);
 
             gazeHitPoint = focusInfo.point;
             sxr.ChangeExperimenterTextbox(5, "Gaze Hit Position: " + gazeHitPoint);
 
-            sxr.WriteToTaggedFile("mainFile", gazeHitPoint.ToString()); // // Records eye-tracking data, detecting collisions and saving coordinates 
-            // if a collision occurs instead of passing through objects.
 
-            // Vector3 screenPoint = Camera.main.WorldToScreenPoint(gazeHitPoint);
-            // Debug.Log("Screen coordinates: " + screenPoint);
+            string DataPoints = (gazeHitPoint.ToString() + "," + FocusedGameObject); 
+            sxr.WriteToTaggedFile("mainFile", DataPoints); // // saves the gazehitpoint which is the gaze with object collision and also 
+            // FocusedGameObject which is the object the user is looking at to file 
+
         }
 
         void Update()
