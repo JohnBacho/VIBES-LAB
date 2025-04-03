@@ -31,7 +31,6 @@ namespace SampleExperimentScene
         private bool StartEyeTracker = false; //used to start the CheckFocus(); function which calculates the eye 
         // tracking data ensuring that all three cameratrack / eyetracker / mainfile are all started at the exact same time
         private string headers = "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus"; // used to write headers to the mainfile
-        private float timeElapsed; //Used to calculate when the CS starts 
         private float TotalTrialTime; //Used to calculate the total time of the trial
 
         void Start()
@@ -42,7 +41,9 @@ namespace SampleExperimentScene
                 sxr.LaunchEyeCalibration();
             }
 
-            timeElapsed = Mathf.Abs(TimeBeforeCS + TimeAfterCS - TimeBeforeCS); // Calculates when to active CS
+            if (TimeAfterCS < 0 )
+                break;
+                
             TotalTrialTime = TimeBeforeCS + TimeAfterCS; // Calculates total time 
         }
         // Coroutine to play the sound after a delay
@@ -154,7 +155,7 @@ namespace SampleExperimentScene
                                     }
 
                                     // doesn't exactly reach seconds ie 10s on the dot since it is a float so we have to add a tolerance so that it still executes 
-                                    if (Mathf.Abs(sxr.TimeRemaining() - Mathf.Abs(timeElapsed)) <= tolerance)
+                                    if (Mathf.Abs(sxr.TimeRemaining() - Mathf.Abs(TimeAfterCS)) <= tolerance)
                                     {
                                         // Activate object and play sound after delay
                                         CS_plus_Object.SetActive(true);
@@ -196,7 +197,7 @@ namespace SampleExperimentScene
                                         sxr.StartTimer(TotalTrialTime);
                                         hasExecuted = true;
                                     }
-                                    if (Mathf.Abs(sxr.TimeRemaining() - timeElapsed) <= tolerance)
+                                    if (Mathf.Abs(sxr.TimeRemaining() - TimeAfterCS) <= tolerance)
                                     {
                                         // Activate object and play sound after delay
                                         CS_minus_Object.SetActive(true);
@@ -240,7 +241,7 @@ namespace SampleExperimentScene
                                         hasExecuted = true;
                                     }
 
-                                    if (Mathf.Abs(sxr.TimeRemaining() - Mathf.Abs(timeElapsed)) <= tolerance)
+                                    if (Mathf.Abs(sxr.TimeRemaining() - Mathf.Abs(TimeAfterCS)) <= tolerance)
                                     {
                                         // Activate object and play sound after delay
                                         CS_plus_Object.SetActive(true);
@@ -281,7 +282,7 @@ namespace SampleExperimentScene
                                         sxr.StartTimer(TotalTrialTime);
                                         hasExecuted = true;
                                     }
-                                    if (Mathf.Abs(sxr.TimeRemaining() - timeElapsed) <= tolerance)
+                                    if (Mathf.Abs(sxr.TimeRemaining() - TimeAfterCS) <= tolerance)
                                     {
                                         // Activate object and play sound after delay
                                         CS_minus_Object.SetActive(true);
