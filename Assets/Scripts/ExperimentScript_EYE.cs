@@ -41,9 +41,11 @@ namespace SampleExperimentScene
                 sxr.LaunchEyeCalibration();
             }
 
-            if (TimeAfterCS < 0 )
-                break;
-                
+            if (TimeAfterCS < 0)
+            {
+                Application.Quit();
+            }
+
             TotalTrialTime = TimeBeforeCS + TimeAfterCS; // Calculates total time 
         }
         // Coroutine to play the sound after a delay
