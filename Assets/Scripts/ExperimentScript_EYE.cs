@@ -10,7 +10,7 @@ namespace SampleExperimentScene
     {
         public bool EyeCalibration; // toggle for eye tracking
         public float TimeBeforeCS; // Enter time for trial for before the CS
-        public float TimeAfterCS; // Enter time for trial for After the CS
+        public float TimeAfterCS; // Enter time for trial for during and After the CS
         public float tolerance; // Enter Tolerance to trigger CS
 
         public GameObject CS_plus_Object; // drag and drop CS+ object
@@ -31,7 +31,13 @@ namespace SampleExperimentScene
         private bool StartEyeTracker = false; //used to start the CheckFocus(); function which calculates the eye 
         // tracking data ensuring that all three cameratrack / eyetracker / mainfile are all started at the exact same time
         private string headers = "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus"; // used to write headers to the mainfile
-        private float TotalTrialTime; //Used to calculate the total time of the trial
+        private float TotalTrialTimeCsPlus; //Used to calculate the total time of the trial for CS Plus trial
+
+        private float TotalTrialTimeCsMinus; //Used to calculate the total time of the trial for CS Minus trial
+
+        private float timeUntilCSMinusStarts; // Used to calculate when the when to display CS minus object
+
+        private float timeUntilCSPlusStarts; // Used to calculate when the when to display CS plus object
 
         void Start()
         {
@@ -41,12 +47,23 @@ namespace SampleExperimentScene
                 sxr.LaunchEyeCalibration();
             }
 
-            if (TimeAfterCS < 0)
+            // error handling
+            if (TimeAfterCS < 0) // if time after is less then CS minus and plus interval then it stops the program
             {
-                Application.Quit();
+                Debug.LogError("TimeAfterCS must be greater than 0");
+                UnityEditor.EditorApplication.isPlaying = false; // stops the editor from playing
             }
 
-            TotalTrialTime = TimeBeforeCS + TimeAfterCS; // Calculates total time 
+            // error handling
+            if (CS_minus_Sound_Delay > CS_minus_Object_Interval || CS_plus_Sound_Delay > CS_plus_Object_Interval)
+            {
+                Debug.LogWarning("CS minus or CS plus sound delay should be less than CS plus object_interval");
+            }
+
+            TotalTrialTimeCsPlus = TimeBeforeCS + CS_plus_Object_Interval + TimeAfterCS; // Calculates total time 
+            TotalTrialTimeCsMinus = TimeBeforeCS + CS_minus_Object_Interval + TimeAfterCS;
+            timeUntilCSMinusStarts = CS_minus_Object_Interval + TimeAfterCS;
+            timeUntilCSPlusStarts = CS_minus_Object_Interval + TimeAfterCS;
         }
         // Coroutine to play the sound after a delay
         IEnumerator PlaySoundAfterDelay(GameObject soundObject, float soundDelay)
@@ -95,7 +112,7 @@ namespace SampleExperimentScene
             sxr.ChangeExperimenterTextbox(5, "Gaze Hit Position: " + gazeHitPoint);
 
 
-            string DataPoints = (gazeHitPoint.ToString() + "," + FocusedGameObject); 
+            string DataPoints = (gazeHitPoint.ToString() + "," + FocusedGameObject);
             sxr.WriteToTaggedFile("mainFile", DataPoints); // // saves the gazehitpoint which is the gaze with object collision and also 
             // FocusedGameObject which is the object the user is looking at to file 
 
@@ -146,18 +163,18 @@ namespace SampleExperimentScene
 
                         case 1: // Start of CS+ and Inter Trial Interval
                             switch (sxr.GetStepInTrial())
-                            {   
+                            {
                                 case 0: // CS+
                                     if (!hasExecuted)
                                     {
 
                                         sxr.MoveObjectTo("sXR_prefab", 23.0f, 0f, 0f); // teleports player to CS+ environment
-                                        sxr.StartTimer(TotalTrialTime); // sets the timer based on TimeBeforeCS + TimeAfterCS;
+                                        sxr.StartTimer(TotalTrialTimeCsPlus); // sets the timer based on TimeBeforeCS + TimeAfterCS;
                                         hasExecuted = true;
                                     }
 
-                                    // doesn't exactly reach seconds ie 10s on the dot since it is a float so we have to add a tolerance so that it still executes 
-                                    if (Mathf.Abs(sxr.TimeRemaining() - Mathf.Abs(TimeAfterCS)) <= tolerance)
+                                    // since TimeRemaining is a float point it doesn't exactly reach ie 10s on the dot instead it's 10.0123s so we have to add a tolerance so that it still executes
+                                    if (Mathf.Abs(sxr.TimeRemaining() - timeUntilCSPlusStarts) <= tolerance)
                                     {
                                         // Activate object and play sound after delay
                                         CS_plus_Object.SetActive(true);
@@ -196,10 +213,10 @@ namespace SampleExperimentScene
                                     {
                                         // Move player to CS- environment
                                         sxr.MoveObjectTo("sXR_prefab", 61.39f, 0f, 0f);
-                                        sxr.StartTimer(TotalTrialTime);
+                                        sxr.StartTimer(TotalTrialTimeCsMinus);
                                         hasExecuted = true;
                                     }
-                                    if (Mathf.Abs(sxr.TimeRemaining() - TimeAfterCS) <= tolerance)
+                                    if (Mathf.Abs(sxr.TimeRemaining() - timeUntilCSMinusStarts) <= tolerance)
                                     {
                                         // Activate object and play sound after delay
                                         CS_minus_Object.SetActive(true);
@@ -239,11 +256,11 @@ namespace SampleExperimentScene
                                     {
                                         // Move player to CS+ environment
                                         sxr.MoveObjectTo("sXR_prefab", 23.0f, 0f, 0f);
-                                        sxr.StartTimer(TotalTrialTime);
+                                        sxr.StartTimer(TotalTrialTimeCsPlus);
                                         hasExecuted = true;
                                     }
 
-                                    if (Mathf.Abs(sxr.TimeRemaining() - Mathf.Abs(TimeAfterCS)) <= tolerance)
+                                    if (Mathf.Abs(sxr.TimeRemaining() - timeUntilCSPlusStarts) <= tolerance)
                                     {
                                         // Activate object and play sound after delay
                                         CS_plus_Object.SetActive(true);
@@ -281,10 +298,10 @@ namespace SampleExperimentScene
                                     {
                                         // Move player to CS- environment
                                         sxr.MoveObjectTo("sXR_prefab", 61.39f, 0f, 0f);
-                                        sxr.StartTimer(TotalTrialTime);
+                                        sxr.StartTimer(TotalTrialTimeCsMinus);
                                         hasExecuted = true;
                                     }
-                                    if (Mathf.Abs(sxr.TimeRemaining() - TimeAfterCS) <= tolerance)
+                                    if (Mathf.Abs(sxr.TimeRemaining() - timeUntilCSMinusStarts) <= tolerance)
                                     {
                                         // Activate object and play sound after delay
                                         CS_minus_Object.SetActive(true);
