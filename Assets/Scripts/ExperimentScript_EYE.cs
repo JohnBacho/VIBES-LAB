@@ -26,8 +26,7 @@ namespace SampleExperimentScene
         private FocusInfo focusInfo; // used for Sranipal
         private Vector3 gazeHitPoint; // used in calculating eye tracking data with collisions
         private bool hasExecuted = false; //  used as a way to execute one block of code only once
-        private bool hasStartedCSPlus = false; // used to execute the start of the CS+ only once
-        private bool hasStartedCSMinus = false; // used to execute the start of the CS- only once
+        private bool hasStartedCS = false; // used to execute the start of the CS+ only once
         private bool StartEyeTracker = false; //used to start the CheckFocus(); function which calculates the eye 
         // tracking data ensuring that all three cameratrack / eyetracker / mainfile are all started at the exact same time
         private string headers = "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus"; // used to write headers to the mainfile
@@ -36,32 +35,49 @@ namespace SampleExperimentScene
         private float timeUntilCSMinusStarts; // Used to calculate when the when to display CS minus object
         private float timeUntilCSPlusStarts; // Used to calculate when the when to display CS plus object
 
-        void Start()
+        public void StartCS(GameObject CS_Object, GameObject CS_Sound, float CS_Sound_Delay, float CS_Object_Interval, float timeUntilCSStarts, float TotalTrialTimeCs, float TeleportX, float TeleportY, float TeleportZ)
         {
-
-            if (EyeCalibration) // set to true in the inspector if you would like to auto launch SRanipal eye tracker calibration
+            if (!hasExecuted)
             {
-                sxr.LaunchEyeCalibration();
+                sxr.MoveObjectTo("sXR_prefab", TeleportX, TeleportY, TeleportZ); // teleports player to specified coordinates
+                sxr.StartTimer(TotalTrialTimeCs); // sets the timer based on TimeBeforeCS + TimeAfterCS;
+                hasExecuted = true;
             }
 
-            // error handling
-            if (TimeAfterCS <= 0 || TimeBeforeCS <= 0) // if time after is less then CS minus and plus interval then it stops the program
+            // since TimeRemaining is a float point it doesn't exactly reach ie 10s on the dot instead it's 10.0123s so we have to do less than zero and hasStartedCSPlus/Minus is so it only executes once
+            if (!hasStartedCS && (sxr.TimeRemaining() - timeUntilCSStarts) <= 0)
             {
-                Debug.LogError("TimeAfterCS must be greater than 0");
-                UnityEditor.EditorApplication.isPlaying = false; // stops the editor from playing
+                // Activate object and play sound after delay
+                hasStartedCS = true;
+                CS_Object.SetActive(true);
+                StartCoroutine(PlaySoundAfterDelay(CS_Sound, CS_Sound_Delay)); // calls function to play sound with delay
+                StartCoroutine(DisableObjects(CS_Object, CS_Object_Interval)); // calls function to deactivate sound with delay
             }
 
-            // error handling
-            if (CS_minus_Sound_Delay > CS_minus_Object_Interval || CS_plus_Sound_Delay > CS_plus_Object_Interval)
+            if (sxr.CheckTimer()) // checks if timer is zero
             {
-                Debug.LogWarning("CS minus or CS plus sound delay should be less than CS plus object_interval");
+                sxr.NextStep(); // advances to inter trial interval and sets hasExecuted to false
+                hasExecuted = false;
+                hasStartedCS = false;
             }
-
-            TotalTrialTimeCsPlus = TimeBeforeCS + CS_plus_Object_Interval + TimeAfterCS; // Calculates total trial time for CS plus
-            TotalTrialTimeCsMinus = TimeBeforeCS + CS_minus_Object_Interval + TimeAfterCS; // Calculates total trial time for CS minus
-            timeUntilCSMinusStarts = CS_minus_Object_Interval + TimeAfterCS; // used for calculating when the CS_Minus_Object appears 
-            timeUntilCSPlusStarts = CS_minus_Object_Interval + TimeAfterCS; // used for calculating when the CS_Plus_Object appears 
         }
+
+        public void InterTrial(float InterTrialIntervalTime)
+        {
+            if (!hasExecuted)
+            {
+                sxr.MoveObjectTo("sXR_prefab", 0.0f, 0f, 0f); // teleports player back to spawn
+                sxr.StartTimer(InterTrialIntervalTime); // // inter trial interval time
+                hasExecuted = true; // sets has Executed Flag to true so that it only executes once
+            }
+
+            if (sxr.CheckTimer())
+            {
+                sxr.NextTrial(); // Goes to the next trial
+                hasExecuted = false; // sets has Executed Flag to false for the next trial
+            }
+        }
+
         // Coroutine to play the sound after a delay
         IEnumerator PlaySoundAfterDelay(GameObject soundObject, float soundDelay)
         {
@@ -91,7 +107,6 @@ namespace SampleExperimentScene
             }
         }
 
-
         void CheckFocus()
         {
 
@@ -112,7 +127,33 @@ namespace SampleExperimentScene
             string DataPoints = (gazeHitPoint.ToString() + "," + FocusedGameObject);
             sxr.WriteToTaggedFile("mainFile", DataPoints); // // saves the gazehitpoint which is the gaze with object collision and also 
             // FocusedGameObject which is the name of the object where the user is looking at to file 
+        }
 
+        void Start()
+        {
+
+            if (EyeCalibration) // set to true in the inspector if you would like to auto launch SRanipal eye tracker calibration
+            {
+                sxr.LaunchEyeCalibration();
+            }
+
+            // error handling
+            if (TimeAfterCS <= 0 || TimeBeforeCS <= 0) // if time after is less then CS minus and plus interval then it stops the program
+            {
+                Debug.LogError("TimeAfterCS must be greater than 0");
+                UnityEditor.EditorApplication.isPlaying = false; // stops the editor from playing
+            }
+
+            // error handling
+            if (CS_minus_Sound_Delay > CS_minus_Object_Interval || CS_plus_Sound_Delay > CS_plus_Object_Interval)
+            {
+                Debug.LogWarning("CS minus or CS plus sound delay should be less than CS plus object_interval");
+            }
+
+            TotalTrialTimeCsPlus = TimeBeforeCS + CS_plus_Object_Interval + TimeAfterCS; // Calculates total trial time for CS plus
+            TotalTrialTimeCsMinus = TimeBeforeCS + CS_minus_Object_Interval + TimeAfterCS; // Calculates total trial time for CS minus
+            timeUntilCSMinusStarts = CS_minus_Object_Interval + TimeAfterCS; // used for calculating when the CS_Minus_Object appears 
+            timeUntilCSPlusStarts = CS_minus_Object_Interval + TimeAfterCS; // used for calculating when the CS_Plus_Object appears 
         }
 
         void Update()
@@ -122,9 +163,6 @@ namespace SampleExperimentScene
             {
                 CheckFocus();
             }
-
-            //var gazeInfo = sxr.GetFullGazeInfo();
-            //sxr.ChangeExperimenterTextbox(5, "Gaze Info: " + gazeInfo);
 
             switch (sxr.GetPhase()) // gets the phase
             {
@@ -139,7 +177,7 @@ namespace SampleExperimentScene
                     {
                         sxr.WriteHeaderToTaggedFile("mainFile", headers);
                         sxr.StartTimer(20);
-                        sxr.DisplayText("In this experiment, you will see different colored shapes in the 3d environment. Please look at the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored shapes and the loud sounds.");
+                        sxr.DisplayText("In this experiment, you will see different colored shapes in the 3d environment. Please keep your focus on the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored shapes and the loud sounds.");
                         hasExecuted = true; // set to true so this block of code only runs once
                     }
 
@@ -158,94 +196,28 @@ namespace SampleExperimentScene
                             sxr.NextTrial();
                             break;
 
-                        case 1: // Start of CS+ and Inter Trial Interval
+                        case 1: // CS+
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    if (!hasExecuted)
-                                    {
-
-                                        sxr.MoveObjectTo("sXR_prefab", 23.0f, 0f, 0f); // teleports player to CS+ environment
-                                        sxr.StartTimer(TotalTrialTimeCsPlus); // sets the timer based on TimeBeforeCS + TimeAfterCS;
-                                        hasExecuted = true;
-                                    }
-
-                                    // since TimeRemaining is a float point it doesn't exactly reach ie 10s on the dot instead it's 10.0123s so we have to do less then zero and hasStartedCSPlus is so it only executes once
-                                    if (!hasStartedCSPlus && (sxr.TimeRemaining() - timeUntilCSPlusStarts) <= 0)
-                                    {
-                                        // Activate object and play sound after delay
-                                        hasStartedCSPlus = true;
-                                        CS_plus_Object.SetActive(true);
-                                        StartCoroutine(PlaySoundAfterDelay(CS_plus_Sound, CS_plus_Sound_Delay)); // calls function to play sound with delay
-                                        StartCoroutine(DisableObjects(CS_plus_Object, CS_plus_Object_Interval)); // calls function to deactivate sound with delay
-                                    }
-                                    if (sxr.CheckTimer()) // checks if timer is zero
-                                    {
-                                        sxr.NextStep(); // advances to inter trial interval and sets hasExecuted to false
-                                        hasExecuted = false;
-                                        hasStartedCSPlus = false;
-                                    }
+                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, 23.0f, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
-                                    if (!hasExecuted)
-                                    {
-                                        sxr.MoveObjectTo("sXR_prefab", 0.0f, 0f, 0f); // teleports player back to spawn
-                                        sxr.StartTimer(9f); // // inter trial interval time
-                                        hasExecuted = true;
-                                    }
-
-                                    if (sxr.CheckTimer())
-                                    {
-                                        sxr.NextTrial();
-                                        hasExecuted = false;
-                                    }
+                                    InterTrial(9f);
                                     break;
                             }
                             break;
 
-                        case 2: // Start of CS- and Inter Trial Interval
+                        case 2: // CS-
                             switch (sxr.GetStepInTrial())
                             {
-                                case 0:
-                                    if (!hasExecuted)
-                                    {
-                                        // Move player to CS- environment
-                                        sxr.MoveObjectTo("sXR_prefab", 61.39f, 0f, 0f);
-                                        sxr.StartTimer(TotalTrialTimeCsMinus);
-                                        hasExecuted = true;
-                                    }
-                                    if (!hasStartedCSMinus && (sxr.TimeRemaining() - timeUntilCSMinusStarts) <= 0)
-                                    {
-                                        hasStartedCSMinus = true;
-                                        // Activate object and play sound after delay
-                                        CS_minus_Object.SetActive(true);
-                                        StartCoroutine(PlaySoundAfterDelay(CS_minus_Sound, CS_minus_Sound_Delay));
-                                        StartCoroutine(DisableObjects(CS_minus_Object, CS_minus_Object_Interval));
-                                    }
-
-                                    if (sxr.CheckTimer())
-                                    {
-                                        sxr.NextStep();
-                                        hasExecuted = false;
-                                        hasStartedCSMinus = false;
-                                    }
+                                case 0: // CS-
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, 61.39f, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
-                                    if (!hasExecuted)
-                                    {
-                                        sxr.MoveObjectTo("sXR_prefab", 0.0f, 0.0f, 0f);
-                                        sxr.StartTimer(14f); // inter trial interval time
-                                        hasExecuted = true;
-                                    }
-
-                                    if (sxr.CheckTimer())
-                                    {
-                                        sxr.NextTrial(); // Proceed to step 3, or handle the transition as required
-                                        hasExecuted = false;
-
-                                    }
+                                    InterTrial(14f);
                                     break;
                             }
                             break;
@@ -254,87 +226,23 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    if (!hasExecuted)
-                                    {
-                                        // Move player to CS+ environment
-                                        sxr.MoveObjectTo("sXR_prefab", 23.0f, 0f, 0f);
-                                        sxr.StartTimer(TotalTrialTimeCsPlus);
-                                        hasExecuted = true;
-                                    }
-
-                                    if (!hasStartedCSPlus && (sxr.TimeRemaining() - timeUntilCSPlusStarts) <= 0)
-                                    {
-                                        hasStartedCSPlus = true;
-                                        // Activate object and play sound after delay
-                                        CS_plus_Object.SetActive(true);
-                                        StartCoroutine(PlaySoundAfterDelay(CS_plus_Sound, CS_plus_Sound_Delay));
-                                        StartCoroutine(DisableObjects(CS_plus_Object, CS_plus_Object_Interval));
-                                    }
-                                    if (sxr.CheckTimer())
-                                    {
-                                        sxr.NextStep();
-                                        hasExecuted = false;
-                                        hasStartedCSPlus = false;
-                                    }
+                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, 23.0f, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
-                                    if (!hasExecuted)
-                                    {
-                                        sxr.MoveObjectTo("sXR_prefab", 0.0f, 0f, 0f);
-                                        sxr.StartTimer(10f); // // inter trial interval time
-                                        hasExecuted = true;
-                                    }
-
-                                    if (sxr.CheckTimer())
-                                    {
-                                        sxr.NextTrial();
-                                        hasExecuted = false;
-                                    }
+                                    InterTrial(10f);
                                     break;
                             }
                             break;
                         case 4: // CS-
                             switch (sxr.GetStepInTrial())
                             {
-                                case 0:
-                                    if (!hasExecuted)
-                                    {
-                                        // Move player to CS- environment
-                                        sxr.MoveObjectTo("sXR_prefab", 61.39f, 0f, 0f);
-                                        sxr.StartTimer(TotalTrialTimeCsMinus);
-                                        hasExecuted = true;
-                                    }
-                                    if (!hasStartedCSMinus && (sxr.TimeRemaining() - timeUntilCSMinusStarts) <= 0)
-                                    {
-                                        hasStartedCSMinus = true;
-                                        // Activate object and play sound after delay
-                                        CS_minus_Object.SetActive(true);
-                                        StartCoroutine(PlaySoundAfterDelay(CS_minus_Sound, CS_minus_Sound_Delay));
-                                        StartCoroutine(DisableObjects(CS_minus_Object, CS_minus_Object_Interval));
-                                    }
-
-                                    if (sxr.CheckTimer())
-                                    {
-                                        sxr.NextStep();
-                                        hasExecuted = false;
-                                        hasStartedCSMinus = false;
-                                    }
+                                case 0: // CS-
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, 61.39f, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
-                                    if (!hasExecuted)
-                                    {
-                                        sxr.MoveObjectTo("sXR_prefab", 0.0f, 0.0f, 0f);
-                                        sxr.StartTimer(40f); // inter trial interval time
-                                        hasExecuted = true;
-                                    }
-
-                                    if (sxr.CheckTimer())
-                                    {
-                                        sxr.NextTrial(); // Proceed to step 3, or handle the transition as required
-                                        hasExecuted = false;
-                                    }
+                                    InterTrial(55f);
                                     break;
                             }
                             break;
