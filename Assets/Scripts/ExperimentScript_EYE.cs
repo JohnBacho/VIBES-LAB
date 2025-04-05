@@ -11,8 +11,6 @@ namespace SampleExperimentScene
         public bool EyeCalibration; // toggle for eye tracking
         public float TimeBeforeCS; // Enter time for trial for before the CS
         public float TimeAfterCS; // Enter time for trial for during and After the CS
-        public float tolerance; // Enter Tolerance to trigger CS
-
         public GameObject CS_plus_Object; // drag and drop CS+ object
         public GameObject CS_plus_Sound; // drag and drop CS+ sound to get it to play
         public float CS_plus_Sound_Delay; // Enter time for sound delay to play after CS+ object is activated.
@@ -28,27 +26,26 @@ namespace SampleExperimentScene
         private FocusInfo focusInfo; // used for Sranipal
         private Vector3 gazeHitPoint; // used in calculating eye tracking data with collisions
         private bool hasExecuted = false; //  used as a way to execute one block of code only once
+        private bool hasStartedCSPlus = false; // used to execute the start of the CS+ only once
+        private bool hasStartedCSMinus = false; // used to execute the start of the CS- only once
         private bool StartEyeTracker = false; //used to start the CheckFocus(); function which calculates the eye 
         // tracking data ensuring that all three cameratrack / eyetracker / mainfile are all started at the exact same time
         private string headers = "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus"; // used to write headers to the mainfile
         private float TotalTrialTimeCsPlus; //Used to calculate the total time of the trial for CS Plus trial
-
         private float TotalTrialTimeCsMinus; //Used to calculate the total time of the trial for CS Minus trial
-
         private float timeUntilCSMinusStarts; // Used to calculate when the when to display CS minus object
-
         private float timeUntilCSPlusStarts; // Used to calculate when the when to display CS plus object
 
         void Start()
         {
 
-            if (EyeCalibration) // set to true in the inspector if you would like to auto launch SRanipal
+            if (EyeCalibration) // set to true in the inspector if you would like to auto launch SRanipal eye tracker calibration
             {
                 sxr.LaunchEyeCalibration();
             }
 
             // error handling
-            if (TimeAfterCS < 0) // if time after is less then CS minus and plus interval then it stops the program
+            if (TimeAfterCS <= 0 || TimeBeforeCS <= 0) // if time after is less then CS minus and plus interval then it stops the program
             {
                 Debug.LogError("TimeAfterCS must be greater than 0");
                 UnityEditor.EditorApplication.isPlaying = false; // stops the editor from playing
@@ -60,10 +57,10 @@ namespace SampleExperimentScene
                 Debug.LogWarning("CS minus or CS plus sound delay should be less than CS plus object_interval");
             }
 
-            TotalTrialTimeCsPlus = TimeBeforeCS + CS_plus_Object_Interval + TimeAfterCS; // Calculates total time 
-            TotalTrialTimeCsMinus = TimeBeforeCS + CS_minus_Object_Interval + TimeAfterCS;
-            timeUntilCSMinusStarts = CS_minus_Object_Interval + TimeAfterCS;
-            timeUntilCSPlusStarts = CS_minus_Object_Interval + TimeAfterCS;
+            TotalTrialTimeCsPlus = TimeBeforeCS + CS_plus_Object_Interval + TimeAfterCS; // Calculates total trial time for CS plus
+            TotalTrialTimeCsMinus = TimeBeforeCS + CS_minus_Object_Interval + TimeAfterCS; // Calculates total trial time for CS minus
+            timeUntilCSMinusStarts = CS_minus_Object_Interval + TimeAfterCS; // used for calculating when the CS_Minus_Object appears 
+            timeUntilCSPlusStarts = CS_minus_Object_Interval + TimeAfterCS; // used for calculating when the CS_Plus_Object appears 
         }
         // Coroutine to play the sound after a delay
         IEnumerator PlaySoundAfterDelay(GameObject soundObject, float soundDelay)
@@ -105,16 +102,16 @@ namespace SampleExperimentScene
             else if (SRanipal_Eye.Focus(GazeIndex.RIGHT, out testRay, out focusInfo)) { }
             else return;
 
-            FocusedGameObject = focusInfo.collider.gameObject.name;
-            sxr.ChangeExperimenterTextbox(4, "Current Game Object: " + FocusedGameObject);
+            FocusedGameObject = focusInfo.collider.gameObject.name; // gets the name of the object that the player is currently looking at
+            sxr.ChangeExperimenterTextbox(4, "Current Game Object: " + FocusedGameObject); // displays the object currently being looked at on the text box
 
-            gazeHitPoint = focusInfo.point;
-            sxr.ChangeExperimenterTextbox(5, "Gaze Hit Position: " + gazeHitPoint);
+            gazeHitPoint = focusInfo.point; // gets the X / Y / Z coordinate of where the player is looking
+            sxr.ChangeExperimenterTextbox(5, "Gaze Hit Position: " + gazeHitPoint); // displays the X / Y / Z coordinates currently being looked at on the text box
 
 
             string DataPoints = (gazeHitPoint.ToString() + "," + FocusedGameObject);
             sxr.WriteToTaggedFile("mainFile", DataPoints); // // saves the gazehitpoint which is the gaze with object collision and also 
-            // FocusedGameObject which is the object the user is looking at to file 
+            // FocusedGameObject which is the name of the object where the user is looking at to file 
 
         }
 
@@ -173,10 +170,11 @@ namespace SampleExperimentScene
                                         hasExecuted = true;
                                     }
 
-                                    // since TimeRemaining is a float point it doesn't exactly reach ie 10s on the dot instead it's 10.0123s so we have to add a tolerance so that it still executes
-                                    if (Mathf.Abs(sxr.TimeRemaining() - timeUntilCSPlusStarts) <= tolerance)
+                                    // since TimeRemaining is a float point it doesn't exactly reach ie 10s on the dot instead it's 10.0123s so we have to do less then zero and hasStartedCSPlus is so it only executes once
+                                    if (!hasStartedCSPlus && (sxr.TimeRemaining() - timeUntilCSPlusStarts) <= 0)
                                     {
                                         // Activate object and play sound after delay
+                                        hasStartedCSPlus = true;
                                         CS_plus_Object.SetActive(true);
                                         StartCoroutine(PlaySoundAfterDelay(CS_plus_Sound, CS_plus_Sound_Delay)); // calls function to play sound with delay
                                         StartCoroutine(DisableObjects(CS_plus_Object, CS_plus_Object_Interval)); // calls function to deactivate sound with delay
@@ -185,6 +183,7 @@ namespace SampleExperimentScene
                                     {
                                         sxr.NextStep(); // advances to inter trial interval and sets hasExecuted to false
                                         hasExecuted = false;
+                                        hasStartedCSPlus = false;
                                     }
                                     break;
 
@@ -216,8 +215,9 @@ namespace SampleExperimentScene
                                         sxr.StartTimer(TotalTrialTimeCsMinus);
                                         hasExecuted = true;
                                     }
-                                    if (Mathf.Abs(sxr.TimeRemaining() - timeUntilCSMinusStarts) <= tolerance)
+                                    if (!hasStartedCSMinus && (sxr.TimeRemaining() - timeUntilCSMinusStarts) <= 0)
                                     {
+                                        hasStartedCSMinus = true;
                                         // Activate object and play sound after delay
                                         CS_minus_Object.SetActive(true);
                                         StartCoroutine(PlaySoundAfterDelay(CS_minus_Sound, CS_minus_Sound_Delay));
@@ -228,6 +228,7 @@ namespace SampleExperimentScene
                                     {
                                         sxr.NextStep();
                                         hasExecuted = false;
+                                        hasStartedCSMinus = false;
                                     }
                                     break;
 
@@ -243,6 +244,7 @@ namespace SampleExperimentScene
                                     {
                                         sxr.NextTrial(); // Proceed to step 3, or handle the transition as required
                                         hasExecuted = false;
+
                                     }
                                     break;
                             }
@@ -260,8 +262,9 @@ namespace SampleExperimentScene
                                         hasExecuted = true;
                                     }
 
-                                    if (Mathf.Abs(sxr.TimeRemaining() - timeUntilCSPlusStarts) <= tolerance)
+                                    if (!hasStartedCSPlus && (sxr.TimeRemaining() - timeUntilCSPlusStarts) <= 0)
                                     {
+                                        hasStartedCSPlus = true;
                                         // Activate object and play sound after delay
                                         CS_plus_Object.SetActive(true);
                                         StartCoroutine(PlaySoundAfterDelay(CS_plus_Sound, CS_plus_Sound_Delay));
@@ -271,6 +274,7 @@ namespace SampleExperimentScene
                                     {
                                         sxr.NextStep();
                                         hasExecuted = false;
+                                        hasStartedCSPlus = false;
                                     }
                                     break;
 
@@ -301,8 +305,9 @@ namespace SampleExperimentScene
                                         sxr.StartTimer(TotalTrialTimeCsMinus);
                                         hasExecuted = true;
                                     }
-                                    if (Mathf.Abs(sxr.TimeRemaining() - timeUntilCSMinusStarts) <= tolerance)
+                                    if (!hasStartedCSMinus && (sxr.TimeRemaining() - timeUntilCSMinusStarts) <= 0)
                                     {
+                                        hasStartedCSMinus = true;
                                         // Activate object and play sound after delay
                                         CS_minus_Object.SetActive(true);
                                         StartCoroutine(PlaySoundAfterDelay(CS_minus_Sound, CS_minus_Sound_Delay));
@@ -313,6 +318,7 @@ namespace SampleExperimentScene
                                     {
                                         sxr.NextStep();
                                         hasExecuted = false;
+                                        hasStartedCSMinus = false;
                                     }
                                     break;
 

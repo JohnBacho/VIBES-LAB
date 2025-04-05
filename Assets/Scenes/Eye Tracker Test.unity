@@ -1059,7 +1059,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -2.5122986, y: 12.861583, z: -20.147669}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1013961018}
@@ -1340,7 +1340,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -40.312298, y: 12.861583, z: -20.147669}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2089776190}
@@ -2133,7 +2133,6 @@ MonoBehaviour:
   EyeCalibration: 0
   TimeBeforeCS: 2
   TimeAfterCS: 2
-  tolerance: 0.05
   CS_plus_Object: {fileID: 792466238}
   CS_plus_Sound: {fileID: 2124453806}
   CS_plus_Sound_Delay: 7
