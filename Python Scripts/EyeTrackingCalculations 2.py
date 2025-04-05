@@ -7,15 +7,16 @@ from sklearn.cluster import KMeans
 from scipy.stats import gaussian_kde
 
 # Load data
-df = pd.read_csv("/Users/johnbacho/Documents/GitHub/VR-LAB/Python Scripts/2025_3_27_1542_0_mainFile.csv", delimiter=",")
+df = pd.read_csv("2025_4_3_1124_0_mainFile.csv", delimiter=",")
 
 print(df.columns)
 
 # Extract coordinates and time
-x = df["GazePositionX"]
-y = df["GazePositionY"]
-z = df["GazePositionZ"]
+x = df["GazeHitPointX"]
+y = df["GazeHitPointY"]
+z = df["GazeHitPointZ"]
 time = df["UnityTime"]
+GameObject = df["GameObjectInFocus"]
 
 # Compute Velocity (Distance/Time)
 df["Velocity"] = np.sqrt(np.diff(x, prepend=x.iloc[0])**2 + 
@@ -31,7 +32,7 @@ max_velocity_time = df.loc[max_velocity_index, "UnityTime"]
 print(f"Max Velocity: {df['Velocity'].max():.5f} Unity units per second at time {max_velocity_time:.5f}")
 
 # Dispersion Metric (Mean Distance Between Points)
-dist_matrix = squareform(pdist(df[["GazePositionX", "GazePositionY", "GazePositionZ"]]))
+dist_matrix = squareform(pdist(df[["GazeHitPointX", "GazeHitPointY", "GazeHitPointZ"]]))
 dispersion = np.mean(dist_matrix)
 print(f"Average Gaze Dispersion: {dispersion:.5f}")
 
@@ -83,7 +84,3 @@ ax.set_xlim(max(x), min(x))  # Reverse x-axis
 
 plt.tight_layout()
 plt.show()
-
-# Average Gaze Dispersion measures how spread out gaze points are in 3D space. A higher dispersion indicates a wider range of eye movement, 
-# suggesting scanning behavior. A lower dispersion suggests focus on a particular area, indicating potential fixation. This metric is useful 
-# in understanding user attention, engagement, and cognitive load.
