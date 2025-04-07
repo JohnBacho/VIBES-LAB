@@ -15,11 +15,13 @@ namespace SampleExperimentScene
         public GameObject CS_plus_Sound; // drag and drop CS+ sound to get it to play
         public float CS_plus_Sound_Delay; // Enter time for sound delay to play after CS+ object is activated.
         public float CS_plus_Object_Interval; // Enter time for CS+ object to stay active
+        public float CS_Plus_TeleportX; // Enter the X coordinate of where you want the player to teleport to in the CS plus environment
 
         public GameObject CS_minus_Object; // drag and drop CS- object
         public GameObject CS_minus_Sound; // drag and drop CS- sound to get it to play
         public float CS_minus_Sound_Delay; // Enter time for sound delay to play after CS- object is activated.
         public float CS_minus_Object_Interval; // Enter time for CS- object to stay active
+        public float CS_Minus_TeleportX; // Enter the X coordinate of where you want the player to teleport to in the CS Minus environment
 
         private string FocusedGameObject = ""; // used for Sranipal
         private Ray testRay; // used for Sranipal
@@ -197,7 +199,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(CS_plus_Object, CS_minus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, 23.0f, 0f, 0f);
+                                    StartCS(CS_plus_Object, CS_minus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -210,7 +212,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, 61.39f, 0f, 0f);
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -223,7 +225,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(CS_plus_Object, CS_minus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, 23.0f, 0f, 0f);
+                                    StartCS(CS_plus_Object, CS_minus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -236,14 +238,21 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, 61.39f, 0f, 0f);
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
-                                    InterTrial(5f);
+                                    if (!hasExecuted)
+                                    {
+                                        sxr.MoveObjectTo("sXR_prefab", 0.0f, 0f, 0f); // teleports player back to spawn
+                                        sxr.StartTimer(5); // // inter trial interval time
+                                        hasExecuted = true; // sets has Executed Flag to true so that it only executes once
+                                    }
+
                                     if (sxr.CheckTimer())
                                     {
-                                        sxr.NextPhase();
+                                        sxr.NextPhase(); // Goes to the next trial
+                                        hasExecuted = false; // sets has Executed Flag to false for the next trial
                                     }
                                     break;
 
@@ -260,7 +269,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, 61.39f, 0f, 0f);
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -273,7 +282,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, 61.39f, 0f, 0f);
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -286,7 +295,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, 23.0f, 0f, 0f);
+                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -298,7 +307,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS+
-                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, 23.0f, 0f, 0f);
+                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -311,7 +320,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS-
-                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, 61.39f, 0f, 0f);
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -323,7 +332,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS+
-                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, 23.0f, 0f, 0f);
+                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -335,7 +344,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS+ without US
-                                    StartCS(CS_plus_Object, CS_minus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, 23.0f, 0f, 0f);
+                                    StartCS(CS_plus_Object, CS_minus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -347,7 +356,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS-
-                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, 61.39f, 0f, 0f);
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -359,7 +368,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS+
-                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, 23.0f, 0f, 0f);
+                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -371,7 +380,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS-
-                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, 61.39f, 0f, 0f);
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -383,7 +392,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS+
-                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, 23.0f, 0f, 0f);
+                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -395,7 +404,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS-
-                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, 61.39f, 0f, 0f);
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -407,7 +416,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS-
-                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, 61.39f, 0f, 0f);
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -419,7 +428,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS+ without US
-                                    StartCS(CS_plus_Object, CS_minus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, 23.0f, 0f, 0f);
+                                    StartCS(CS_plus_Object, CS_minus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -431,7 +440,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS-
-                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, 61.39f, 0f, 0f);
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
@@ -443,7 +452,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS+
-                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, 23.0f, 0f, 0f);
+                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
                                     break;
 
                                 case 1: // inter trial interval
