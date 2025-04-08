@@ -1,88 +1,472 @@
 ﻿using UnityEngine;
 using ViveSR.anipal.Eye;
+using sxr_internal;
+using System.Collections; // Required for IEnumerator
+
 
 namespace SampleExperimentScene
 {
     public class ExperimentScript_EYE : MonoBehaviour
     {
         public bool EyeCalibration; // toggle for eye tracking
-        int trialCounter = 0;
-        bool hasStarted = false; // Flag to track if movement should start in vr mover script
+        public float TimeBeforeCS; // Enter time for trial for before the CS
+        public float TimeAfterCS; // Enter time for trial for during and After the CS
+        public GameObject CS_plus_Object; // drag and drop CS+ object
+        public GameObject CS_plus_Sound; // drag and drop CS+ sound to get it to play
+        public float CS_plus_Sound_Delay; // Enter time for sound delay to play after CS+ object is activated.
+        public float CS_plus_Object_Interval; // Enter time for CS+ object to stay active
+        public float CS_Plus_TeleportX; // Enter the X coordinate of where you want the player to teleport to in the CS plus environment
 
-        private string currentFocus = "";
-        private Ray testRay;
-        private FocusInfo focusInfo;
+        public GameObject CS_minus_Object; // drag and drop CS- object
+        public GameObject CS_minus_Sound; // drag and drop CS- sound to get it to play
+        public float CS_minus_Sound_Delay; // Enter time for sound delay to play after CS- object is activated.
+        public float CS_minus_Object_Interval; // Enter time for CS- object to stay active
+        public float CS_Minus_TeleportX; // Enter the X coordinate of where you want the player to teleport to in the CS Minus environment
 
-        private Vector3 gazeHitPoint;
+        private string FocusedGameObject = ""; // used for Sranipal
+        private Ray testRay; // used for Sranipal
+        private FocusInfo focusInfo; // used for Sranipal
+        private Vector3 gazeHitPoint; // used in calculating eye tracking data with collisions
+        private bool hasExecuted = false; //  used as a way to execute one block of code only once
+        private bool hasStartedCS = false; // used to execute the start of the CS+ only once
+        private bool StartEyeTracker = false; //used to start the CheckFocus(); function which calculates the eye 
+        // tracking data ensuring that all three cameratrack / eyetracker / mainfile are all started at the exact same time
+        private string headers = "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus"; // used to write headers to the mainfile
+        private float TotalTrialTimeCsPlus; //Used to calculate the total time of the trial for CS Plus trial
+        private float TotalTrialTimeCsMinus; //Used to calculate the total time of the trial for CS Minus trial
+        private float timeUntilCSMinusStarts; // Used to calculate when the when to display CS minus object
+        private float timeUntilCSPlusStarts; // Used to calculate when the when to display CS plus object
 
-        void Start() // set to true in the inspector if you would like to auto launch SRanipal
+        public void StartCS(GameObject CS_Object, GameObject CS_Sound, float CS_Sound_Delay, float CS_Object_Interval, float timeUntilCSStarts, float TotalTrialTimeCs, float TeleportX, float TeleportY, float TeleportZ)
         {
-
-            sxr.StartRecordingCameraPos();
-            sxr.StartRecordingEyeTrackerInfo();
-            if (EyeCalibration)
+            if (!hasExecuted)
             {
-                sxr.LaunchEyeCalibration();
+                sxr.MoveObjectTo("sXR_prefab", TeleportX, TeleportY, TeleportZ); // teleports player to specified coordinates
+                sxr.StartTimer(TotalTrialTimeCs); // sets the timer based on TimeBeforeCS + TimeAfterCS;
+                hasExecuted = true;
             }
 
-            sxr.WriteHeaderToTaggedFile("mainFile", "GazeHitPoint");
+            // since TimeRemaining is a float point it doesn't exactly reach ie 10s on the dot instead it's 10.0123s so we have to do less than zero and hasStartedCSPlus/Minus is so it only executes once
+            if (!hasStartedCS && (sxr.TimeRemaining() - timeUntilCSStarts) <= 0)
+            {
+                // Activate object and play sound after delay
+                hasStartedCS = true;
+                CS_Object.SetActive(true);
+                StartCoroutine(PlaySoundAfterDelay(CS_Sound, CS_Sound_Delay)); // calls function to play sound with delay
+                StartCoroutine(DisableObjects(CS_Object, CS_Object_Interval)); // calls function to deactivate sound with delay
+            }
 
+            if (sxr.CheckTimer()) // checks if timer is zero
+            {
+                sxr.NextStep(); // advances to inter trial interval and sets hasExecuted to false
+                hasExecuted = false;
+                hasStartedCS = false;
+            }
+        }
+
+        public void InterTrial(float InterTrialIntervalTime)  // used to wait till start of next trial
+        {
+            if (!hasExecuted)
+            {
+                sxr.MoveObjectTo("sXR_prefab", 0.0f, 0f, 0f); // teleports player back to spawn
+                sxr.StartTimer(InterTrialIntervalTime); // // inter trial interval time
+                hasExecuted = true; // sets has Executed Flag to true so that it only executes once
+            }
+
+            if (sxr.CheckTimer())
+            {
+                sxr.NextTrial(); // Goes to the next trial
+                hasExecuted = false; // sets has Executed Flag to false for the next trial
+            }
+        }
+
+        // Coroutine to play the sound after a delay
+        IEnumerator PlaySoundAfterDelay(GameObject soundObject, float soundDelay)
+        {
+            yield return new WaitForSeconds(soundDelay); // soundDelay determines how long it should wait to play the sound
+            AudioSource audioSource = soundObject.GetComponent<AudioSource>();
+            if (audioSource != null)
+            {
+                audioSource.Play(); // plays audio attached to object
+            }
+            else
+            {
+                Debug.LogWarning("No AudioSource found on " + soundObject.name); // error handling
+            }
+        }
+
+        // Coroutine to disable the object after a delay
+        IEnumerator DisableObjects(GameObject objectToDisable, float ObjectDelay)
+        {
+            yield return new WaitForSeconds(ObjectDelay); // Delay determines how long it should wait to deactivate object
+            if (objectToDisable != null)
+            {
+                objectToDisable.SetActive(false); // will deactivate object
+            }
+            else
+            {
+                Debug.LogWarning("The GameObject to disable is null!"); // error handling
+            }
         }
 
         void CheckFocus()
         {
 
-            currentFocus = "";
+            FocusedGameObject = "";
 
             if (SRanipal_Eye.Focus(GazeIndex.COMBINE, out testRay, out focusInfo)) { }
             else if (SRanipal_Eye.Focus(GazeIndex.LEFT, out testRay, out focusInfo)) { }
             else if (SRanipal_Eye.Focus(GazeIndex.RIGHT, out testRay, out focusInfo)) { }
             else return;
 
-            currentFocus = focusInfo.collider.gameObject.name;
-            sxr.ChangeExperimenterTextbox(4, "Current Game Object: " + currentFocus);
+            FocusedGameObject = focusInfo.collider.gameObject.name; // gets the name of the object that the player is currently looking at
+            sxr.ChangeExperimenterTextbox(4, "Current Game Object: " + FocusedGameObject); // displays the object currently being looked at on the text box
 
-            gazeHitPoint = focusInfo.point;
-            sxr.ChangeExperimenterTextbox(5, "Gaze Hit Position: " + gazeHitPoint);
+            gazeHitPoint = focusInfo.point; // gets the X / Y / Z coordinate of where the player is looking
+            sxr.ChangeExperimenterTextbox(5, "Gaze Hit Position: " + gazeHitPoint); // displays the X / Y / Z coordinates currently being looked at on the text box
 
-            sxr.WriteToTaggedFile("mainFile", gazeHitPoint.ToString());
 
-            // Vector3 screenPoint = Camera.main.WorldToScreenPoint(gazeHitPoint);
-            // Debug.Log("Screen coordinates: " + screenPoint);
+            string DataPoints = (gazeHitPoint.ToString() + "," + FocusedGameObject);
+            sxr.WriteToTaggedFile("mainFile", DataPoints); // // saves the gazehitpoint which is the gaze with object collision and also 
+            // FocusedGameObject which is the name of the object where the user is looking at to file 
+        }
+
+        void Start()
+        {
+
+            if (EyeCalibration) // set to true in the inspector if you would like to auto launch SRanipal eye tracker calibration
+            {
+                sxr.LaunchEyeCalibration();
+            }
+
+            // error handling
+            if (TimeAfterCS <= 0 || TimeBeforeCS <= 0) // if time after is less then CS minus and plus interval then it stops the program
+            {
+                Debug.LogError("TimeAfterCS must be greater than 0");
+                UnityEditor.EditorApplication.isPlaying = false; // stops the editor from playing
+            }
+
+            // error handling
+            if (CS_minus_Sound_Delay > CS_minus_Object_Interval || CS_plus_Sound_Delay > CS_plus_Object_Interval)
+            {
+                Debug.LogWarning("CS minus or CS plus sound delay should be less than CS plus object_interval");
+            }
+
+            TotalTrialTimeCsPlus = TimeBeforeCS + CS_plus_Object_Interval + TimeAfterCS; // Calculates total trial time for CS plus
+            TotalTrialTimeCsMinus = TimeBeforeCS + CS_minus_Object_Interval + TimeAfterCS; // Calculates total trial time for CS minus
+            timeUntilCSMinusStarts = CS_minus_Object_Interval + TimeAfterCS; // used for calculating when the CS_Minus_Object appears 
+            timeUntilCSPlusStarts = CS_minus_Object_Interval + TimeAfterCS; // used for calculating when the CS_Plus_Object appears 
         }
 
         void Update()
         {
 
+            if (StartEyeTracker)
+            {
+                CheckFocus();
+            }
 
-            CheckFocus();
-            //var gazeInfo = sxr.GetFullGazeInfo();
-            //sxr.ChangeExperimenterTextbox(5, "Gaze Info: " + gazeInfo);
-
-            switch (sxr.GetPhase())
+            switch (sxr.GetPhase()) // gets the phase
             {
                 case 0: // Start Screen Phase
                     break;
 
                 case 1: // Instruction Phase
-
-                    if (trialCounter < 1)
+                    StartEyeTracker = true;
+                    sxr.StartRecordingCameraPos();
+                    sxr.StartRecordingEyeTrackerInfo();
+                    if (!hasExecuted)
                     {
-                        FindObjectOfType<VRCameraPathMover>().StartMoving(); // talks to the VRCameraPathMover script and triggers the StartMoving Function
-                        sxr.StartTimer(50); // Start a 50s trial timer
-                        trialCounter++;
+                        sxr.WriteHeaderToTaggedFile("mainFile", headers);
+                        sxr.StartTimer(20);
+                        sxr.DisplayText("In this experiment, you will see different colored shapes in the 3d environment. Please keep your focus on the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored shapes and the loud sounds.");
+                        hasExecuted = true; // set to true so this block of code only runs once
                     }
 
-                    switch (sxr.GetStepInTrial())
+                    if (sxr.CheckTimer()) // checks if the timer has reached zero
                     {
-                        case 0:
-                            sxr.HideImagesUI();
-                            break;
-                        case 1:
-                            break;
+                        sxr.HideAllText();
+                        sxr.NextPhase(); // go to the next phase and set has Executed to false
+                        hasExecuted = false;
                     }
                     break;
+
+                case 2: // Habituation Phase
+                    switch (sxr.GetTrial())
+                    {
+
+                        case 0: // CS+
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0: // CS+
+                                    StartCS(CS_plus_Object, CS_minus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(9f);
+                                    break;
+                            }
+                            break;
+
+                        case 1: // CS-
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0: // CS-
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(14f);
+                                    break;
+                            }
+                            break;
+
+                        case 2: // CS+
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0: // CS+
+                                    StartCS(CS_plus_Object, CS_minus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(10f);
+
+                                    break;
+                            }
+                            break;
+                        case 3: // CS-
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0: // CS-
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    if (!hasExecuted)
+                                    {
+                                        sxr.MoveObjectTo("sXR_prefab", 0.0f, 0f, 0f); // teleports player back to spawn
+                                        sxr.StartTimer(5); // // inter trial interval time
+                                        hasExecuted = true; // sets has Executed Flag to true so that it only executes once
+                                    }
+
+                                    if (sxr.CheckTimer())
+                                    {
+                                        sxr.NextPhase(); // Goes to the next trial
+                                        hasExecuted = false; // sets has Executed Flag to false for the next trial
+                                    }
+                                    break;
+
+                            }
+                            break;
+
+                    }
+                    break; // End of phase case 2
+
+                case 3: // Fear Acquisition training
+                    switch (sxr.GetTrial())
+                    {
+                        case 0: // CS-
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0: // CS-
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(11f);
+                                    break;
+                            }
+                            break;
+
+                        case 1: // CS-
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0: // CS-
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(14f);
+                                    break;
+                            }
+                            break;
+
+                        case 2: // CS+
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0: // CS+
+                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(9f);
+                                    break;
+                            }
+                            break;
+                        case 3:  // CS+
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0:  // CS+
+                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(15f);
+
+                                    break;
+                            }
+                            break;
+                        case 4:  // CS-
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0:  // CS-
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(12f);
+                                    break;
+                            }
+                            break;
+                        case 5:   // CS+
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0:  // CS+
+                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(10f);
+                                    break;
+                            }
+                            break;
+                        case 6:   // CS+ without US
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0:  // CS+ without US
+                                    StartCS(CS_plus_Object, CS_minus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(13f);
+                                    break;
+                            }
+                            break;
+                        case 7:  // CS-
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0:  // CS-
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(11f);
+                                    break;
+                            }
+                            break;
+                        case 8:   // CS+
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0:  // CS+
+                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(9f);
+                                    break;
+                            }
+                            break;
+                        case 9:  // CS-
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0:  // CS-
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(12f);
+                                    break;
+                            }
+                            break;
+                        case 10:   // CS+
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0:  // CS+
+                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(15f);
+                                    break;
+                            }
+                            break;
+                        case 11:  // CS-
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0:  // CS-
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(12f);
+                                    break;
+                            }
+                            break;
+                        case 12:  // CS-
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0:  // CS-
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(10f);
+                                    break;
+                            }
+                            break;
+                        case 13:   // CS+ without US
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0:  // CS+ without US
+                                    StartCS(CS_plus_Object, CS_minus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(13f);
+                                    break;
+                            }
+                            break;
+                        case 14:  // CS-
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0:  // CS-
+                                    StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(9f);
+                                    break;
+                            }
+                            break;
+                        case 15:   // CS+
+                            switch (sxr.GetStepInTrial())
+                            {
+                                case 0:  // CS+
+                                    StartCS(CS_plus_Object, CS_plus_Sound, CS_plus_Sound_Delay, CS_plus_Object_Interval, timeUntilCSPlusStarts, TotalTrialTimeCsPlus, CS_Plus_TeleportX, 0f, 0f);
+                                    break;
+
+                                case 1: // inter trial interval
+                                    InterTrial(55f);
+                                    break;
+                            }
+                            break;
+
+
+                    }
+                    break; // End of phase case 3
+
             }
+
         }
     }
 }
