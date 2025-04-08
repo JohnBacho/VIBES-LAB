@@ -14,6 +14,10 @@ This project is a collaborative research initiative between the Psychology, Neur
 
 - Fear Conditioning & Extinction Models: Designed to simulate real-world scenarios that induce and measure fear responses.
 
+- Developed Python scripts to map and analyze eye-tracking data for visual behavior insights
+
+![Screen Recording 2025-03-27 at 3 53 53 PM 2](https://github.com/user-attachments/assets/ee3b9917-993f-42b7-bbb1-4edee87478eb)
+
 ## Technology Stack
 
 - Game Engine: [Unity](https://unity.com/)
@@ -24,7 +28,7 @@ This project is a collaborative research initiative between the Psychology, Neur
 
 - SDKs & Libraries: SteamVr, [SRanipal](https://docs.vrcft.io/docs/v4.0/hardware/VIVE/sranipal)
 
-- Programming Languages: C#, Unity Scripts
+- Programming Languages: C#, Unity Scripts, Python
 
 <img src="https://github.com/user-attachments/assets/25181e6c-d4bd-42f2-bacc-719134e4decb" width="500"/>
 
@@ -51,7 +55,7 @@ This project is a collaborative research initiative between the Psychology, Neur
 
 - John Bacho – Computer Scientist, Baldwin Wallace University
 
-- Lauren Dunlap - Software Engineer, Baldwin Wallace University
+- Lauren Dunlap - Psychologist, Baldwin Wallace University
 
 - Gavin Miller - Software Engineer, Baldwin Wallace University
 
