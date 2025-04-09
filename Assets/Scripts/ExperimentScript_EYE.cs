@@ -9,6 +9,8 @@ namespace SampleExperimentScene
     public class ExperimentScript_EYE : MonoBehaviour
     {
         public bool EyeCalibration; // toggle for eye tracking
+        public bool GazeRays; // Set to true to toggle on gaze rays to see in real time where user is looking
+        public GameObject gaze_ray; // drag and drop sranpial Gaze Ray Sample 
         public float TimeBeforeCS; // Enter time for trial for before the CS
         public float TimeAfterCS; // Enter time for trial for during and After the CS
         public GameObject CS_plus_Object; // drag and drop CS+ object
@@ -140,6 +142,11 @@ namespace SampleExperimentScene
             if (EyeCalibration) // set to true in the inspector if you would like to auto launch SRanipal eye tracker calibration
             {
                 sxr.LaunchEyeCalibration();
+            }
+
+            if (GazeRays)
+            {
+                gaze_ray.SetActive(true);
             }
 
             // error handling
@@ -480,10 +487,9 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                sxr.InputSlider(0, 1, "Did you anticipate the US? 0 being no / 1 being yes [" + AnticipatedNumber + "]", true);
-                                if (sxr.ParseInputUI(out AnticipatedNumber))
-                                        sxr.NextPhase();
-                                        break;
+                                    sxr.InputSlider(1, 10, "How much did you anticipate the scream? 1 being not at all / 10 being completely", true); if (sxr.ParseInputUI(out AnticipatedNumber))
+                                    sxr.NextPhase();
+                                    break;
 
                             }
                             break;
@@ -992,7 +998,8 @@ namespace SampleExperimentScene
                                     break;
 
                                 case 1: // inter trial interval
-                                    if (!hasExecuted){
+                                    if (!hasExecuted)
+                                    {
                                         sxr.DisplayText("Experiment Complete. Thank You!");
                                         hasExecuted = true;
                                     }
