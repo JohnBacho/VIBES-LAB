@@ -150,7 +150,7 @@ namespace SampleExperimentScene
             }
 
             // error handling
-            if (TimeAfterCS <= 0 || TimeBeforeCS <= 0) // if time after is less then CS minus and plus interval then it stops the program
+            if (TimeAfterCS <= 0 || TimeBeforeCS <= 0) // if time before/after is less then or equal to 0 it will throw an error and stop the program
             {
                 Debug.LogError("TimeAfterCS must be greater than 0");
                 UnityEditor.EditorApplication.isPlaying = false; // stops the editor from playing
