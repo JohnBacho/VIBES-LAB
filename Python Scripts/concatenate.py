@@ -7,8 +7,6 @@ df1['LocalTime']=df1['LocalTime'].astype("object")
 df1['UnityTime']=df1['UnityTime'].astype("float64")
 df1['Step']=df1['Step'].astype("int64")
 
-df1.to_csv('camtrack.csv', index=False)
-
 df2 = pd.read_csv("Python Scripts/2025_4_3_1124_0_eyetracker.csv")
 df3 = pd.read_csv("Python Scripts/2025_4_3_1124_0_mainFile.csv")
 
