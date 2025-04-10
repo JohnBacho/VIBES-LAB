@@ -7,7 +7,7 @@ from sklearn.cluster import KMeans
 from scipy.stats import gaussian_kde
 
 # Load data
-df = pd.read_csv("2025_3_27_1542_0_mainFile.csv", delimiter=",")
+df = pd.read_csv("out.csv", delimiter=",")
 
 print(df.columns)
 
@@ -16,7 +16,7 @@ x = df["GazeHitPointX"]
 y = df["GazeHitPointY"]
 z = df["GazeHitPointZ"]
 time = df["UnityTime"]
-GameObject = df["GameObjectInFocus"]
+# GameObject = df["GameObjectInFocus"]
 
 # Compute Velocity (Distance/Time)
 df["Velocity"] = np.sqrt(np.diff(x, prepend=x.iloc[0])**2 + 
