@@ -65,6 +65,7 @@ This project is a collaborative research initiative between the Psychology, Neur
 
 - Sophia Ott - Neuroscientist, Baldwin Wallace University
 
+- Alexa Gossett - Neuroscientist, Baldwin Wallace University
 
 ## Acknowledgments
 
