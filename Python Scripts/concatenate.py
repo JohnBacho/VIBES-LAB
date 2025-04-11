@@ -18,4 +18,11 @@ df3['GazeHitPointZ'] = df3['GazeHitPointZ'].str.replace(')', '')
 #final_df = pd.merge(df1, pd.merge(df2, df3, how="inner"), how="inner")
 
 final_df = df2.merge(df3)
-final_df.to_csv('out.csv', index=False)
+
+# gets subjectid and data used in making the filename unique
+subject_id = final_df["SubjectID"].iloc[0]
+date = final_df["Date"].iloc[0]
+
+# writes file name and saves file
+filename = f"Subject_{int(subject_id)}_Date{str(date)}.csv"
+final_df.to_csv(filename, index=False)
