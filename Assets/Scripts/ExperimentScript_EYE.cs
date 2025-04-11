@@ -25,7 +25,22 @@ namespace SampleExperimentScene
         public float CS_minus_Object_Interval; // Enter time for CS- object to stay active
         public float CS_Minus_TeleportX; // Enter the X coordinate of where you want the player to teleport to in the CS Minus environment
 
-        public bool Toggle_Different_Extinction; // Used to determine what context you want Extinction to 
+        public bool ABA_Testing; // Used to determine what context you want Extinction to 
+
+        public GameObject CS_plus_Ceiling;
+        public GameObject CS_plus_LeftWall;
+        public GameObject CS_plus_RightWall;
+        public GameObject CS_plus_BackWall;
+        public GameObject CS_plus_FrontWall;
+        public GameObject CS_plus_Floor;
+
+        public GameObject CS_minus_Ceiling;
+        public GameObject CS_minus_LeftWall;
+        public GameObject CS_minus_RightWall;
+        public GameObject CS_minus_BackWall;
+        public GameObject CS_minus_FrontWall;
+        public GameObject CS_minus_Floor;
+
 
         private string FocusedGameObject = ""; // used for Sranipal
         private Ray testRay; // used for Sranipal
@@ -41,6 +56,20 @@ namespace SampleExperimentScene
         private float timeUntilCSMinusStarts; // Used to calculate when the when to display CS minus object
         private float timeUntilCSPlusStarts; // Used to calculate when the when to display CS plus object
         private int AnticipatedNumber; // Used for when the user enters if they anticipated US
+
+        private Color    CS_plus_originalCeilingColor;
+        private Color    CS_plus_originalLeftWallColor;
+        private Color    CS_plus_originalRightWallColor;
+        private Color    CS_plus_originalBackWallColor;
+        private Color    CS_plus_originalFrontWallColor;
+        private Color    CS_plus_originalFloorColor;
+        private Color    CS_minus_originalCeilingColor;
+        private Color    CS_minus_originalLeftWallColor;
+        private Color    CS_minus_originalRightWallColor;
+        private Color    CS_minus_originalBackWallColor;
+        private Color    CS_minus_originalFrontWallColor;
+        private Color    CS_minus_originalFloorColor;
+
 
         public void StartCS(GameObject CS_Object, GameObject CS_Sound, float CS_Sound_Delay, float CS_Object_Interval, float timeUntilCSStarts, float TotalTrialTimeCs, float TeleportX, float TeleportY, float TeleportZ)
         {
@@ -136,6 +165,49 @@ namespace SampleExperimentScene
             // FocusedGameObject which is the name of the object where the user is looking at to file 
         }
 
+        public void ChangeColorTo(GameObject obj, Color newColor)
+        {
+            Renderer objRenderer = obj.GetComponent<Renderer>();
+            if (objRenderer != null)
+            {
+                objRenderer.material.color = newColor;
+            }
+        }
+
+        public void ChangeAllColors(Color newColor)
+        {
+            ChangeColorTo(CS_plus_Ceiling, newColor);
+            ChangeColorTo(CS_plus_LeftWall, newColor);
+            ChangeColorTo(CS_plus_RightWall, newColor);
+            ChangeColorTo(CS_plus_BackWall, newColor);
+            ChangeColorTo(CS_plus_FrontWall, newColor);
+            ChangeColorTo(CS_plus_Floor, newColor);
+
+            ChangeColorTo(CS_minus_Ceiling, newColor);
+            ChangeColorTo(CS_minus_LeftWall, newColor);
+            ChangeColorTo(CS_minus_RightWall, newColor);
+            ChangeColorTo(CS_minus_BackWall, newColor);
+            ChangeColorTo(CS_minus_FrontWall, newColor);
+            ChangeColorTo(CS_minus_Floor, newColor);
+        }
+
+            public void RevertAllColors()
+        {
+            ChangeColorTo(CS_plus_Ceiling, CS_plus_originalCeilingColor);
+            ChangeColorTo(CS_plus_LeftWall, CS_plus_originalLeftWallColor);
+            ChangeColorTo(CS_plus_RightWall, CS_plus_originalRightWallColor);
+            ChangeColorTo(CS_plus_BackWall, CS_plus_originalBackWallColor);
+            ChangeColorTo(CS_plus_FrontWall, CS_plus_originalFrontWallColor);
+            ChangeColorTo(CS_plus_Floor, CS_plus_originalFloorColor);
+
+            ChangeColorTo(CS_minus_Ceiling, CS_minus_originalCeilingColor);
+            ChangeColorTo(CS_minus_LeftWall, CS_minus_originalLeftWallColor);
+            ChangeColorTo(CS_minus_RightWall, CS_minus_originalRightWallColor);
+            ChangeColorTo(CS_minus_BackWall, CS_minus_originalBackWallColor);
+            ChangeColorTo(CS_minus_FrontWall, CS_minus_originalFrontWallColor);
+            ChangeColorTo(CS_minus_Floor, CS_minus_originalFloorColor);
+        }
+
         void Start()
         {
 
@@ -148,6 +220,20 @@ namespace SampleExperimentScene
             {
                 gaze_ray.SetActive(true);
             }
+
+            CS_plus_originalCeilingColor = CS_plus_Ceiling.GetComponent<Renderer>().material.color;
+            CS_plus_originalLeftWallColor = CS_plus_LeftWall.GetComponent<Renderer>().material.color;
+            CS_plus_originalRightWallColor = CS_plus_RightWall.GetComponent<Renderer>().material.color;
+            CS_plus_originalBackWallColor = CS_plus_BackWall.GetComponent<Renderer>().material.color;
+            CS_plus_originalFrontWallColor = CS_plus_FrontWall.GetComponent<Renderer>().material.color;
+            CS_plus_originalFloorColor = CS_plus_Floor.GetComponent<Renderer>().material.color;
+
+            CS_minus_originalCeilingColor = CS_minus_Ceiling.GetComponent<Renderer>().material.color;
+            CS_minus_originalLeftWallColor = CS_minus_LeftWall.GetComponent<Renderer>().material.color;
+            CS_minus_originalRightWallColor = CS_minus_RightWall.GetComponent<Renderer>().material.color;
+            CS_minus_originalBackWallColor = CS_minus_BackWall.GetComponent<Renderer>().material.color;
+            CS_minus_originalFrontWallColor = CS_minus_FrontWall.GetComponent<Renderer>().material.color;
+            CS_minus_originalFloorColor = CS_minus_Floor.GetComponent<Renderer>().material.color;
 
             // error handling
             if (TimeAfterCS <= 0 || TimeBeforeCS <= 0) // if time before/after is less then or equal to 0 it will throw an error and stop the program
@@ -279,6 +365,9 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
+                                if(ABA_Testing){
+                                        ChangeAllColors(Color.yellow);
+                                    }
                                     StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus, CS_Minus_TeleportX, 0f, 0f);
                                     break;
 
@@ -475,22 +564,13 @@ namespace SampleExperimentScene
 
                                     if (sxr.CheckTimer())
                                     {
-                                        //sxr.NextPhase(); // Goes to the next Phase
-                                        sxr.NextTrial();
+                                        sxr.NextPhase(); // Goes to the next Phase
                                         hasExecuted = false; // sets has Executed Flag to false for the next trial
+                                        if(ABA_Testing){
+                                        RevertAllColors();
+                                        }
                                     }
                                     break;
-                            }
-                            break;
-
-                        case 16: // CS+
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0: // CS+
-                                    sxr.InputSlider(1, 10, "How much did you anticipate the scream? 1 being not at all / 10 being completely", true); if (sxr.ParseInputUI(out AnticipatedNumber))
-                                    sxr.NextPhase();
-                                    break;
-
                             }
                             break;
 
