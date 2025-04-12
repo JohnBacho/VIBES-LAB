@@ -10,7 +10,7 @@ namespace SampleExperimentScene
     {
         public bool EyeCalibration; // toggle for eye tracking
         public bool GazeRays; // Set to true to toggle on gaze rays to see in real time where user is looking
-        public GameObject gaze_ray; // drag and drop sranpial Gaze Ray Sample 
+        public GameObject GazeRayObject; // drag and drop sranpial Gaze Ray Sample 
         public float TimeBeforeCS; // Enter time for trial for before the CS
         public float TimeAfterCS; // Enter time for trial for during and After the CS
         public GameObject CS_plus_Object; // drag and drop CS+ object
@@ -23,7 +23,7 @@ namespace SampleExperimentScene
         public float CS_minus_Sound_Delay; // Enter time for sound delay to play after CS- object is activated.
         public float CS_minus_Object_Interval; // Enter time for CS- object to stay active
 
-        public bool ABA_Testing; // Used to determine what context you want Extinction to 
+        public bool ABATesting; // Used to determine what context you want Extinction to 
 
 
         private string FocusedGameObject = ""; // used for Sranipal
@@ -41,23 +41,17 @@ namespace SampleExperimentScene
         private float timeUntilCSPlusStarts; // Used to calculate when the when to display CS plus object
         private int AnticipatedNumber; // Used for when the user enters if they anticipated US
 
-        private Color originalCeilingColor;
-        private Color originalLeftWallColor;
-        private Color originalRightWallColor;
-        private Color originalBackWallColor;
-        private Color originalFrontWallColor;
-        private Color originalFloorColor;
+        // Used to take in a pair of gameobjects and materials in a list
+        [System.Serializable]
+        public class ObjectMaterialPair
+        {
+            public GameObject obj;
+            public Material newMaterial;
+        }
 
-            [System.Serializable]
-            public class ObjectMaterialPair
-            {
-                public GameObject obj;
-                public Material newMaterial;
-            }
+        public ObjectMaterialPair[] objectMaterialPairs; // saves object and material pair into an array
 
-         public ObjectMaterialPair[] objectMaterialPairs;
-
-         private Material[] originalMaterials;
+        private Material[] originalMaterials; // saves entered material into an array
 
         public void StartCS(GameObject CS_Object, GameObject CS_Sound, float CS_Sound_Delay, float CS_Object_Interval, float timeUntilCSStarts, float TotalTrialTimeCs)
         {
@@ -129,7 +123,7 @@ namespace SampleExperimentScene
             }
         }
 
-        void CheckFocus()
+        void CheckFocus() // Main driver of eye tracking 
         {
 
             FocusedGameObject = "";
@@ -151,25 +145,25 @@ namespace SampleExperimentScene
             // FocusedGameObject which is the name of the object where the user is looking at to file 
         }
 
-        public void ChangeMaterials()
+        public void ChangeMaterials() // changes material of object to the one entered
+        {
+            for (int i = 0; i < objectMaterialPairs.Length; i++)
             {
-                for (int i = 0; i < objectMaterialPairs.Length; i++)
-                {
-                    Renderer rend = objectMaterialPairs[i].obj.GetComponent<Renderer>();
-                    if (rend != null)
-                        rend.material = objectMaterialPairs[i].newMaterial;
-                }
+                Renderer rend = objectMaterialPairs[i].obj.GetComponent<Renderer>();
+                if (rend != null)
+                    rend.material = objectMaterialPairs[i].newMaterial;
             }
+        }
 
-        public void RevertMaterials()
+        public void RevertMaterials() // reverts object to the original material 
+        {
+            for (int i = 0; i < objectMaterialPairs.Length; i++)
             {
-                for (int i = 0; i < objectMaterialPairs.Length; i++)
-                {
-                    Renderer rend = objectMaterialPairs[i].obj.GetComponent<Renderer>();
-                    if (rend != null && originalMaterials[i] != null)
-                        rend.material = originalMaterials[i];
-                }
+                Renderer rend = objectMaterialPairs[i].obj.GetComponent<Renderer>();
+                if (rend != null && originalMaterials[i] != null)
+                    rend.material = originalMaterials[i];
             }
+        }
 
         void Start()
         {
@@ -181,17 +175,17 @@ namespace SampleExperimentScene
 
             if (GazeRays)
             {
-                gaze_ray.SetActive(true);
+                GazeRayObject.SetActive(true);
             }
             // used to save the original Material of the object before it changes them for the B part of ABA testing
             originalMaterials = new Material[objectMaterialPairs.Length];
 
-        for (int i = 0; i < objectMaterialPairs.Length; i++)
-        {
-            Renderer rend = objectMaterialPairs[i].obj.GetComponent<Renderer>();
-            if (rend != null)
-                originalMaterials[i] = rend.material;
-        }
+            for (int i = 0; i < objectMaterialPairs.Length; i++)
+            {
+                Renderer rend = objectMaterialPairs[i].obj.GetComponent<Renderer>();
+                if (rend != null)
+                    originalMaterials[i] = rend.material;
+            }
 
 
 
@@ -325,9 +319,9 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    if (ABA_Testing)
+                                    if (ABATesting)
                                     {
-                                        ChangeMaterials();
+                                        ChangeMaterials(); // changes all entered objects material
                                     }
                                     StartCS(CS_minus_Object, CS_minus_Sound, CS_minus_Sound_Delay, CS_minus_Object_Interval, timeUntilCSMinusStarts, TotalTrialTimeCsMinus);
                                     break;
@@ -527,9 +521,9 @@ namespace SampleExperimentScene
                                     {
                                         sxr.NextPhase(); // Goes to the next Phase
                                         hasExecuted = false; // sets has Executed Flag to false for the next trial
-                                        if (ABA_Testing)
+                                        if (ABATesting)
                                         {
-                                            RevertMaterials();
+                                            RevertMaterials(); // Reverts environment back to original color/material
                                         }
                                     }
                                     break;

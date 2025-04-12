@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028292, g: 0.22571306, b: 0.30692118, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -798,7 +798,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 150.00002
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -5847,7 +5847,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1906118194687653928, guid: 3e6979bbf2be81f4d831be4d063b7610, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -17.701614
+      value: -17.73
       objectReference: {fileID: 0}
     - target: {fileID: 1906118194687653928, guid: 3e6979bbf2be81f4d831be4d063b7610, type: 3}
       propertyPath: m_LocalRotation.w
@@ -6924,7 +6924,7 @@ GameObject:
   - component: {fileID: 1412178892}
   - component: {fileID: 1412178891}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: SunLight Blocker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9671,7 +9671,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EyeCalibration: 0
   GazeRays: 1
-  gaze_ray: {fileID: 1212169513}
+  GazeRayObject: {fileID: 1212169513}
   TimeBeforeCS: 2
   TimeAfterCS: 2
   CS_plus_Object: {fileID: 792466238}
@@ -9682,7 +9682,7 @@ MonoBehaviour:
   CS_minus_Sound: {fileID: 1900603030}
   CS_minus_Sound_Delay: 7
   CS_minus_Object_Interval: 8
-  ABA_Testing: 1
+  ABATesting: 1
   objectMaterialPairs:
   - obj: {fileID: 511584106}
     newMaterial: {fileID: 2100000, guid: bc0d593133344934c903edd5f5fa8f3d, type: 2}

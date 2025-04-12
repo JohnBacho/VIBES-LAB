@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028292, g: 0.22571306, b: 0.30692118, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2075,7 +2075,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EyeCalibration: 0
   GazeRays: 1
-  gaze_ray: {fileID: 1212169513}
+  GazeRayObject: {fileID: 1212169513}
   TimeBeforeCS: 2
   TimeAfterCS: 2
   CS_plus_Object: {fileID: 792466238}
@@ -2086,7 +2086,7 @@ MonoBehaviour:
   CS_minus_Sound: {fileID: 1900603030}
   CS_minus_Sound_Delay: 7
   CS_minus_Object_Interval: 8
-  ABA_Testing: 0
+  ABATesting: 1
   ABA_Environment_Color: {r: 0.60617876, g: 0, b: 1, a: 1}
   Ceiling: {fileID: 1474067003}
   LeftWall: {fileID: 1892983063}

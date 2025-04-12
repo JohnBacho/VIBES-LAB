@@ -10,7 +10,7 @@ namespace SampleExperimentScene
     {
         public bool EyeCalibration; // toggle for eye tracking
         public bool GazeRays; // Set to true to toggle on gaze rays to see in real time where user is looking
-        public GameObject gaze_ray; // drag and drop sranpial Gaze Ray Sample 
+        public GameObject GazeRayObject; // drag and drop sranpial Gaze Ray Sample 
         public float TimeBeforeCS; // Enter time for trial for before the CS
         public float TimeAfterCS; // Enter time for trial for during and After the CS
         public GameObject CS_plus_Object; // drag and drop CS+ object
@@ -23,7 +23,7 @@ namespace SampleExperimentScene
         public float CS_minus_Sound_Delay; // Enter time for sound delay to play after CS- object is activated.
         public float CS_minus_Object_Interval; // Enter time for CS- object to stay active
 
-        public bool ABA_Testing; // Used to determine what context you want Extinction to 
+        public bool ABATesting; // Used to determine what context you want Extinction to 
 
         public Color ABA_Environment_Color = Color.green; // set the color of the room for the ABA testing
 
@@ -190,7 +190,7 @@ namespace SampleExperimentScene
 
             if (GazeRays)
             {
-                gaze_ray.SetActive(true);
+                GazeRayObject.SetActive(true);
             }
             // used to save the original color of the object before it changes them for the B part of ABA testing
             originalCeilingColor = Ceiling.GetComponent<Renderer>().material.color;
@@ -330,7 +330,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    if (ABA_Testing)
+                                    if (ABATesting)
                                     {
                                         ChangeAllColors(ABA_Environment_Color);
                                     }
@@ -532,7 +532,7 @@ namespace SampleExperimentScene
                                     {
                                         sxr.NextPhase(); // Goes to the next Phase
                                         hasExecuted = false; // sets has Executed Flag to false for the next trial
-                                        if (ABA_Testing)
+                                        if (ABATesting)
                                         {
                                             RevertAllColors();
                                         }
