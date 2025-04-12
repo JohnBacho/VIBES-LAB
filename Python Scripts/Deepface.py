@@ -46,9 +46,11 @@ def analyze_video_emotions(video_path):
                 x, y, w, h = region['x'], region['y'], region['w'], region['h']
 
                 # Define mouth region as bottom 50% of the face
+                mouth_x_start = x + int(w * 0.25)
+                mouth_x_end = x + int(w * 0.75)
                 mouth_y_start = y + int(h * 0.5)
                 mouth_y_end = y + h
-                mouth_roi = rgb_frame[mouth_y_start:mouth_y_end, x:x+w]
+                mouth_roi = rgb_frame[mouth_y_start:mouth_y_end, mouth_x_start:mouth_x_end]
 
                 if mouth_roi.size == 0:
                     continue
