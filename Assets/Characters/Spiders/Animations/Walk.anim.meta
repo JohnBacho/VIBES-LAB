@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8573bcd50d913844991255b0926cb830
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 236418
+  packageName: fantasy spiders
+  packageVersion: 1.0
+  assetPath: Assets/Spiders/Animations/Walk.anim
+  uploadId: 535463

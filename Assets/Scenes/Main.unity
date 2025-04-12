@@ -709,11 +709,11 @@ Transform:
   m_GameObject: {fileID: 133621064}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: -38, y: 21.441582, z: -38.49767}
+  m_LocalPosition: {x: 0, y: 11.189999, z: -12.35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 951051802}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1001 &245716178
 PrefabInstance:
@@ -1040,11 +1040,11 @@ Transform:
   m_GameObject: {fileID: 400742871}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -38.16, y: 15.311583, z: -21.93}
+  m_LocalPosition: {x: -0.15999985, y: 5.0599995, z: 4.2176685}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 951051802}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &400742873
 Light:
@@ -1136,7 +1136,7 @@ Transform:
   m_GameObject: {fileID: 506905802}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0522995, y: 2.6099997, z: 6}
+  m_LocalPosition: {x: 0, y: 2.6099997, z: 6}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1312,7 +1312,7 @@ Transform:
   m_GameObject: {fileID: 792466238}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0522995, y: 2.6099997, z: 6}
+  m_LocalPosition: {x: 0, y: 2.6099997, z: 6}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1573,14 +1573,12 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 400742872}
   - {fileID: 1122698373}
   - {fileID: 1993520584}
   - {fileID: 931929659}
   - {fileID: 1892983064}
   - {fileID: 1474067004}
   - {fileID: 394973871}
-  - {fileID: 133621066}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1122698372
@@ -2080,15 +2078,15 @@ MonoBehaviour:
   gaze_ray: {fileID: 1212169513}
   TimeBeforeCS: 2
   TimeAfterCS: 2
-  CS_plus_Object: {fileID: 245716179}
+  CS_plus_Object: {fileID: 792466238}
   CS_plus_Sound: {fileID: 2124453806}
   CS_plus_Sound_Delay: 7
   CS_plus_Object_Interval: 8
-  CS_minus_Object: {fileID: 126713805}
+  CS_minus_Object: {fileID: 506905802}
   CS_minus_Sound: {fileID: 1900603030}
   CS_minus_Sound_Delay: 7
   CS_minus_Object_Interval: 8
-  ABA_Testing: 1
+  ABA_Testing: 0
   ABA_Environment_Color: {r: 0.60617876, g: 0, b: 1, a: 1}
   Ceiling: {fileID: 1474067003}
   LeftWall: {fileID: 1892983063}
@@ -2336,6 +2334,8 @@ SceneRoots:
   - {fileID: 1970160397}
   - {fileID: 126110552}
   - {fileID: 899025178}
+  - {fileID: 133621066}
+  - {fileID: 400742872}
   - {fileID: 951051802}
   - {fileID: 245716178}
   - {fileID: 126713804}
