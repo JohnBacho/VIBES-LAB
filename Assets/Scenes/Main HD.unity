@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028292, g: 0.22571306, b: 0.30692118, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6099,7 +6099,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4252b720730d4bf4782ff6e9961ab9d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: 0
+  toggle: 1
 --- !u!1 &1232421053 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5268800257392070488, guid: 91bf78ba20b394448ae57ffeb426184a, type: 3}
@@ -10068,8 +10068,8 @@ MonoBehaviour:
   EyeCalibration: 0
   GazeRays: 1
   GazeRayObject: {fileID: 1212169513}
-  TimeBeforeCS: 2
-  TimeAfterCS: 2
+  TimeBeforeCS: 0
+  TimeAfterCS: 0
   CS_plus_Object: {fileID: 792466238}
   CS_plus_Sound: {fileID: 2124453806}
   CS_plus_Sound_Delay: 7

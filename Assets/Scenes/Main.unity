@@ -1396,7 +1396,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1300242302035366, guid: 95145ad4fe8448d4ebdcf3760752e2e5, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4809116349261976, guid: 95145ad4fe8448d4ebdcf3760752e2e5, type: 3}
       propertyPath: m_RootOrder
@@ -1437,7 +1437,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1300242302035366, guid: 95145ad4fe8448d4ebdcf3760752e2e5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1212169514}
   m_SourcePrefab: {fileID: 100100000, guid: 95145ad4fe8448d4ebdcf3760752e2e5, type: 3}
 --- !u!1 &931929658
 GameObject:
@@ -1691,6 +1694,19 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1300242302035366, guid: 95145ad4fe8448d4ebdcf3760752e2e5, type: 3}
   m_PrefabInstance: {fileID: 899025178}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1212169514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1212169513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4252b720730d4bf4782ff6e9961ab9d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toggle: 0
 --- !u!1 &1474067003
 GameObject:
   m_ObjectHideFlags: 0
@@ -2076,8 +2092,8 @@ MonoBehaviour:
   EyeCalibration: 0
   GazeRays: 1
   GazeRayObject: {fileID: 1212169513}
-  TimeBeforeCS: 2
-  TimeAfterCS: 2
+  TimeBeforeCS: 0
+  TimeAfterCS: 0
   CS_plus_Object: {fileID: 792466238}
   CS_plus_Sound: {fileID: 2124453806}
   CS_plus_Sound_Delay: 7

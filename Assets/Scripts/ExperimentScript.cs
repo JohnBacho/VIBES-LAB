@@ -8,26 +8,39 @@ namespace SampleExperimentScene
 {
     public class ExperimentScript_2 : MonoBehaviour
     {
+        [Tooltip("If toggled on program will auto launch Sranipal eye calibration")]
         public bool EyeCalibration; // toggle for eye tracking
+        [Tooltip("If toggled on a line will point to where the user is looking")]
         public bool GazeRays; // Set to true to toggle on gaze rays to see in real time where user is looking
+        [Tooltip("Drag GameObject Gaze Ray Sample into field")]
         public GameObject GazeRayObject; // drag and drop sranpial Gaze Ray Sample 
+        [Tooltip("Enter a buffer time (seconds) you want before the CS is displayed")]
         public float TimeBeforeCS; // Enter time for trial for before the CS
+        [Tooltip("Enter a buffer time (seconds) you want after the CS is displayed")]
         public float TimeAfterCS; // Enter time for trial for during and After the CS
+        [Tooltip("Drag your CS+ Object into this field the object should be disabled before being dragged in. To disable object when clicked on object (option + shift + a)")]
         public GameObject CS_plus_Object; // drag and drop CS+ object
+        [Tooltip("Drag your CS+ sound into this field the object. Audio source with your sound should be attached to object")]
         public GameObject CS_plus_Sound; // drag and drop CS+ sound to get it to play
+        [Tooltip("Enter a time (seconds) for once the CS+ is displayed how long you want to wait till the CS+ sound is played. (Note sound delay must be less then object interval)")]
         public float CS_plus_Sound_Delay; // Enter time for sound delay to play after CS+ object is activated.
+        [Tooltip("Enter a time (seconds) you want the CS+ object to be displayed. (Note it must be greater then then CS_plus_Sound;)")]
         public float CS_plus_Object_Interval; // Enter time for CS+ object to stay active
-
+        [Tooltip("Drag your CS- Object into this field the object should be disabled before being dragged in. To disable object when clicked on object (option + shift + a)")]
         public GameObject CS_minus_Object; // drag and drop CS- object
+        [Tooltip("Drag your CS- sound into this field the object. Audio source with your sound should be attached to object")]
         public GameObject CS_minus_Sound; // drag and drop CS- sound to get it to play
+        [Tooltip("Enter a time (seconds) for once the CS- is displayed how long you want to wait till the CS- sound is played. (Note sound delay must be less then object interval)")]
         public float CS_minus_Sound_Delay; // Enter time for sound delay to play after CS- object is activated.
+        [Tooltip("Enter a time (seconds) you want the CS- object to be displayed. (Note it must be greater then then CS_minus_Sound;)")]
         public float CS_minus_Object_Interval; // Enter time for CS- object to stay active
-
+        [Tooltip("Toggle on if you want ABA context changing")]
         public bool ABATesting; // Used to determine what context you want Extinction to 
-
+        [Tooltip("Select a color you'd like the room to change to for context B")]
         public Color ABA_Environment_Color = Color.green; // set the color of the room for the ABA testing
 
         // drag and drop room objects into this so that it can change the color for ABA testing
+        [Tooltip("Drag and drop ceiling walls and floor into correct fields to have them to change color for context B")]
         public GameObject Ceiling;
         public GameObject LeftWall;
         public GameObject RightWall;
@@ -201,7 +214,7 @@ namespace SampleExperimentScene
             originalFloorColor = Floor.GetComponent<Renderer>().material.color;
 
             // error handling
-            if (TimeAfterCS <= 0 || TimeBeforeCS <= 0) // if time before/after is less then or equal to 0 it will throw an error and stop the program
+            if (TimeAfterCS < 0 || TimeBeforeCS < 0) // if time before/after is less then 0 it will throw an error and stop the program
             {
                 Debug.LogError("TimeAfterCS must be greater than 0");
                 UnityEditor.EditorApplication.isPlaying = false; // stops the editor from playing
