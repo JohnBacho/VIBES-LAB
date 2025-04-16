@@ -1,4 +1,4 @@
-# Virtually Immersive BEhavioural sciences (VIBES) Lab
+# Virtually Immersive BEhavioural Sciences (VIBES) Lab
 
 ## Overview
 
