@@ -1,0 +1,26 @@
+--- In VS Code use "command + shift + P" and type python interpreter select the correct one for each 
+
+--- to run EyeTrackingCalculations.py
+*In the terminal
+conda create -n gaze-env python=3.11
+conda activate gaze-env
+conda install "numpy<2" pandas matplotlib scipy scikit-learn
+- *In VS Code
+- open file
+- "command + shift + P"
+- type "python interpreter"
+- select gaze-env
+- run 
+
+
+--- to run deepface.py
+- *In the terminal
+- conda create -n deepface-env python=3.8
+- pip install deepface
+- conda activate deepface-env
+- *In VS Code
+- open file
+- "command + shift + P"
+- type "python interpreter"
+- select deepface-env
+- run 

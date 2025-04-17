@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 707360a9c581a4bd7aa53bfeb1429f71
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 288108
+  packageName: Vintage Retro Room URP
+  packageVersion: 1.0
+  assetPath: Assets/Stylized Retro Room/Settings/URP-Performant-Renderer.asset
+  uploadId: 676855
