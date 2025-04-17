@@ -99,5 +99,5 @@ def analyze_video_emotions(video_path):
     print("Processing complete. Logs saved.")
 
 if __name__ == "__main__":
-    video_path = "/Users/johnbacho/Desktop/Movie on 4-10-25 at 5.52 PM.mov"
+    video_path = "/Users/johnbacho/Desktop/Movie on 4-15-25 at 6.10 PM.mov"
     analyze_video_emotions(video_path)
