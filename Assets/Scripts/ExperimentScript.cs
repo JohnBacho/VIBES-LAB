@@ -62,15 +62,16 @@ namespace SampleExperimentScene
         private bool hasStartedCS = false; // used to execute the start of the CS+ only once
         private bool StartEyeTracker = false; //used to start the CheckFocus(); function which calculates the eye 
         // tracking data ensuring that all three cameratrack / eyetracker / mainfile are all started at the exact same time
-        private string headers = "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus"; // used to write headers to the mainfile
-        private string Anticipateheaders = "Anticipated,ResponseTime";
+        private string headers = "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus"; // Used to write headers to the mainfile
+        private string Anticipateheaders = "Anticipated,ResponseTime"; // Used to write headers to Anticipatedfile
         private float TotalTrialTimeCsPlus; //Used to calculate the total time of the trial for CS Plus trial
         private float TotalTrialTimeCsMinus; //Used to calculate the total time of the trial for CS Minus trial
         private float timeUntilCSMinusStarts; // Used to calculate when the when to display CS minus object
         private float timeUntilCSPlusStarts; // Used to calculate when the when to display CS plus object
         private int AnticipatedNumber; // Used for when the user enters if they anticipated US
-        private bool userHasResponded;
-        private bool userInputComplete = false;
+        private bool userInputComplete = false; // Used for a check if the user has submitted a value  
+        private float TimeForUserToRespond = 50; // Used to determine how long the user has to respond
+        private float WaitTimeTillUserInput = 5; // Used to determine how long to wait into the CS to display Slider
 
         private Color originalCeilingColor;
         private Color originalLeftWallColor;
@@ -100,7 +101,7 @@ namespace SampleExperimentScene
 
             if (sxr.CheckTimer()) // checks if timer is zero
             {
-                sxr.NextStep(); // advances to inter trial interval and sets hasExecuted to false
+                sxr.NextStep(); // advances to inter trial interval and sets hasExecuted and hasStartedCS to false
                 hasExecuted = false;
                 hasStartedCS = false;
             }
@@ -124,25 +125,24 @@ namespace SampleExperimentScene
         // Coroutine to play the sound after a delay
         IEnumerator PlaySoundAfterDelay(GameObject soundObject, float soundDelay, bool waitForUserInput)
         {
-           if(waitForUserInput){
+            if (waitForUserInput)
+            {
 
-                int timer = 5;
-
-                while (!userInputComplete)
+                while (!userInputComplete) // waits for the user to input a response into input 
                 {
                     yield return null; // Wait until input is complete
                 }
 
                 // Wait the rest of the delay if any
-                if (timer < soundDelay)
+                if (WaitTimeTillUserInput < soundDelay)
                 {
-                    yield return new WaitForSeconds(soundDelay - timer);
+                    yield return new WaitForSeconds(soundDelay - WaitTimeTillUserInput);
                 }
 
-                AudioSource audioSource = soundObject.GetComponent<AudioSource>();
+                AudioSource audioSource = soundObject.GetComponent<AudioSource>(); // grabs audio source from object
                 if (audioSource != null)
                 {
-                    audioSource.Play();
+                    audioSource.Play(); // plays sound
                 }
                 else
                 {
@@ -150,62 +150,62 @@ namespace SampleExperimentScene
                 }
 
             }
-            else{
-            yield return new WaitForSeconds(soundDelay); // soundDelay determines how long it should wait to play the sound
-            AudioSource audioSource = soundObject.GetComponent<AudioSource>();
-            if (audioSource != null)
-            {
-                audioSource.Play(); // plays audio attached to object
-            }
             else
             {
-                Debug.LogWarning("No AudioSource found on " + soundObject.name); // error handling
-            }
+                yield return new WaitForSeconds(soundDelay); // soundDelay determines how long it should wait to play the sound
+                AudioSource audioSource = soundObject.GetComponent<AudioSource>();
+                if (audioSource != null)
+                {
+                    audioSource.Play(); // plays audio attached to object
+                }
+                else
+                {
+                    Debug.LogWarning("No AudioSource found on " + soundObject.name); // error handling
+                }
             }
         }
 
-
-        public void stoptimer()
-        {
-            sxr.StartTimer(50);
-        }
         // Coroutine to disable the object after a delay
         IEnumerator DisableObjects(GameObject objectToDisable, float objectDelay, bool waitForUserInput)
         {
             if (waitForUserInput)
             {
-                yield return new WaitForSeconds(5f);
-                float TempStoreTime = sxr.TimeRemaining();
-                
-                stoptimer();
+                yield return new WaitForSeconds(WaitTimeTillUserInput); // waits 5 seconds
+                float TempStoreTime = sxr.TimeRemaining(); // stores the trial timer so that it can be restored later
+
+                sxr.StartTimer(TimeForUserToRespond); // starts a new timer for 50s allowing the user to respond 
                 Debug.Log("Paused before disabling object. Waiting for user input...");
+                // enables the user to move the right controller 
                 RIGHTContorl.SetActive(true);
                 RIGHTControlStabilized.SetActive(true);
                 RightEnviormentController.SetActive(true);
                 RightControllerEnvironmentStabilized.SetActive(true);
+
                 int TempStoreAnticipateNum = -1;
                 while (!sxr.ParseInputUI(out AnticipatedNumber))
-                {   
-                    AnticipatedNumber = 0;
-                    sxr.InputSlider(0, 9, $"How likely is it that a scream will follow? 0 (certainly no scream) to 9 (certainly a scream) [{AnticipatedNumber}]", true);
-                    TempStoreAnticipateNum = AnticipatedNumber;
+                {
+                    sxr.InputSlider(0, 9, $"How likely is it that a scream will follow? 0 (certainly no scream) to 9 (certainly a scream) [{AnticipatedNumber}]", true); // displays slider that user can input 
+                    TempStoreAnticipateNum = AnticipatedNumber; // for some reason I am unable to get anticipatedNumber to save to file out side of the loop so we create a new var to save it 
                     Debug.Log($"User entered: {AnticipatedNumber}");
                     yield return null;
                 }
-                userInputComplete = true;
+                userInputComplete = true; // this bool is used to tell PlaySoundAfterDelay that it can continue with it's delay.
+
+                // disables the Right Controller
                 RIGHTContorl.SetActive(false);
                 RIGHTControlStabilized.SetActive(false);
                 RightEnviormentController.SetActive(false);
                 RightControllerEnvironmentStabilized.SetActive(false);
-                float ResponseTime = 50 - sxr.TimeRemaining();
-                sxr.StartTimer(TempStoreTime);
-                sxr.WriteToTaggedFile("AnticipateFile", TempStoreAnticipateNum.ToString() + "," + ResponseTime.ToString());
+
+                float ResponseTime = TimeForUserToRespond - sxr.TimeRemaining(); // used to calculate response time
+                sxr.StartTimer(TempStoreTime); // restores the original timer 
+                sxr.WriteToTaggedFile("AnticipateFile", TempStoreAnticipateNum.ToString() + "," + ResponseTime.ToString()); // writes user response as well as response time to AnticipateFile
 
 
                 // Wait remaining time if any
-                if (objectDelay > 5f)
+                if (objectDelay > WaitTimeTillUserInput)
                 {
-                    yield return new WaitForSeconds(objectDelay - 5f);
+                    yield return new WaitForSeconds(objectDelay - WaitTimeTillUserInput);
                     objectToDisable.SetActive(false); // will deactivate object
                 }
             }
@@ -224,7 +224,7 @@ namespace SampleExperimentScene
             }
 
 
-            userInputComplete = false;
+            userInputComplete = false; // rests flag
         }
 
 
