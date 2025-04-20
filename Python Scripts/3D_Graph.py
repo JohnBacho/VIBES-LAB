@@ -9,6 +9,8 @@ from scipy.stats import gaussian_kde
 # Load data
 df = pd.read_csv("reduced.csv", delimiter=",")
 
+results = []
+
 if "Phase" in df.columns and "TrialNumber" in df.columns:
     grouped = df.groupby(["Phase", "TrialNumber"])
     for (phase, trial), group in grouped:
@@ -33,6 +35,10 @@ if "Phase" in df.columns and "TrialNumber" in df.columns:
         print(f"  Average Velocity: {np.nanmean(velocity):.5f} Unity units/sec")
         print(f"  Max Velocity: {np.nanmax(velocity):.5f}")
         print(f"  Gaze Dispersion: {dispersion:.5f}")
+
+        group.loc[:, "AverageVelocity"] = np.nanmean(velocity)
+        group.loc[:, "Velocity"] = velocity
+        group.loc[:, "GazeDispersion"] = dispersion
 
         # Create 3D plot of gaze
         fig = plt.figure()
@@ -71,5 +77,10 @@ if "Phase" in df.columns and "TrialNumber" in df.columns:
         ax.set_xlim(max(x), min(x))
         plt.tight_layout()
         plt.show()
+
+        results.append(group)
+
+    result_df = pd.concat(results)
+    result_df.to_csv("reduced.csv", index=False)
 else:
     print("Missing 'Phase' and/or 'Trial' columns in the CSV.")
