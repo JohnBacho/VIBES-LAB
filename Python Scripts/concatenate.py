@@ -19,9 +19,9 @@ subject_id = merge_df["SubjectID"].iloc[0]
 date = merge_df["Date"].iloc[0]
 
 # writes file name and saves file
-filename = f"Subject:{int(subject_id)}-Date:{str(date)}.csv"
+filename = f"Subject{int(subject_id)}Date{str(date)}.csv"
 merge_df.to_csv(filename, index=False)
 
-filename = f"Reduced-Subject:{int(subject_id)}-Date:{str(date)}.csv"
+filename = f"Reduced-Subject{int(subject_id)}Date{str(date)}.csv"
 step = merge_df[(merge_df['Phase'] != 1) & (merge_df['Step'] == 0)]
 step.to_csv(filename, index=False)
