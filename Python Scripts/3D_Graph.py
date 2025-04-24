@@ -7,7 +7,7 @@ from sklearn.cluster import KMeans
 from scipy.stats import gaussian_kde
 
 # Load data
-df = pd.read_csv("reduced.csv", delimiter=",")
+df = pd.read_csv("Reduced-Subject0Date4_3.csv", delimiter=",")
 
 results = []
 
@@ -81,6 +81,6 @@ if "Phase" in df.columns and "TrialNumber" in df.columns:
         results.append(group)
 
     result_df = pd.concat(results)
-    result_df.to_csv("reduced.csv", index=False)
+    result_df.to_csv("Reduced-Subject0Date4_3.csv", index=False)
 else:
     print("Missing 'Phase' and/or 'Trial' columns in the CSV.")
