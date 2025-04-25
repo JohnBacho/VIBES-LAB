@@ -1,3 +1,8 @@
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/aa04e915-eb9d-4558-b735-069c5ad0871e" alt="VIBES_LAB_Logo-Transparent" width="300"/>
+</div>
+
+
 # Virtually Immersive BEhavioural Sciences (VIBES) Lab
 
 ## Overview
