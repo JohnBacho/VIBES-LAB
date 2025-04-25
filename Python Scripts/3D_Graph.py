@@ -7,80 +7,80 @@ from sklearn.cluster import KMeans
 from scipy.stats import gaussian_kde
 
 # Load data
-df = pd.read_csv("out.csv", delimiter=",")
+df = pd.read_csv("Reduced-Subject0Date4_3.csv", delimiter=",")
 
-print(df.columns)
+results = []
 
-# Extract coordinates and time
-x = df["GazeHitPointX"]
-y = df["GazeHitPointY"]
-z = df["GazeHitPointZ"]
-time = df["UnityTime"]
-# GameObject = df["GameObjectInFocus"]
+if "Phase" in df.columns and "TrialNumber" in df.columns:
+    grouped = df.groupby(["Phase", "TrialNumber"])
+    for (phase, trial), group in grouped:
+        x = group["GazeHitPointX"].values
+        y = group["GazeHitPointY"].values
+        z = group["GazeHitPointZ"].values
+        time = group["UnityTime"].values
 
-# Compute Velocity (Distance/Time)
-df["Velocity"] = np.sqrt(np.diff(x, prepend=x.iloc[0])**2 + 
-                         np.diff(y, prepend=y.iloc[0])**2 + 
-                         np.diff(z, prepend=z.iloc[0])**2) / np.diff(time, prepend=time.iloc[0])
+        # Handle or drop NaN in time
+        if np.isnan(time).any():
+            print(f"Skipping Phase {phase}, Trial {trial} due to NaN in time.")
+            continue
 
-# Print velocity statistics
-print(f"Average Velocity: {df['Velocity'].mean():.5f} Unity units per second")
+        velocity = np.sqrt(np.diff(x, prepend=x[0])**2 +
+                           np.diff(y, prepend=y[0])**2 +
+                           np.diff(z, prepend=z[0])**2) / np.diff(time, prepend=time[0])
 
-max_velocity_index = df["Velocity"].idxmax()  
-max_velocity_time = df.loc[max_velocity_index, "UnityTime"]  
+        dist_matrix = squareform(pdist(np.column_stack((x, y, z))))
+        dispersion = np.mean(dist_matrix)
 
-print(f"Max Velocity: {df['Velocity'].max():.5f} Unity units per second at time {max_velocity_time:.5f}")
+        print(f"[Phase {phase}, Trial {trial}]")
+        print(f"  Average Velocity: {np.nanmean(velocity):.5f} Unity units/sec")
+        print(f"  Max Velocity: {np.nanmax(velocity):.5f}")
+        print(f"  Gaze Dispersion: {dispersion:.5f}")
 
-# Dispersion Metric (Mean Distance Between Points)
-dist_matrix = squareform(pdist(df[["GazeHitPointX", "GazeHitPointY", "GazeHitPointZ"]]))
-dispersion = np.mean(dist_matrix)
-print(f"Average Gaze Dispersion: {dispersion:.5f}")
+        group.loc[:, "AverageVelocity"] = np.nanmean(velocity)
+        group.loc[:, "Velocity"] = velocity
+        group.loc[:, "GazeDispersion"] = dispersion
 
-# Create plot
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+        # Create 3D plot of gaze
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        sc = ax.scatter(x, y, z, c=time, cmap='viridis', s=20, alpha=0.8)
+        plt.colorbar(sc, ax=ax, shrink=0.5).set_label("Time (UnityTime)")
+        ax.set_xlabel("gazeFixationX")
+        ax.set_ylabel("gazeFixationY")
+        ax.set_zlabel("gazeFixationZ")
+        ax.set_title(f"Gaze Fixation Over Time\nPhase {phase}, Trial {trial}")
+        ax.set_xlim(max(x), min(x))
+        plt.tight_layout()
+        plt.show()
 
-# Scatter plot with time-based coloring
-sc = ax.scatter(x, y, z, c=time, cmap='viridis', s=20, alpha=0.8)
+        # Velocity over time
+        plt.figure(figsize=(8, 5))
+        plt.plot(time, velocity, label="Velocity", color="blue")
+        plt.xlabel("Time (UnityTime)")
+        plt.ylabel("Velocity")
+        plt.title(f"Velocity Over Time\nPhase {phase}, Trial {trial}")
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
 
-# Add color bar
-cbar = plt.colorbar(sc, ax=ax, shrink=0.5)
-cbar.set_label("Time (UnityTime)")
+        # Density plot
+        xyz = np.vstack([x, y, z])
+        density = gaussian_kde(xyz)(xyz)
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        sc = ax.scatter(x, y, z, c=density, cmap='inferno', s=20, alpha=0.8)
+        plt.colorbar(sc, ax=ax, shrink=0.5).set_label("Density (Hotspot Intensity)")
+        ax.set_xlabel("gazeFixationX")
+        ax.set_ylabel("gazeFixationY")
+        ax.set_zlabel("gazeFixationZ")
+        ax.set_title(f"Gaze Fixation Hotspots\nPhase {phase}, Trial {trial}")
+        ax.set_xlim(max(x), min(x))
+        plt.tight_layout()
+        plt.show()
 
-# Labels
-ax.set_xlabel("gazeFixationX")
-ax.set_ylabel("gazeFixationY")
-ax.set_zlabel("gazeFixationZ")
-ax.set_title("Gaze Fixation Over Time")
-ax.set_xlim(max(x), min(x))  # Reverse x-axis
+        results.append(group)
 
-# Plot Velocity Over Time
-plt.figure(figsize=(8, 5))
-plt.plot(time, df["Velocity"], label="Velocity", color="blue")
-plt.xlabel("Time (UnityTime)")
-plt.ylabel("Velocity")
-plt.title("Gaze Movement Velocity Over Time")
-plt.legend()
-plt.show()
-
-xyz = np.vstack([x, y, z])
-density = gaussian_kde(xyz)(xyz)
-
-# Create plot
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-
-# Scatter plot with density-based coloring
-sc = ax.scatter(x, y, z, c=density, cmap='inferno', s=20, alpha=0.8)
-
-# Add color bar
-cbar = plt.colorbar(sc, ax=ax, shrink=0.5)
-cbar.set_label("Density (Hotspot Intensity)")
-ax.set_xlabel("gazeFixationX")
-ax.set_ylabel("gazeFixationY")
-ax.set_zlabel("gazeFixationZ")
-ax.set_title("Gaze Fixation Hotspots")
-ax.set_xlim(max(x), min(x))  # Reverse x-axis
-
-plt.tight_layout()
-plt.show()
+    result_df = pd.concat(results)
+    result_df.to_csv("Reduced-Subject0Date4_3.csv", index=False)
+else:
+    print("Missing 'Phase' and/or 'Trial' columns in the CSV.")
