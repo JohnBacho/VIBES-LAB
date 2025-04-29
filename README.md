@@ -3,7 +3,7 @@
 </div>
 
 
-# Virtually Immersive BEhavioural Sciences (VIBES) Lab
+# Virtually Immersive Behavioural Sciences (VIBES) Lab
 
 ## Overview
 
