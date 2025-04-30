@@ -72,6 +72,10 @@ This project is a collaborative research initiative between the Psychology, Neur
 
 - Alexa Gossett - Neuroscientist, Baldwin Wallace University
 
+- Elizabeth Bell - Psychology, Baldwin Wallace University
+
+- Jace Lander - Software Engineer, Baldwin Wallace University
+
 ## Acknowledgments
 
 - Justin Kasowski – Developer of SimpleOmnia
