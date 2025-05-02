@@ -45,7 +45,7 @@ This project is a collaborative research initiative between the Psychology, Neur
 
   - git clone https://github.com/YOUR_USERNAME/VR-LAB.git
     
-  - cd VR-Lab
+  - cd VIBES-Lab
     
   - Open the project in Unity (recommended version: 2023.1.5f1).
 
