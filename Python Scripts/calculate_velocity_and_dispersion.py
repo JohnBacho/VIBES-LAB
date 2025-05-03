@@ -21,9 +21,12 @@ if "Phase" in df.columns and "TrialNumber" in df.columns:
             print(f"Skipping Phase {phase}, Trial {trial} due to NaN in time.")
             continue
 
+        time_deltas = np.diff(time, prepend=time[0])
+        time_deltas[time_deltas == 0] = np.nan
+
         velocity = np.sqrt(np.diff(x, prepend=x[0])**2 +
                            np.diff(y, prepend=y[0])**2 +
-                           np.diff(z, prepend=z[0])**2) / np.diff(time, prepend=time[0])
+                           np.diff(z, prepend=z[0])**2) / time_deltas
 
         dist_matrix = squareform(pdist(np.column_stack((x, y, z))))
         dispersion = np.mean(dist_matrix)
@@ -33,7 +36,6 @@ if "Phase" in df.columns and "TrialNumber" in df.columns:
         print(f"  Max Velocity: {np.nanmax(velocity):.5f}")
         print(f"  Gaze Dispersion: {dispersion:.5f}")
 
-        group.loc[:, "AverageVelocity"] = np.nanmean(velocity)
         group.loc[:, "Velocity"] = velocity
         group.loc[:, "GazeDispersion"] = dispersion
 
@@ -43,5 +45,3 @@ if "Phase" in df.columns and "TrialNumber" in df.columns:
     result_df.to_csv(file, index=False)
 else:
     print("Missing 'Phase' and/or 'Trial' columns in the CSV.")
-
-    

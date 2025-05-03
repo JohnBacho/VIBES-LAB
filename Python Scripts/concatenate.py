@@ -62,9 +62,13 @@ merge_df['LookDuration'] = None
 
 for idx, row in merge_df.iterrows():
     unity_time = row['UnityTime']
+    focus_object = row['GameObjectInFocus']
 
-    # Find which look time interval this unity_time falls into
-    match = look_times_df[(look_times_df['StartTime'] <= unity_time) & (unity_time <= look_times_df['EndTime'])]
+    match = look_times_df[
+        (look_times_df['GameObject'] == focus_object) &
+        (look_times_df['StartTime'] <= unity_time) &
+        (unity_time <= look_times_df['EndTime'])
+    ]
 
     if not match.empty:
         merge_df.at[idx, 'LookedGameObject'] = match.iloc[0]['GameObject']
