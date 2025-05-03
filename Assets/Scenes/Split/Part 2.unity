@@ -2026,12 +2026,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1970160395}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48569b11d16ee45af9aaa30de14e0c7f, type: 3}
+  m_Script: {fileID: 11500000, guid: debb9d9f6fbfd464bac7bb1e461f4684, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   EyeCalibration: 0
   GazeRays: 0
-  InstructionPhase: 0
   GazeRayObject: {fileID: 1212169513}
   TimeBeforeCS: 0
   TimeAfterCS: 0
@@ -2044,7 +2043,7 @@ MonoBehaviour:
   CS_minus_Sound_Delay: 7
   CS_minus_Object_Interval: 8
   ABATesting: 1
-  ABA_Environment_Color: {r: 0.60617876, g: 0, b: 1, a: 1}
+  ABA_Environment_Color: {r: 0, g: 1, b: 0, a: 1}
   Ceiling: {fileID: 1474067003}
   LeftWall: {fileID: 1892983063}
   RightWall: {fileID: 931929658}
