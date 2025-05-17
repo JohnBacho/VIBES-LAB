@@ -242,6 +242,7 @@ namespace SampleExperimentScene
         void Start()
         {
 
+            Building2.SetActive(false);
             if (EyeCalibration) // set to true in the inspector if you would like to auto launch SRanipal eye tracker calibration
             {
                 sxr.LaunchEyeCalibration();
