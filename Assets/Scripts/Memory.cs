@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using ViveSR.anipal.Eye;
 using sxr_internal;
 using System.Collections; // Required for IEnumerator
@@ -11,16 +11,12 @@ namespace SampleExperimentScene
         public bool EyeCalibration; // toggle for eye tracking
         public GameObject InteractiveUI;
         private bool[] lastKnownStates;
+        private int score;
         public ChangeMaterialOnHover[] targets;
-
         public GameObject RightController;
         public GameObject RightControllerStablized;
-
-
-
         public Material ChangeCubeColor;
         public Material OringalCubeColor;
-
         public GameObject Cube1;
         public GameObject Cube2;
         public GameObject Cube3;
@@ -32,6 +28,7 @@ namespace SampleExperimentScene
         public GameObject Cube9;
 
         private string FocusedGameObject = ""; // used for Sranipal
+        private float ResponseTime;
         private Ray testRay; // used for Sranipal
         private FocusInfo focusInfo; // used for Sranipal
         private Vector3 gazeHitPoint; // used in calculating eye tracking data with collisions
@@ -40,7 +37,9 @@ namespace SampleExperimentScene
         private bool StartEyeTracker = false; //used to start the CheckFocus(); function which calculates the eye 
         // tracking data ensuring that all three cameratrack / eyetracker / mainfile are all started at the exact same time
         private string headers = "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus"; // used to write headers to the mainfile
-        private string[] CubeValues;
+        private string CubeHeaders = "Cube1,Cube2,Cube3,Cube4,Cube5,Cube6,Cube7,Cube8,Cube9,Score";
+        private bool[] CubeValues;
+        private bool[] Answers1 = new bool[] { true, false, true, false, true, false, true, false, true };
 
         public void StartCS(GameObject CS_Object, GameObject CS_Sound, float CS_Sound_Delay, float CS_Object_Interval, float timeUntilCSStarts, float TotalTrialTimeCs)
         {
@@ -72,7 +71,6 @@ namespace SampleExperimentScene
         public void SetPressedTrue()
         {
             isPressed = true;
-            Debug.Log("Button was pressed!");
         }
 
         public void ChangeColor(GameObject Cube, Material color)
@@ -161,7 +159,7 @@ namespace SampleExperimentScene
 
         void Start()
         {
-            CubeValues = new string[targets.Length];
+            CubeValues = new bool[targets.Length];
             lastKnownStates = new bool[targets.Length];
             for (int i = 0; i < targets.Length; i++)
             {
@@ -197,6 +195,7 @@ namespace SampleExperimentScene
                     if (!hasExecuted)
                     {
                         sxr.WriteHeaderToTaggedFile("mainFile", headers);
+                        sxr.WriteHeaderToTaggedFile("CubeFile", CubeHeaders);
                         hasExecuted = true; // set to true so this block of code only runs once
                         sxr.StartTimer(5);
                     }
@@ -230,6 +229,14 @@ namespace SampleExperimentScene
 
                                     if (sxr.CheckTimer())
                                     {
+                                        hasExecuted = false;
+                                        sxr.NextStep();
+                                    }
+                                    break;
+
+                                case 1:
+                                    if (!hasExecuted)
+                                    {
                                         RightController.SetActive(true);
                                         RightControllerStablized.SetActive(true);
                                         ChangeColor(Cube1, OringalCubeColor);
@@ -238,29 +245,31 @@ namespace SampleExperimentScene
                                         ChangeColor(Cube7, OringalCubeColor);
                                         ChangeColor(Cube3, OringalCubeColor);
                                         InteractiveUI.SetActive(true);
-                                        sxr.NextStep();
+                                        sxr.StartTimer(99);
+                                        hasExecuted = true;
                                     }
-                                    break;
 
-                                case 1:
                                     if (isPressed)
                                     {
-
+                                        ResponseTime = sxr.TimePassed();
                                         InteractiveUI.SetActive(false);
                                         isPressed = false;
                                         Debug.Log("Button Pressed .......................");
                                         for (int i = 0; i < targets.Length; i++)
                                         {
                                             bool currentState = targets[i].IsSelected;
-                                            CubeValues[i] = "Cube" + (i + 1) + currentState.ToString();
+                                            CubeValues[i] = currentState;
+
+                                            if (currentState == true && Answers1[i] == true)
+                                            {
+                                                score++;
+                                            }
                                         }
 
-                                        // This will not print useful data unless CubeValues is a string array.
-                                        // If you want to print the array as a whole:
-                                        Debug.Log(string.Join(", ", CubeValues));
-
+                                        Debug.Log(score);
                                         InteractiveUI.SetActive(false);
                                         isPressed = false;
+                                        sxr.WriteToTaggedFile("CubeFile", string.Join(",", CubeValues) + "," + score.ToString() + ',' + ResponseTime.ToString());
                                         sxr.NextTrial();
                                     }
 
