@@ -9,15 +9,15 @@ namespace SampleExperimentScene
     public class Memory : MonoBehaviour
     {
         public bool EyeCalibration; // toggle for eye tracking
-        public GameObject InteractiveUI; 
+        public GameObject InteractiveUI;
         private bool[] lastKnownStates;
         public ChangeMaterialOnHover[] targets;
 
-        public GameObject RightController; 
-        public GameObject RightControllerStablized; 
+        public GameObject RightController;
+        public GameObject RightControllerStablized;
 
 
-        
+
         public Material ChangeCubeColor;
         public Material OringalCubeColor;
 
@@ -66,7 +66,7 @@ namespace SampleExperimentScene
                 hasStartedCS = false;
             }
         }
-        
+
         private bool isPressed = false;
 
         public void SetPressedTrue()
@@ -97,11 +97,11 @@ namespace SampleExperimentScene
         }
 
 
-    void HandleBoolChanged(bool isSelected)
-    {
-        Debug.Log("ChangeMaterialOnHover changed: " + isSelected);
-        // Do your logic here
-    }
+        void HandleBoolChanged(bool isSelected)
+        {
+            Debug.Log("ChangeMaterialOnHover changed: " + isSelected);
+            // Do your logic here
+        }
 
         // Coroutine to disable the object after a delay
         IEnumerator DisableObjects(GameObject objectToDisable, float ObjectDelay)
@@ -117,24 +117,24 @@ namespace SampleExperimentScene
             }
         }
 
-            void HandleSelectionChanged(bool isNowSelected)
-            {
-                Debug.Log("Selection state changed to: " + isNowSelected);
-            }
+        void HandleSelectionChanged(bool isNowSelected)
+        {
+            Debug.Log("Selection state changed to: " + isNowSelected);
+        }
 
-            void OnDestroy()
+        void OnDestroy()
+        {
+            if (targets != null)
             {
-                if (targets != null)
+                for (int i = 0; i < targets.Length; i++)
                 {
-                    for (int i = 0; i < targets.Length; i++)
+                    if (targets[i] != null)
                     {
-                        if (targets[i] != null)
-                        {
-                            targets[i].OnBoolChanged -= HandleSelectionChanged;
-                        }
+                        targets[i].OnBoolChanged -= HandleSelectionChanged;
                     }
                 }
             }
+        }
 
 
         void CheckFocus() // Main driver of eye tracking 
@@ -161,12 +161,12 @@ namespace SampleExperimentScene
 
         void Start()
         {
-        CubeValues = new string[targets.Length];
-        lastKnownStates = new bool[targets.Length];
-        for (int i = 0; i < targets.Length; i++)
-        {
-            lastKnownStates[i] = targets[i].IsSelected;
-        }
+            CubeValues = new string[targets.Length];
+            lastKnownStates = new bool[targets.Length];
+            for (int i = 0; i < targets.Length; i++)
+            {
+                lastKnownStates[i] = targets[i].IsSelected;
+            }
 
 
             if (EyeCalibration) // set to true in the inspector if you would like to auto launch SRanipal eye tracker calibration
@@ -198,7 +198,7 @@ namespace SampleExperimentScene
                     {
                         sxr.WriteHeaderToTaggedFile("mainFile", headers);
                         hasExecuted = true; // set to true so this block of code only runs once
-                         sxr.StartTimer(5);
+                        sxr.StartTimer(5);
                     }
 
                     if (sxr.CheckTimer()) // checks if the timer has reached zero
@@ -219,13 +219,13 @@ namespace SampleExperimentScene
                                 case 0: // CS+
                                     if (!hasExecuted)
                                     {
-                                    sxr.StartTimer(3);
-                                    ChangeColor(Cube1, ChangeCubeColor);
-                                    ChangeColor(Cube5, ChangeCubeColor);
-                                    ChangeColor(Cube9, ChangeCubeColor);
-                                    ChangeColor(Cube7, ChangeCubeColor);
-                                    ChangeColor(Cube3, ChangeCubeColor);
-                                    hasExecuted = true;
+                                        sxr.StartTimer(3);
+                                        ChangeColor(Cube1, ChangeCubeColor);
+                                        ChangeColor(Cube5, ChangeCubeColor);
+                                        ChangeColor(Cube9, ChangeCubeColor);
+                                        ChangeColor(Cube7, ChangeCubeColor);
+                                        ChangeColor(Cube3, ChangeCubeColor);
+                                        hasExecuted = true;
                                     }
 
                                     if (sxr.CheckTimer())
@@ -239,13 +239,13 @@ namespace SampleExperimentScene
                                         ChangeColor(Cube3, OringalCubeColor);
                                         InteractiveUI.SetActive(true);
                                         sxr.NextStep();
-                                     }
+                                    }
                                     break;
 
                                 case 1:
                                     if (isPressed)
                                     {
-                                        
+
                                         InteractiveUI.SetActive(false);
                                         isPressed = false;
                                         Debug.Log("Button Pressed .......................");
@@ -264,7 +264,7 @@ namespace SampleExperimentScene
                                         sxr.NextTrial();
                                     }
 
-                             break;
+                                    break;
                             }
                             break;
 
@@ -317,8 +317,8 @@ namespace SampleExperimentScene
 
                     }
                     break; // End of phase case 2
-                    }
             }
-
         }
+
     }
+}
