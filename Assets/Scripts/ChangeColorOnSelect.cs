@@ -57,4 +57,12 @@ public class ChangeMaterialOnHover : MonoBehaviour
         OnBoolChanged?.Invoke(isSelected); // 👈 Fire the event
         meshRenderer.material = isSelected ? selectedMaterial : originalMaterial;
     }
+
+    public void ResetState()
+    {
+        isSelected = false;
+        meshRenderer.material = originalMaterial;
+        OnBoolChanged?.Invoke(isSelected);
+    }
+
 }

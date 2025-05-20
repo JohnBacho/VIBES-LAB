@@ -17,15 +17,7 @@ namespace SampleExperimentScene
         public GameObject RightControllerStablized;
         public Material ChangeCubeColor;
         public Material OringalCubeColor;
-        public GameObject Cube1;
-        public GameObject Cube2;
-        public GameObject Cube3;
-        public GameObject Cube4;
-        public GameObject Cube5;
-        public GameObject Cube6;
-        public GameObject Cube7;
-        public GameObject Cube8;
-        public GameObject Cube9;
+        public GameObject[] cubes;
 
         private string FocusedGameObject = ""; // used for Sranipal
         private float ResponseTime;
@@ -37,34 +29,9 @@ namespace SampleExperimentScene
         private bool StartEyeTracker = false; //used to start the CheckFocus(); function which calculates the eye 
         // tracking data ensuring that all three cameratrack / eyetracker / mainfile are all started at the exact same time
         private string headers = "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus"; // used to write headers to the mainfile
-        private string CubeHeaders = "Cube1,Cube2,Cube3,Cube4,Cube5,Cube6,Cube7,Cube8,Cube9,Score";
+        private string CubeHeaders = "Cube1,Cube2,Cube3,Cube4,Cube5,Cube6,Cube7,Cube8,Cube9,Score,ResponseTime";
         private bool[] CubeValues;
         private bool[] Answers1 = new bool[] { true, false, true, false, true, false, true, false, true };
-
-        public void StartCS(GameObject CS_Object, GameObject CS_Sound, float CS_Sound_Delay, float CS_Object_Interval, float timeUntilCSStarts, float TotalTrialTimeCs)
-        {
-            if (!hasExecuted)
-            {
-                sxr.StartTimer(TotalTrialTimeCs); // sets the timer based on TimeBeforeCS + TimeAfterCS;
-                hasExecuted = true;
-            }
-
-            // since TimeRemaining is a float point it doesn't exactly reach ie 10s on the dot instead it's 10.0123s so we have to do less than zero and hasStartedCSPlus/Minus is so it only executes once
-            if (!hasStartedCS && (sxr.TimeRemaining() - timeUntilCSStarts) <= 0)
-            {
-                // Activate object and play sound after delay
-                hasStartedCS = true;
-                CS_Object.SetActive(true);
-                StartCoroutine(DisableObjects(CS_Object, CS_Object_Interval)); // calls function to deactivate sound with delay
-            }
-
-            if (sxr.CheckTimer()) // checks if timer is zero
-            {
-                sxr.NextStep(); // advances to inter trial interval and sets hasExecuted to false
-                hasExecuted = false;
-                hasStartedCS = false;
-            }
-        }
 
         private bool isPressed = false;
 
@@ -72,6 +39,62 @@ namespace SampleExperimentScene
         {
             isPressed = true;
         }
+
+        public void DisplayPattern(bool[] cubeFlags)
+        {
+            if (cubeFlags.Length != cubes.Length)
+            {
+                Debug.LogWarning("cubeFlags doesn't match the length of targets");
+            }
+            sxr.StartTimer(3);
+
+            for (int i = 0; i < cubeFlags.Length; i++)
+            {
+                if (cubeFlags[i])
+                {
+                    ChangeColor(cubes[i], ChangeCubeColor);
+                }
+            }
+            hasExecuted = true;
+
+        }
+
+        public void ParticipantInteraction()
+        {
+            RightController.SetActive(true);
+            RightControllerStablized.SetActive(true);
+            for (int i = 0; i < cubes.Length; i++)
+            {
+                ChangeColor(cubes[i], OringalCubeColor);
+            }
+            InteractiveUI.SetActive(true);
+            sxr.StartTimer(999);
+            hasExecuted = true;
+
+        }
+
+        public void ButtonPressed()
+        {
+            ResponseTime = sxr.TimePassed();
+            InteractiveUI.SetActive(false);
+            isPressed = false;
+            for (int i = 0; i < targets.Length; i++)
+            {
+                bool currentState = targets[i].IsSelected;
+                CubeValues[i] = currentState;
+
+                if (currentState == true && Answers1[i] == true)
+                {
+                    score++;
+                }
+                targets[i].ResetState();
+            }
+            Debug.Log(score);
+            InteractiveUI.SetActive(false);
+            isPressed = false;
+            sxr.WriteToTaggedFile("CubeFile", string.Join(",", CubeValues) + "," + score.ToString() + ',' + ResponseTime.ToString());
+        }
+
 
         public void ChangeColor(GameObject Cube, Material color)
         {
@@ -218,13 +241,11 @@ namespace SampleExperimentScene
                                 case 0: // CS+
                                     if (!hasExecuted)
                                     {
-                                        sxr.StartTimer(3);
-                                        ChangeColor(Cube1, ChangeCubeColor);
-                                        ChangeColor(Cube5, ChangeCubeColor);
-                                        ChangeColor(Cube9, ChangeCubeColor);
-                                        ChangeColor(Cube7, ChangeCubeColor);
-                                        ChangeColor(Cube3, ChangeCubeColor);
-                                        hasExecuted = true;
+                                        DisplayPattern(new bool[] {
+                                            true, false, true,
+                                            false, true, false,
+                                            true, false, true
+                                        });
                                     }
 
                                     if (sxr.CheckTimer())
@@ -237,39 +258,12 @@ namespace SampleExperimentScene
                                 case 1:
                                     if (!hasExecuted)
                                     {
-                                        RightController.SetActive(true);
-                                        RightControllerStablized.SetActive(true);
-                                        ChangeColor(Cube1, OringalCubeColor);
-                                        ChangeColor(Cube5, OringalCubeColor);
-                                        ChangeColor(Cube9, OringalCubeColor);
-                                        ChangeColor(Cube7, OringalCubeColor);
-                                        ChangeColor(Cube3, OringalCubeColor);
-                                        InteractiveUI.SetActive(true);
-                                        sxr.StartTimer(99);
-                                        hasExecuted = true;
+                                        ParticipantInteraction();
                                     }
 
                                     if (isPressed)
                                     {
-                                        ResponseTime = sxr.TimePassed();
-                                        InteractiveUI.SetActive(false);
-                                        isPressed = false;
-                                        Debug.Log("Button Pressed .......................");
-                                        for (int i = 0; i < targets.Length; i++)
-                                        {
-                                            bool currentState = targets[i].IsSelected;
-                                            CubeValues[i] = currentState;
-
-                                            if (currentState == true && Answers1[i] == true)
-                                            {
-                                                score++;
-                                            }
-                                        }
-
-                                        Debug.Log(score);
-                                        InteractiveUI.SetActive(false);
-                                        isPressed = false;
-                                        sxr.WriteToTaggedFile("CubeFile", string.Join(",", CubeValues) + "," + score.ToString() + ',' + ResponseTime.ToString());
+                                        ButtonPressed();
                                         sxr.NextTrial();
                                     }
 
