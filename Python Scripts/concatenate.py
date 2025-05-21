@@ -22,35 +22,38 @@ look_times = []
 current_object = None
 start_time = None
 
-for idx, row in merge_df.iterrows():
+for idx in range(len(merge_df)):
+    row = merge_df.iloc[idx]
     game_object = row['GameObjectInFocus']
     unity_time = row['UnityTime']
 
     if current_object is None:
         current_object = game_object
         start_time = unity_time
+        continue
 
     if game_object != current_object:
-        # Object changed, calculate look time
-        duration = unity_time - start_time
+        # Use the previous row's UnityTime as the actual end time
+        end_time = merge_df.iloc[idx - 1]['UnityTime']
+        duration = end_time - start_time
         look_times.append({
             'GameObject': current_object,
             'StartTime': start_time,
-            'EndTime': unity_time,
+            'EndTime': end_time,
             'Duration': duration
         })
 
-        # Reset for new object
         current_object = game_object
         start_time = unity_time
 
-# Handle last object (if still looking at something)
+# Handle last object
 if current_object is not None and start_time is not None:
-    duration = merge_df.iloc[-1]['UnityTime'] - start_time
+    end_time = merge_df.iloc[-1]['UnityTime']
+    duration = end_time - start_time
     look_times.append({
         'GameObject': current_object,
         'StartTime': start_time,
-        'EndTime': merge_df.iloc[-1]['UnityTime'],
+        'EndTime': end_time,
         'Duration': duration
     })
 
