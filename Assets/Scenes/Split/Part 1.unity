@@ -1868,7 +1868,7 @@ GameObject:
   - component: {fileID: 1900603031}
   - component: {fileID: 1900603032}
   m_Layer: 0
-  m_Name: CS- Sound
+  m_Name: No Sound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2030,19 +2030,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EyeCalibration: 0
-  GazeRays: 0
   InstructionPhase: 0
-  GazeRayObject: {fileID: 1212169513}
-  TimeBeforeCS: 0
-  TimeAfterCS: 0
   CS_plus_Object: {fileID: 792466238}
-  CS_plus_Sound: {fileID: 2124453806}
-  CS_plus_Sound_Delay: 7
   CS_plus_Object_Interval: 8
   CS_minus_Object: {fileID: 506905802}
-  CS_minus_Sound: {fileID: 1900603030}
-  CS_minus_Sound_Delay: 7
   CS_minus_Object_Interval: 8
+  US_Sound: {fileID: 2124453806}
+  US_Sound_Delay: 7
   ABATesting: 1
   ABA_Environment_Color: {r: 0.006026745, g: 0, b: 1, a: 1}
   Ceiling: {fileID: 1474067003}
@@ -2055,6 +2049,8 @@ MonoBehaviour:
   RIGHTControlStabilized: {fileID: 1126951193}
   RightEnviormentController: {fileID: 1208664798}
   RightControllerEnvironmentStabilized: {fileID: 1572637430}
+  NoSoundObject: {fileID: 1900603030}
+  NoSoundDelay: 0
 --- !u!1 &1993520583
 GameObject:
   m_ObjectHideFlags: 0
@@ -2171,7 +2167,7 @@ GameObject:
   - component: {fileID: 2124453808}
   - component: {fileID: 2124453807}
   m_Layer: 0
-  m_Name: CS+ Sound
+  m_Name: US Sound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

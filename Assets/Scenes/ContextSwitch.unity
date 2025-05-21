@@ -6477,7 +6477,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 150.00002
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -8529,7 +8529,7 @@ GameObject:
   - component: {fileID: 1900603031}
   - component: {fileID: 1900603032}
   m_Layer: 0
-  m_Name: CS- Sound
+  m_Name: No Sound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8952,19 +8952,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EyeCalibration: 0
-  GazeRays: 0
   InstructionPhase: 0
-  GazeRayObject: {fileID: 1212169513}
-  TimeBeforeCS: 0
-  TimeAfterCS: 0
   CS_plus_Object: {fileID: 792466238}
-  CS_plus_Sound: {fileID: 2124453806}
-  CS_plus_Sound_Delay: 7
   CS_plus_Object_Interval: 8
   CS_minus_Object: {fileID: 506905802}
-  CS_minus_Sound: {fileID: 1900603030}
-  CS_minus_Sound_Delay: 7
   CS_minus_Object_Interval: 8
+  US_Sound: {fileID: 2124453806}
+  US_Sound_Delay: 7
   ABATesting: 1
   Building1: {fileID: 1140153487}
   Building2: {fileID: 223467010}
@@ -8972,6 +8966,8 @@ MonoBehaviour:
   RIGHTControlStabilized: {fileID: 1126951193}
   RightEnviormentController: {fileID: 1208664798}
   RightControllerEnvironmentStabilized: {fileID: 1572637430}
+  NoSoundObject: {fileID: 1900603030}
+  NoSoundDelay: 0
 --- !u!4 &1979809590 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3633274115501892773, guid: 1601c144309b10f4bbb1d7403e9ef29a, type: 3}
@@ -9463,7 +9459,7 @@ GameObject:
   - component: {fileID: 2124453808}
   - component: {fileID: 2124453807}
   m_Layer: 0
-  m_Name: CS+ Sound
+  m_Name: US Sound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
