@@ -88,7 +88,7 @@ namespace SampleExperimentScene
                 bool currentState = targets[i].IsSelected;
                 CubeValues[i] = currentState;
 
-                if (currentState == true && Answers[i] == true)
+                if (currentState == Answers[i])
                 {
                     score++;
                 }
@@ -126,22 +126,9 @@ namespace SampleExperimentScene
         void HandleBoolChanged(bool isSelected)
         {
             Debug.Log("ChangeMaterialOnHover changed: " + isSelected);
-            // Do your logic here
         }
 
         // Coroutine to disable the object after a delay
-        IEnumerator DisableObjects(GameObject objectToDisable, float ObjectDelay)
-        {
-            yield return new WaitForSeconds(ObjectDelay); // Delay determines how long it should wait to deactivate object
-            if (objectToDisable != null)
-            {
-                objectToDisable.SetActive(false); // will deactivate object
-            }
-            else
-            {
-                Debug.LogWarning("The GameObject to disable is null!"); // error handling
-            }
-        }
 
         void HandleSelectionChanged(bool isNowSelected)
         {
@@ -210,7 +197,7 @@ namespace SampleExperimentScene
             {
                 CubeHeaders += "Cube" + (i + 1) + ",";
             }
-            
+
             CubeHeaders += "Score,ResponseTime";
         }
 
