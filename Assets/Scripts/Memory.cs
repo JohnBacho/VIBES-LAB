@@ -37,6 +37,11 @@ namespace SampleExperimentScene
                                                false, true, false, true, true,
                                                false, true, false, true, true,
                                                false, true, false, true, true };
+        private bool[] Pattern2 = new bool[] { true, false, true, false, true,
+                                               false, true, false, true, false,
+                                               false, true, false, false, false,
+                                               false, false, false, true, false,
+                                               false, true, false, true, true };
 
         private bool isPressed = false;
 
@@ -45,13 +50,13 @@ namespace SampleExperimentScene
             isPressed = true;
         }
 
-        public void DisplayPattern(bool[] cubeFlags)
+        public void DisplayPattern(bool[] cubeFlags, int SetTimer)
         {
             if (cubeFlags.Length != cubes.Length)
             {
                 Debug.LogError("cubeFlags doesn't match the length of targets");
             }
-            sxr.StartTimer(3);
+            sxr.StartTimer(SetTimer);
 
             for (int i = 0; i < cubeFlags.Length; i++)
             {
@@ -98,6 +103,9 @@ namespace SampleExperimentScene
             InteractiveUI.SetActive(false);
             isPressed = false;
             sxr.WriteToTaggedFile("CubeFile", string.Join(",", CubeValues) + "," + score.ToString() + ',' + ResponseTime.ToString());
+            score = 0;
+            RightController.SetActive(false);
+            RightControllerStablized.SetActive(false);
         }
 
 
@@ -246,7 +254,7 @@ namespace SampleExperimentScene
                                 case 0: // CS+
                                     if (!hasExecuted)
                                     {
-                                        DisplayPattern(Pattern1);
+                                        DisplayPattern(Pattern1, 3);
                                     }
 
                                     if (sxr.CheckTimer())
@@ -265,6 +273,7 @@ namespace SampleExperimentScene
                                     if (isPressed)
                                     {
                                         ButtonPressed(Pattern1);
+                                        hasExecuted = false;
                                         sxr.NextTrial();
                                     }
 
@@ -275,11 +284,32 @@ namespace SampleExperimentScene
                         case 1: // CS-
                             switch (sxr.GetStepInTrial())
                             {
-                                case 0: // CS-
+                                case 0: // CS+
+                                    if (!hasExecuted)
+                                    {
+                                        DisplayPattern(Pattern2, 5);
+                                    }
+
+                                    if (sxr.CheckTimer())
+                                    {
+                                        hasExecuted = false;
+                                        sxr.NextStep();
+                                    }
                                     break;
 
-                                case 1: // inter trial interval
-                                    InterTrial(14f);
+                                case 1:
+                                    if (!hasExecuted)
+                                    {
+                                        ParticipantInteraction();
+                                    }
+
+                                    if (isPressed)
+                                    {
+                                        ButtonPressed(Pattern2);
+                                        hasExecuted = false;
+                                        sxr.NextTrial();
+                                    }
+
                                     break;
                             }
                             break;
