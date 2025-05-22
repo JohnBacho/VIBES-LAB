@@ -2,6 +2,7 @@ using UnityEngine;
 using ViveSR.anipal.Eye;
 using sxr_internal;
 using System.Collections; // Required for IEnumerator
+using UnityEditor;
 
 
 namespace SampleExperimentScene
@@ -21,17 +22,21 @@ namespace SampleExperimentScene
 
         private string FocusedGameObject = ""; // used for Sranipal
         private float ResponseTime;
+        private PreviewRenderUtility previewRenderUtility; // Stops unity from bitching
         private Ray testRay; // used for Sranipal
         private FocusInfo focusInfo; // used for Sranipal
         private Vector3 gazeHitPoint; // used in calculating eye tracking data with collisions
         private bool hasExecuted = false; //  used as a way to execute one block of code only once
-        private bool hasStartedCS = false; // used to execute the start of the CS+ only once
         private bool StartEyeTracker = false; //used to start the CheckFocus(); function which calculates the eye 
         // tracking data ensuring that all three cameratrack / eyetracker / mainfile are all started at the exact same time
         private string headers = "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus"; // used to write headers to the mainfile
-        private string CubeHeaders = "Cube1,Cube2,Cube3,Cube4,Cube5,Cube6,Cube7,Cube8,Cube9,Score,ResponseTime";
+        private string CubeHeaders;
         private bool[] CubeValues;
-        private bool[] Answers1 = new bool[] { true, false, true, false, true, false, true, false, true };
+        private bool[] Pattern1 = new bool[] { true, false, true, false, true,
+                                               false, true, false, true, true,
+                                               false, true, false, true, true,
+                                               false, true, false, true, true,
+                                               false, true, false, true, true };
 
         private bool isPressed = false;
 
@@ -44,7 +49,7 @@ namespace SampleExperimentScene
         {
             if (cubeFlags.Length != cubes.Length)
             {
-                Debug.LogWarning("cubeFlags doesn't match the length of targets");
+                Debug.LogError("cubeFlags doesn't match the length of targets");
             }
             sxr.StartTimer(3);
 
@@ -73,7 +78,7 @@ namespace SampleExperimentScene
 
         }
 
-        public void ButtonPressed()
+        public void ButtonPressed(bool[] Answers)
         {
             ResponseTime = sxr.TimePassed();
             InteractiveUI.SetActive(false);
@@ -83,7 +88,7 @@ namespace SampleExperimentScene
                 bool currentState = targets[i].IsSelected;
                 CubeValues[i] = currentState;
 
-                if (currentState == true && Answers1[i] == true)
+                if (currentState == true && Answers[i] == true)
                 {
                     score++;
                 }
@@ -155,6 +160,12 @@ namespace SampleExperimentScene
                     }
                 }
             }
+
+            if (previewRenderUtility != null)
+            {
+                previewRenderUtility.Cleanup();
+                previewRenderUtility = null;
+            }
         }
 
 
@@ -194,6 +205,13 @@ namespace SampleExperimentScene
             {
                 sxr.LaunchEyeCalibration();
             }
+
+            for (int i = 0; i < cubes.Length; i++)
+            {
+                CubeHeaders += "Cube" + (i + 1) + ",";
+            }
+            
+            CubeHeaders += "Score,ResponseTime";
         }
 
         void Update()
@@ -241,11 +259,7 @@ namespace SampleExperimentScene
                                 case 0: // CS+
                                     if (!hasExecuted)
                                     {
-                                        DisplayPattern(new bool[] {
-                                            true, false, true,
-                                            false, true, false,
-                                            true, false, true
-                                        });
+                                        DisplayPattern(Pattern1);
                                     }
 
                                     if (sxr.CheckTimer())
@@ -263,7 +277,7 @@ namespace SampleExperimentScene
 
                                     if (isPressed)
                                     {
-                                        ButtonPressed();
+                                        ButtonPressed(Pattern1);
                                         sxr.NextTrial();
                                     }
 
