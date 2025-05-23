@@ -5,8 +5,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR;
 using InputDevice = UnityEngine.XR.InputDevice;
+using ViveSR.anipal.Eye;
 
-namespace sxr_internal {
+
+namespace sxr_internal
+{
 #if SXR_USE_SRANIPAL
     using ViveSR.anipal.Eye;
 
@@ -22,14 +25,20 @@ namespace sxr_internal {
 
         private bool recordEyeTracker; 
         private bool headerPrinted;
+                private string FocusedGameObject = ""; // used for Sranipal
+        private Ray testRay; // used for Sranipal
+        private FocusInfo focusInfo; // used for Sranipal
+        private Vector3 gazeHitPoint; // used in calculating eye tracking data with collisions
 
         public void WriteEyeTrackerHeader() {
-            ExperimentHandler.Instance.WriteHeaderToTaggedFile("eyetracker",
-                "screenFixationX,screenFixationY,gazeFixationX,gazeFixationY," +
-                "gazeFixationZ,localGazeX,localGazeY,localGazeZ,leftEyePositionX,"+
-                "leftEyePositionY,leftEyePositionZ,rightEyePositionX,rightEyePositionY,rightEyePositionZ," +
-                "leftEyeRotationX,leftEyeRotationY,leftEyeRotationZ,rightEyeRotationX,rightEyeRotationY," +
-                "rightEyeRotationZ,leftEyePupilSize,rightEyePupilSize,leftEyeOpenAmount,rightEyeOpenAmount");
+        ExperimentHandler.Instance.WriteHeaderToTaggedFile("eyetracker",
+            "screenFixationX,screenFixationY,gazeFixationX,gazeFixationY," +
+            "gazeFixationZ,localGazeX,localGazeY,localGazeZ,leftEyePositionX," +
+            "leftEyePositionY,leftEyePositionZ,rightEyePositionX,rightEyePositionY,rightEyePositionZ," +
+            "leftEyeRotationX,leftEyeRotationY,leftEyeRotationZ,rightEyeRotationX,rightEyeRotationY," +
+            "rightEyeRotationZ,leftEyePupilSize,rightEyePupilSize,leftEyeOpenAmount,rightEyeOpenAmount," +
+            "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus");
+
             headerPrinted=true;}
         
         public void StartRecording() {
@@ -41,6 +50,25 @@ namespace sxr_internal {
             recordEyeTracker = false;
             if(toWrite != "") ExperimentHandler.Instance.WriteToTaggedFile("eyetracker", toWrite, includeTimeStepInfo:false);
             toWrite = ""; 
+        }
+
+        private string CheckFocusedObject()
+        {
+            
+            // Try to get gaze focus from either eye
+            if (!SRanipal_Eye.Focus(GazeIndex.COMBINE, out testRay, out focusInfo) &&
+                !SRanipal_Eye.Focus(GazeIndex.LEFT, out testRay, out focusInfo) &&
+                !SRanipal_Eye.Focus(GazeIndex.RIGHT, out testRay, out focusInfo))
+            {
+                return ",NoFocus";  // or return empty string "" if you prefer
+            }
+
+            string focusedGameObject = focusInfo.collider.gameObject.name;
+            Vector3 gazeHitPoint = focusInfo.point;
+
+            // Return formatted data
+            return "," + gazeHitPoint.x + "," + gazeHitPoint.y + "," + gazeHitPoint.z + "," + focusedGameObject;
+
         }
 
         public bool RecordingGaze() { return recordEyeTracker; }
@@ -59,10 +87,10 @@ namespace sxr_internal {
                     LeftEyeRotation() +","+ RightEyeRotation() +","+ LeftEyePupilSize() +","+ RightEyePupilSize() + ","+
                     LeftEyeOpenAmount() +","+ RightEyeOpenAmount()).Replace("(","").Replace(")","");
         }
-
+        
         public void Update() {
             if (sxrSettings.Instance.RecordThisFrame() & recordEyeTracker)
-                toWrite += ExperimentHandler.Instance.timeStepToWriteInfo()+GetFullGazeInfo() + "\n"; }
+                toWrite += ExperimentHandler.Instance.timeStepToWriteInfo()+GetFullGazeInfo() + CheckFocusedObject() + "\n"; }
 
         void UpdateGaze() {
             if (lastUpdate != sxrSettings.Instance.GetCurrentFrame()) {
@@ -164,58 +192,96 @@ namespace sxr_internal {
     }
 
 #else
-    public class GazeHandler : MonoBehaviour {
-    
+    public class GazeHandler : MonoBehaviour
+    {
+
         private InputDevice eyeTracker;
         private Eyes eyesData;
         private Camera vrCamera;
 
-        private string toWrite = ""; 
+        private string toWrite = "";
         private int lastUpdate;
-        private bool recordEyeTracker; 
+        private bool recordEyeTracker;
         private bool headerPrinted;
 
-        public void WriteEyeTrackerHeader() {
+        private string FocusedGameObject = ""; // used for Sranipal
+        private Ray testRay; // used for Sranipal
+        private FocusInfo focusInfo; // used for Sranipal
+        private Vector3 gazeHitPoint; // used in calculating eye tracking data with collisions
+
+        public void WriteEyeTrackerHeader()
+        {
             ExperimentHandler.Instance.WriteHeaderToTaggedFile("eyetracker",
-                "screenFixationX,screenFixationY,gazeFixationX,gazeFixationY,gazeFixationZ,leftEyePositionX,"+
+                "screenFixationX,screenFixationY,gazeFixationX,gazeFixationY,gazeFixationZ,leftEyePositionX," +
                 "leftEyePositionY,leftEyePositionZ,rightEyePositionX,rightEyePositionY,rightEyePositionZ," +
                 "leftEyeRotationX,leftEyeRotationY,leftEyeRotationZ,rightEyeRotationX,rightEyeRotationY," +
-                "rightEyeRotationZ,leftEyePupilSize,rightEyePupilSize,leftEyeOpenAmount,rightEyeOpenAmount");
-            headerPrinted=true; }
-        
-        public void StartRecording() {
-            if (!headerPrinted) WriteEyeTrackerHeader();
-            recordEyeTracker = true; }
+                "rightEyeRotationZ,leftEyePupilSize,rightEyePupilSize,leftEyeOpenAmount,rightEyeOpenAmount,");
+            headerPrinted = true;
+        }
 
-        public void PauseRecording() {
+        private string CheckFocusedObject()
+        {
+
+            // Try to get gaze focus from either eye
+            if (!SRanipal_Eye.Focus(GazeIndex.COMBINE, out testRay, out focusInfo) &&
+                !SRanipal_Eye.Focus(GazeIndex.LEFT, out testRay, out focusInfo) &&
+                !SRanipal_Eye.Focus(GazeIndex.RIGHT, out testRay, out focusInfo))
+            {
+                return ",NoFocus";  // or return empty string "" if you prefer
+            }
+
+            string focusedGameObject = focusInfo.collider.gameObject.name;
+            Vector3 gazeHitPoint = focusInfo.point;
+
+            // Return formatted data
+            return "," + gazeHitPoint.x + "," + gazeHitPoint.y + "," + gazeHitPoint.z + "," + focusedGameObject;
+        }
+
+
+        public void StartRecording()
+        {
+            if (!headerPrinted) WriteEyeTrackerHeader();
+            recordEyeTracker = true;
+        }
+
+        public void PauseRecording()
+        {
             recordEyeTracker = false;
-            if(toWrite != "") ExperimentHandler.Instance.WriteToTaggedFile("eyetracker", toWrite, includeTimeStepInfo:false);
-            toWrite = ""; }
+            if (toWrite != "") ExperimentHandler.Instance.WriteToTaggedFile("eyetracker", toWrite, includeTimeStepInfo: false);
+            toWrite = "";
+        }
 
         public bool RecordingGaze() { return recordEyeTracker; }
 
-        public string GetFullGazeInfo(){
-            return (GetScreenFixationPoint() +","+ GazeFixation() +","+ LeftEyePosition() +","+ RightEyePosition() +","+
-                    LeftEyeRotation() +","+ RightEyeRotation() +","+ LeftEyePupilSize() +","+ RightEyePupilSize() + ","+
-                    LeftEyeOpenAmount() +","+ RightEyeOpenAmount()).Replace("(","").Replace(")","");
+        public string GetFullGazeInfo()
+        {
+            return (GetScreenFixationPoint() + "," + GazeFixation() + "," + LeftEyePosition() + "," + RightEyePosition() + "," +
+                    LeftEyeRotation() + "," + RightEyeRotation() + "," + LeftEyePupilSize() + "," + RightEyePupilSize() + "," +
+                    LeftEyeOpenAmount() + "," + RightEyeOpenAmount()).Replace("(", "").Replace(")", "");
         }
 
-        public void Update() {
+        public void Update()
+        {
             if (sxrSettings.Instance.RecordThisFrame() & recordEyeTracker)
-                toWrite += ExperimentHandler.Instance.timeStepToWriteInfo() + GetFullGazeInfo() + "\n"; }
-       
+                toWrite += ExperimentHandler.Instance.timeStepToWriteInfo() + GetFullGazeInfo() + CheckFocusedObject() + "\n";
+        }
+
         /// <summary>
         /// Updates eyeData once per frame for use in all methods that can use eyeData.
         /// If eyeData cannot be used, can return primitive gaze pos/rot 
         /// </summary>
         /// <returns></returns>
-        bool FindEyeData(){
-            if(lastUpdate != sxrSettings.Instance.GetCurrentFrame()){
-                lastUpdate = sxrSettings.Instance.GetCurrentFrame(); 
-                if (!eyeTracker.isValid) {
+        bool FindEyeData()
+        {
+            if (lastUpdate != sxrSettings.Instance.GetCurrentFrame())
+            {
+                lastUpdate = sxrSettings.Instance.GetCurrentFrame();
+                if (!eyeTracker.isValid)
+                {
                     List<InputDevice> inputDevices = new List<InputDevice>();
                     InputDevices.GetDevicesWithCharacteristics(InputDeviceCharacteristics.EyeTracking, inputDevices);
-                    if (inputDevices.Count > 0) {
+                    if (inputDevices.Count > 0)
+                    {
                         eyeTracker = inputDevices[0];
                         Debug.Log(inputDevices.Count == 1
                             ? "Detected eyetracker: " + eyeTracker.manufacturer + ", " + eyeTracker.name
@@ -223,158 +289,206 @@ namespace sxr_internal {
                               eyeTracker.name);
                         if (eyeTracker.TryGetFeatureValue(CommonUsages.eyesData, out eyesData))
                             return true;
-                        Debug.LogWarning("Detected eyetracker but no eyesData available... Only primitive gaze information available"); } }
-                else return true; 
+                        Debug.LogWarning("Detected eyetracker but no eyesData available... Only primitive gaze information available");
+                    }
+                }
+                else return true;
 
                 sxr.DebugLog("Failed to find eye tracker with eyesData Struct, should you be using SRanipal (Vive Pro Eye)?");
-                return false; }
+                return false;
+            }
 
-            return true; }
-        
-        
-        public Vector3 GazeFixation() {
-            if (FindEyeData()) {
+            return true;
+        }
+
+
+        public Vector3 GazeFixation()
+        {
+            if (FindEyeData())
+            {
                 if (eyesData.TryGetFixationPoint(out Vector3 fixationPoint))
                     return fixationPoint;
-                sxr.DebugLog("Found eyesData but unable to get fixation point"); }
+                sxr.DebugLog("Found eyesData but unable to get fixation point");
+            }
             else
                 sxr.DebugLog("No eyesData available, try GetGazeCombinedGazeRayLocal() and GetGazeCombinedRotationLocal() ");
 
-            return new Vector3(); }
-        
-        public Vector3 LeftEyePosition() {
-            if (FindEyeData()) {
+            return new Vector3();
+        }
+
+        public Vector3 LeftEyePosition()
+        {
+            if (FindEyeData())
+            {
                 if (eyesData.TryGetLeftEyePosition(out Vector3 leftPos))
                     return leftPos;
-                sxr.DebugLog("Found eyesData but unable to get left eye position"); }
+                sxr.DebugLog("Found eyesData but unable to get left eye position");
+            }
             else
                 sxr.DebugLog("No eyesData available");
 
-            return new Vector3(); }
+            return new Vector3();
+        }
 
-        public Vector3 RightEyePosition() {
-            if (FindEyeData()) {
+        public Vector3 RightEyePosition()
+        {
+            if (FindEyeData())
+            {
                 if (eyesData.TryGetRightEyePosition(out Vector3 rightPos))
                     return rightPos;
-                sxr.DebugLog("Found eyesData but unable to get left eye position"); }
+                sxr.DebugLog("Found eyesData but unable to get left eye position");
+            }
             else
                 sxr.DebugLog("No eyesData available");
 
-            return new Vector3(); }
-        
-        public Vector3 LeftEyeRotation() {
-            if (FindEyeData()) {
+            return new Vector3();
+        }
+
+        public Vector3 LeftEyeRotation()
+        {
+            if (FindEyeData())
+            {
                 if (eyesData.TryGetLeftEyeRotation(out Quaternion leftRot))
                     return leftRot.eulerAngles;
-                sxr.DebugLog("Found eyesData but unable to get left eye rotation"); }
+                sxr.DebugLog("Found eyesData but unable to get left eye rotation");
+            }
             else
                 sxr.DebugLog("No eyesData available");
 
-            return new Vector3(); }
+            return new Vector3();
+        }
 
-        public Vector3 RightEyeRotation() {
-            if (FindEyeData()) {
+        public Vector3 RightEyeRotation()
+        {
+            if (FindEyeData())
+            {
                 if (eyesData.TryGetRightEyeRotation(out Quaternion rightRot))
                     return rightRot.eulerAngles;
-                sxr.DebugLog("Found eyesData but unable to get left eye position"); }
+                sxr.DebugLog("Found eyesData but unable to get left eye position");
+            }
             else
                 sxr.DebugLog("No eyesData available");
 
-            return new Vector3(); }
+            return new Vector3();
+        }
 
-        public float LeftEyeOpenAmount() {
-            if (FindEyeData()) {
-                 if (eyesData.TryGetLeftEyeOpenAmount(out float leftOpenAmount))
+        public float LeftEyeOpenAmount()
+        {
+            if (FindEyeData())
+            {
+                if (eyesData.TryGetLeftEyeOpenAmount(out float leftOpenAmount))
                     return leftOpenAmount;
-                 sxr.DebugLog("Found eyesData but unable to get left eye open amount"); }
+                sxr.DebugLog("Found eyesData but unable to get left eye open amount");
+            }
             else
                 sxr.DebugLog("No eyesData available");
 
-            return 0; }
+            return 0;
+        }
 
-        public float RightEyeOpenAmount() {
-            if (FindEyeData()) {
+        public float RightEyeOpenAmount()
+        {
+            if (FindEyeData())
+            {
                 if (eyesData.TryGetRightEyeOpenAmount(out float rightOpenAmount))
                     return rightOpenAmount;
-                sxr.DebugLog("Found eyesData but unable to get left eye position"); }
+                sxr.DebugLog("Found eyesData but unable to get left eye position");
+            }
             else
                 sxr.DebugLog("No eyesData available");
 
-            return 0; }
+            return 0;
+        }
 
-        public Vector3 GetGazeCombinedGazeRayLocal() {
+        public Vector3 GetGazeCombinedGazeRayLocal()
+        {
             if (FindEyeData())
                 sxr.DebugLog("EyeData found, can likely use GazeFixation()");
-            
+
             List<InputFeatureUsage> inputFeatureUsages = new List<InputFeatureUsage>();
             eyeTracker.TryGetFeatureUsages(inputFeatureUsages);
-            foreach(var feature in inputFeatureUsages)
-                if(feature.name == "gazeRotation")
+            foreach (var feature in inputFeatureUsages)
+                if (feature.name == "gazeRotation")
                     if (eyeTracker.TryGetFeatureValue(feature.As<Quaternion>(), out Quaternion gazeRot))
-                        return gazeRot.eulerAngles; 
-            
-            sxr.DebugLog("Unable to find gazePosition feature", 10000); 
-            return new Vector3(); }
+                        return gazeRot.eulerAngles;
 
-        public Vector3 GetGazeCombinedPositionLocal(){
+            sxr.DebugLog("Unable to find gazePosition feature", 10000);
+            return new Vector3();
+        }
+
+        public Vector3 GetGazeCombinedPositionLocal()
+        {
             if (FindEyeData())
                 sxr.DebugLog("EyeData found, can likely use GazeFixation()", 10000);
-            
+
             List<InputFeatureUsage> inputFeatureUsages = new List<InputFeatureUsage>();
             eyeTracker.TryGetFeatureUsages(inputFeatureUsages);
-            foreach(var feature in inputFeatureUsages)
-                if(feature.name == "gazePosition")
+            foreach (var feature in inputFeatureUsages)
+                if (feature.name == "gazePosition")
                     if (eyeTracker.TryGetFeatureValue(feature.As<Vector3>(), out Vector3 gazePos))
-                        return gazePos; 
-            
-            sxr.DebugLog("Unable to find gazePosition feature"); 
-            return new Vector3(); }
-        
-        public Vector2 GetScreenFixationPoint() {
+                        return gazePos;
+
+            sxr.DebugLog("Unable to find gazePosition feature");
+            return new Vector3();
+        }
+
+        public Vector2 GetScreenFixationPoint()
+        {
             Camera vrCamera = sxrSettings.Instance.vrCamera;
             Vector3 screenPos;
-            float gazeX, gazeY; 
-            
-            if (FindEyeData()) {
+            float gazeX, gazeY;
+
+            if (FindEyeData())
+            {
                 screenPos =
                     vrCamera.WorldToScreenPoint(GazeFixation());
-        
-                gazeX = screenPos.x / Screen.currentResolution.width; 
+
+                gazeX = screenPos.x / Screen.currentResolution.width;
                 gazeY = screenPos.y / Screen.currentResolution.height;
                 sxr.DebugLog("Gaze: " + gazeX + "," + gazeY);
-                return new Vector2(gazeX, gazeY); }
-            
+                return new Vector2(gazeX, gazeY);
+            }
+
             sxr.DebugLog("Failed to find eyeData, attempting to use primitive gaze position/rotation for screen point");
-            
+
             screenPos =
                 vrCamera.WorldToScreenPoint(vrCamera.transform.position + GetGazeCombinedPositionLocal() +
                                             vrCamera.transform.rotation * GetGazeCombinedGazeRayLocal());
             gazeX = screenPos.x / Screen.currentResolution.width;
             gazeY = screenPos.y / Screen.currentResolution.height;
             sxr.DebugLog("Gaze: " + gazeX + "," + gazeY);
-            return new Vector2(gazeX, gazeY); }
-        
-        public float LeftEyePupilSize() {
+            return new Vector2(gazeX, gazeY);
+        }
+
+        public float LeftEyePupilSize()
+        {
             sxr.DebugLog("Pupil size not yet available through OpenXR implementation, if your headset " +
                          "supports pupil size, post a feature request on the Github or email sxr.unity@gmail.com");
-            return 0; }
+            return 0;
+        }
 
-        public float RightEyePupilSize() {
+        public float RightEyePupilSize()
+        {
             sxr.DebugLog("Pupil size not yet available through OpenXR implementation, if your headset " +
                          "supports pupil size, post a feature request on the Github or email sxr.unity@gmail.com");
-            return 0; }
+            return 0;
+        }
 
-        private void OnApplicationQuit(){
-            if(headerPrinted && toWrite != "")
-                ExperimentHandler.Instance.WriteToTaggedFile("eyetracker", toWrite, includeTimeStepInfo:false);}
+        private void OnApplicationQuit()
+        {
+            if (headerPrinted && toWrite != "")
+                ExperimentHandler.Instance.WriteToTaggedFile("eyetracker", toWrite, includeTimeStepInfo: false);
+        }
 
         private void Start() { vrCamera = sxrSettings.Instance.vrCamera; }
 
         // Singleton initiated on Awake()
         public static GazeHandler Instance;
-        void Awake() {
-            if ( Instance == null) {Instance = this;  DontDestroyOnLoad(gameObject.transform.root);}
-            else Destroy(gameObject); }
+        void Awake()
+        {
+            if (Instance == null) { Instance = this; DontDestroyOnLoad(gameObject.transform.root); }
+            else Destroy(gameObject);
+        }
     }
 
 #endif
