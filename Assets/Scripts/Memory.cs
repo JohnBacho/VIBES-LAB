@@ -42,6 +42,12 @@ namespace SampleExperimentScene
                                                false, true, false, false, false,
                                                false, false, false, true, false,
                                                false, true, false, true, true };
+        private bool[] Pattern3 = new bool[] { true, false, false, true, true,
+                                               false, true, false, false, true,
+                                               true, true, false, false, true,
+                                               false, false, true, true, false,
+                                               false, true, false, true, false
+                                            };
 
         private bool isPressed = false;
 
@@ -125,7 +131,7 @@ namespace SampleExperimentScene
 
             if (sxr.CheckTimer())
             {
-                sxr.NextTrial(); // Goes to the next trial
+                sxr.NextStep();
                 hasExecuted = false; // sets has Executed Flag to false for the next trial
             }
         }
@@ -233,7 +239,7 @@ namespace SampleExperimentScene
                         sxr.WriteHeaderToTaggedFile("mainFile", headers);
                         sxr.WriteHeaderToTaggedFile("CubeFile", CubeHeaders);
                         hasExecuted = true; // set to true so this block of code only runs once
-                        sxr.StartTimer(5);
+                        sxr.StartTimer(8);
                     }
 
                     if (sxr.CheckTimer()) // checks if the timer has reached zero
@@ -244,14 +250,14 @@ namespace SampleExperimentScene
                     }
                     break;
 
-                case 2: // Habituation Phase
+                case 2:
                     switch (sxr.GetTrial())
                     {
 
-                        case 0: // CS+
+                        case 0:
                             switch (sxr.GetStepInTrial())
                             {
-                                case 0: // CS+
+                                case 0:
                                     if (!hasExecuted)
                                     {
                                         DisplayPattern(Pattern1, 3);
@@ -281,10 +287,14 @@ namespace SampleExperimentScene
                             }
                             break;
 
-                        case 1: // CS-
+                        case 1:
                             switch (sxr.GetStepInTrial())
                             {
-                                case 0: // CS+
+                                case 0:
+                                    InterTrial(3);
+                                    break;
+
+                                case 1:
                                     if (!hasExecuted)
                                     {
                                         DisplayPattern(Pattern2, 5);
@@ -295,9 +305,9 @@ namespace SampleExperimentScene
                                         hasExecuted = false;
                                         sxr.NextStep();
                                     }
-                                    break;
 
-                                case 1:
+                                    break;
+                                case 2:
                                     if (!hasExecuted)
                                     {
                                         ParticipantInteraction();
@@ -309,23 +319,48 @@ namespace SampleExperimentScene
                                         hasExecuted = false;
                                         sxr.NextTrial();
                                     }
-
                                     break;
+
                             }
                             break;
 
-                        case 2: // CS+
+                        case 2:
                             switch (sxr.GetStepInTrial())
                             {
-                                case 0: // CS+
+                                case 0:
+                                    InterTrial(3);
                                     break;
 
-                                case 1: // inter trial interval
-                                    InterTrial(10f);
+                                case 1:
+                                    if (!hasExecuted)
+                                    {
+                                        DisplayPattern(Pattern3, 4);
+                                    }
+
+                                    if (sxr.CheckTimer())
+                                    {
+                                        hasExecuted = false;
+                                        sxr.NextStep();
+                                    }
 
                                     break;
+                                case 2:
+                                    if (!hasExecuted)
+                                    {
+                                        ParticipantInteraction();
+                                    }
+
+                                    if (isPressed)
+                                    {
+                                        ButtonPressed(Pattern3);
+                                        hasExecuted = false;
+                                        sxr.NextTrial();
+                                    }
+                                    break;
+
                             }
                             break;
+
                         case 3: // CS-
                             switch (sxr.GetStepInTrial())
                             {
