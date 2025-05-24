@@ -7,8 +7,6 @@ namespace SampleExperimentScene
     {
         public bool EyeCalibration; // toggle for eye tracking
         int trialCounter = 0;
-        bool hasStarted = false; // Flag to track if movement should start in vr mover script
-
         private string currentFocus = "";
         private Ray testRay;
         private FocusInfo focusInfo;
@@ -56,7 +54,6 @@ namespace SampleExperimentScene
 
                     if (trialCounter < 1)
                     {
-                        FindObjectOfType<VRCameraPathMover>().StartMoving(); // talks to the VRCameraPathMover script and triggers the StartMoving Function
                         sxr.StartTimer(50); // Start a 50s trial timer
                         trialCounter++;
                     }

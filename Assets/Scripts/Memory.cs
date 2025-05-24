@@ -20,16 +20,9 @@ namespace SampleExperimentScene
         public Material OringalCubeColor;
         public GameObject[] cubes;
 
-        private string FocusedGameObject = ""; // used for Sranipal
         private float ResponseTime;
         private PreviewRenderUtility previewRenderUtility; // Stops unity from bitching
-        private Ray testRay; // used for Sranipal
-        private FocusInfo focusInfo; // used for Sranipal
-        private Vector3 gazeHitPoint; // used in calculating eye tracking data with collisions
         private bool hasExecuted = false; //  used as a way to execute one block of code only once
-        private bool StartEyeTracker = false; //used to start the CheckFocus(); function which calculates the eye 
-        // tracking data ensuring that all three cameratrack / eyetracker / mainfile are all started at the exact same time
-        private string headers = "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus"; // used to write headers to the mainfile
         private string CubeHeaders;
         private bool[] CubeValues;
         private bool[] Pattern1 = new bool[] { true, false, true, false, true,
@@ -169,29 +162,6 @@ namespace SampleExperimentScene
             }
         }
 
-
-        void CheckFocus() // Main driver of eye tracking 
-        {
-
-            FocusedGameObject = "";
-
-            if (SRanipal_Eye.Focus(GazeIndex.COMBINE, out testRay, out focusInfo)) { }
-            else if (SRanipal_Eye.Focus(GazeIndex.LEFT, out testRay, out focusInfo)) { }
-            else if (SRanipal_Eye.Focus(GazeIndex.RIGHT, out testRay, out focusInfo)) { }
-            else return;
-
-            FocusedGameObject = focusInfo.collider.gameObject.name; // gets the name of the object that the player is currently looking at
-            sxr.ChangeExperimenterTextbox(4, "Current Game Object: " + FocusedGameObject); // displays the object currently being looked at on the text box
-
-            gazeHitPoint = focusInfo.point; // gets the X / Y / Z coordinate of where the player is looking
-            sxr.ChangeExperimenterTextbox(5, "Gaze Hit Position: " + gazeHitPoint); // displays the X / Y / Z coordinates currently being looked at on the text box
-
-
-            string DataPoints = (gazeHitPoint.ToString() + "," + FocusedGameObject);
-            sxr.WriteToTaggedFile("mainFile", DataPoints); // // saves the gazehitpoint which is the gaze with object collision and also 
-            // FocusedGameObject which is the name of the object where the user is looking at to file 
-        }
-
         void Start()
         {
             CubeValues = new bool[targets.Length];
@@ -218,11 +188,6 @@ namespace SampleExperimentScene
         void Update()
         {
 
-            if (StartEyeTracker)
-            {
-                CheckFocus();
-            }
-
             switch (sxr.GetPhase()) // gets the phase
             {
                 case 0: // Start Screen Phase
@@ -231,12 +196,10 @@ namespace SampleExperimentScene
                 case 1: // Instruction Phase
                     RightController.SetActive(false);
                     RightControllerStablized.SetActive(false);
-                    StartEyeTracker = true;
                     sxr.StartRecordingCameraPos();
                     sxr.StartRecordingEyeTrackerInfo();
                     if (!hasExecuted)
                     {
-                        sxr.WriteHeaderToTaggedFile("mainFile", headers);
                         sxr.WriteHeaderToTaggedFile("CubeFile", CubeHeaders);
                         hasExecuted = true; // set to true so this block of code only runs once
                         sxr.StartTimer(8);
