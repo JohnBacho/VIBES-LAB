@@ -72,6 +72,7 @@ namespace sxr_internal {
         public void StartExperiment(string experimentName, string subjectID) {
             this.experimentName = experimentName;
             this.subjectID = subjectID; 
+            //This is where you change SubjectID
             ParseFileNames();
             phase = phase == 0 ? 1 : phase;
         }
