@@ -3,13 +3,10 @@ import pandas as pd
 
 output_dir = r"C:\Users\Kevin\OneDrive\Desktop"
 
-if len(sys.argv) != 4:
-    print("Usage: python concatenate.py <Camera> <EyeTracker> <Anticipate>")
-    sys.exit(1)
-
 CameraPath = sys.argv[1]
 EyeTrackerPath = sys.argv[2]
 AnticipatePath = sys.argv[3]
+output_dir = sys.argv[4]
 
 
 df1 = pd.read_csv(CameraPath)
@@ -97,6 +94,9 @@ merge_df.to_csv(filename_full, index=False)
 filename_reduced = f"{output_dir}\\Reduced-Subject{int(subject_id)}Date{str(date)}.csv"
 step = merge_df[(merge_df['Phase'] != 1) & (merge_df['Step'] == 0)]
 step.to_csv(filename_reduced, index=False)
+
+
+print(f"Subject{int(subject_id)}Date{str(date)}-Folder", end="")
 
 # === Compute average eye movement distance per (Phase, TrialNumber) ===
 import numpy as np
