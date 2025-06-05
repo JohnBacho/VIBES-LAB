@@ -60,7 +60,7 @@ namespace sxr_internal
                 !SRanipal_Eye.Focus(GazeIndex.LEFT, out testRay, out focusInfo) &&
                 !SRanipal_Eye.Focus(GazeIndex.RIGHT, out testRay, out focusInfo))
             {
-                return ",NoFocus";  // or return empty string "" if you prefer
+                return "";  
             }
 
             string focusedGameObject = focusInfo.collider.gameObject.name;
