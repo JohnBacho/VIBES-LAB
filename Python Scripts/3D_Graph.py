@@ -7,38 +7,26 @@ from sklearn.cluster import KMeans
 from scipy.stats import gaussian_kde
 
 # Load data
-df = pd.read_csv("Reduced-Subject0Date4_3.csv", delimiter=",")
+df = pd.read_csv("data/2025_6_4_1656_0_eyetracker.csv", delimiter=",")
 
 results = []
 
 if "Phase" in df.columns and "TrialNumber" in df.columns:
     grouped = df.groupby(["Phase", "TrialNumber"])
     for (phase, trial), group in grouped:
-        x = group["GazeHitPointX"].values
-        y = group["GazeHitPointY"].values
-        z = group["GazeHitPointZ"].values
+        # Filter out non-numeric gaze coordinates
+        group = group[pd.to_numeric(group["GazeHitPointX"], errors='coerce').notna()]
+        group = group[pd.to_numeric(group["GazeHitPointY"], errors='coerce').notna()]
+        group = group[pd.to_numeric(group["GazeHitPointZ"], errors='coerce').notna()]
+        x = group["GazeHitPointX"].astype(float).values
+        y = group["GazeHitPointY"].astype(float).values
+        z = group["GazeHitPointZ"].astype(float).values
         time = group["UnityTime"].values
 
         # Handle or drop NaN in time
         if np.isnan(time).any():
             print(f"Skipping Phase {phase}, Trial {trial} due to NaN in time.")
             continue
-
-        velocity = np.sqrt(np.diff(x, prepend=x[0])**2 +
-                           np.diff(y, prepend=y[0])**2 +
-                           np.diff(z, prepend=z[0])**2) / np.diff(time, prepend=time[0])
-
-        dist_matrix = squareform(pdist(np.column_stack((x, y, z))))
-        dispersion = np.mean(dist_matrix)
-
-        print(f"[Phase {phase}, Trial {trial}]")
-        print(f"  Average Velocity: {np.nanmean(velocity):.5f} Unity units/sec")
-        print(f"  Max Velocity: {np.nanmax(velocity):.5f}")
-        print(f"  Gaze Dispersion: {dispersion:.5f}")
-
-        group.loc[:, "AverageVelocity"] = np.nanmean(velocity)
-        group.loc[:, "Velocity"] = velocity
-        group.loc[:, "GazeDispersion"] = dispersion
 
         # Create 3D plot of gaze
         fig = plt.figure()
@@ -49,23 +37,29 @@ if "Phase" in df.columns and "TrialNumber" in df.columns:
         ax.set_ylabel("gazeFixationY")
         ax.set_zlabel("gazeFixationZ")
         ax.set_title(f"Gaze Fixation Over Time\nPhase {phase}, Trial {trial}")
-        ax.set_xlim(max(x), min(x))
-        plt.tight_layout()
-        plt.show()
-
-        # Velocity over time
-        plt.figure(figsize=(8, 5))
-        plt.plot(time, velocity, label="Velocity", color="blue")
-        plt.xlabel("Time (UnityTime)")
-        plt.ylabel("Velocity")
-        plt.title(f"Velocity Over Time\nPhase {phase}, Trial {trial}")
-        plt.legend()
+        if len(x) > 0 and len(y) > 0 and len(z) > 0:
+            buffer = 0.1  # 10% buffer
+            for data, set_lim in zip([x, y, z], [ax.set_xlim, ax.set_ylim, ax.set_zlim]):
+                min_val, max_val = np.nanmin(data), np.nanmax(data)
+                if min_val == max_val:
+                    min_val -= 0.5
+                    max_val += 0.5
+                else:
+                    range_val = max_val - min_val
+                    min_val -= buffer * range_val
+                    max_val += buffer * range_val
+                set_lim(min_val, max_val)
         plt.tight_layout()
         plt.show()
 
         # Density plot
         xyz = np.vstack([x, y, z])
-        density = gaussian_kde(xyz)(xyz)
+        xyz = np.asarray(xyz, dtype=np.float64)
+        if xyz.shape[1] >= 4:  # Require at least 4 samples for 3D KDE
+            density = gaussian_kde(xyz)(xyz)
+        else:
+            print(f"Skipping density plot for Phase {phase}, Trial {trial} due to insufficient data points.")
+            continue
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
         sc = ax.scatter(x, y, z, c=density, cmap='inferno', s=20, alpha=0.8)
@@ -74,7 +68,18 @@ if "Phase" in df.columns and "TrialNumber" in df.columns:
         ax.set_ylabel("gazeFixationY")
         ax.set_zlabel("gazeFixationZ")
         ax.set_title(f"Gaze Fixation Hotspots\nPhase {phase}, Trial {trial}")
-        ax.set_xlim(max(x), min(x))
+        if len(x) > 0 and len(y) > 0 and len(z) > 0:
+            buffer = 0.1  # 10% buffer
+            for data, set_lim in zip([x, y, z], [ax.set_xlim, ax.set_ylim, ax.set_zlim]):
+                min_val, max_val = np.nanmin(data), np.nanmax(data)
+                if min_val == max_val:
+                    min_val -= 0.5
+                    max_val += 0.5
+                else:
+                    range_val = max_val - min_val
+                    min_val -= buffer * range_val
+                    max_val += buffer * range_val
+                set_lim(min_val, max_val)
         plt.tight_layout()
         plt.show()
 

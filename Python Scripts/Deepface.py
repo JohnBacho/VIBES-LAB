@@ -56,12 +56,16 @@ def analyze_video_emotions(video_path):
                     continue
 
                 try:
+                   # Use full face for emotion detection
+                    face_roi = rgb_frame[y:y+h, x:x+w]
+
                     emotion_result = DeepFace.analyze(
-                        img_path=mouth_roi,
+                        img_path=face_roi,
                         actions=['emotion'],
                         enforce_detection=False,
                         detector_backend='opencv'
                     )[0]
+
 
                     emotion = emotion_result['dominant_emotion']
                     confidence = emotion_result['emotion'][emotion]
@@ -99,5 +103,5 @@ def analyze_video_emotions(video_path):
     print("Processing complete. Logs saved.")
 
 if __name__ == "__main__":
-    video_path = "/Users/johnbacho/Desktop/Movie on 4-15-25 at 6.10 PM.mov"
+    video_path = "/Users/johnbacho/Desktop/ScreenRecording_04-16-2025 08-20-05_1.mov"
     analyze_video_emotions(video_path)

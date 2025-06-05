@@ -65,7 +65,7 @@ namespace sxr_internal {
         {
             if (rightLaser == null)
             {
-                Debug.Log("Laser unavailabe to update raycast layers");
+                // Debug.Log("Laser unavailabe to update raycast layers");
                 return;
             }
 
