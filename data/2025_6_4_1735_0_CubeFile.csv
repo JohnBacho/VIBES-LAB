@@ -1,4 +1,0 @@
-SubjectID,Date,LocalTime,UnityTime,Phase,BlockNumber,TrialNumber,Step,TrialTime,Cube1,Cube2,Cube3,Cube4,Cube5,Cube6,Cube7,Cube8,Cube9,Cube10,Cube11,Cube12,Cube13,Cube14,Cube15,Cube16,Cube17,Cube18,Cube19,Cube20,Cube21,Cube22,Cube23,Cube24,Cube25,Score,ResponseTime
-0,6_4,17_35_31,53.22112,2,0,0,1,18.50929,True,False,True,False,True,False,True,False,True,True,False,True,False,True,True,False,True,False,True,True,False,True,False,True,True,25,18.50929
-0,6_4,17_35_52,74.66685,2,0,1,2,13.40509,True,False,True,False,True,False,True,False,False,False,False,True,False,True,False,False,True,False,True,False,False,True,False,True,False,21,13.40509
-0,6_4,17_36_13,95.72232,2,0,2,2,14.00623,True,False,False,True,True,False,True,False,False,True,True,True,False,False,True,False,False,False,True,False,False,False,False,True,True,22,14.00623
