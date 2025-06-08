@@ -15,6 +15,7 @@ df3['GazeHitPointX'] = df3['GazeHitPointX'].str.replace('(', '')
 df3['GazeHitPointZ'] = df3['GazeHitPointZ'].str.replace(')', '')
 
 merge_df = df2.merge(df3)
+# Grabs SubjectID and Date to be used in filename creation.
 subject_id = merge_df["SubjectID"].iloc[0]
 date = merge_df["Date"].iloc[0]
 
@@ -22,6 +23,7 @@ look_times = []
 current_object = None
 start_time = None
 
+# Calculates how long a game object was looked at
 for idx in range(len(merge_df)):
     row = merge_df.iloc[idx]
     game_object = row['GameObjectInFocus']
@@ -86,7 +88,7 @@ filename_reduced = f"Reduced-Subject{int(subject_id)}Date{str(date)}.csv"
 step = merge_df[(merge_df['Phase'] != 1) & (merge_df['Step'] == 0)]
 step.to_csv(filename_reduced, index=False)
 
-# === Compute average eye movement distance per (Phase, TrialNumber) ===
+# Computes average eye movement distance per (Phase, TrialNumber)
 import numpy as np
 
 def compute_avg_eye_movement(input_filename):
@@ -96,9 +98,10 @@ def compute_avg_eye_movement(input_filename):
     if "Phase" in df.columns and "TrialNumber" in df.columns:
         grouped = df.groupby(["Phase", "TrialNumber"])
         for (phase, trial), group in grouped:
-            x = group["GazeHitPointX"].astype(float).values
-            y = group["GazeHitPointY"].astype(float).values
-            z = group["GazeHitPointZ"].astype(float).values
+            valid_group = group[["GazeHitPointX", "GazeHitPointY", "GazeHitPointZ"]].dropna()
+            x = valid_group["GazeHitPointX"].astype(float).values
+            y = valid_group["GazeHitPointY"].astype(float).values
+            z = valid_group["GazeHitPointZ"].astype(float).values
 
             dx = np.diff(x)
             dy = np.diff(y)
