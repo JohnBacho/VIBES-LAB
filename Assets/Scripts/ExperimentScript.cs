@@ -31,7 +31,6 @@ namespace SampleExperimentScene
         public GameObject RIGHTControlStabilized;
         public GameObject RightEnviormentController;
         public GameObject RightControllerEnvironmentStabilized;
-        public bool PowerAutomate;
 
 
         private Vector3 gazeHitPoint; // used in calculating eye tracking data with collisions
@@ -221,11 +220,6 @@ namespace SampleExperimentScene
 
         void Start()
         {
-            if (PowerAutomate)
-            {
-                System.IO.File.Delete("Assets/Temp/playing.flag");
-                System.IO.File.Create("Assets/Temp/playing.flag");
-            }
             if (EyeCalibration) // set to true in the inspector if you would like to auto launch SRanipal eye tracker calibration
             {
                 sxr.LaunchEyeCalibration();
@@ -407,13 +401,6 @@ namespace SampleExperimentScene
 
                                 case 1: // inter trial interval
                                     InterTrial(15f);
-                                    if (PowerAutomate)
-                                    {
-                                        sxr.PauseRecordingEyeTrackerInfo();
-                                        System.IO.File.Delete("Assets/Temp/playing.flag");
-                                        EditorApplication.isPlaying = false;
-
-                                    }
                                     break;
                             }
                             break;
