@@ -45,6 +45,7 @@ namespace SampleExperimentScene
         private bool userInputComplete = false; // Used for a check if the user has submitted a value  
         private float TimeForUserToRespond = 999; // Used to determine how long the user has to respond
         private float WaitTimeTillUserInput = 5; // Used to determine how long to wait into the CS to display Slider
+        private int InstructionSlider = 0; // Used for slider
 
         private Color originalCeilingColor;
         private Color originalLeftWallColor;
@@ -252,27 +253,50 @@ namespace SampleExperimentScene
                 case 1: // Instruction Phase
                     sxr.StartRecordingCameraPos();
                     sxr.StartRecordingEyeTrackerInfo();
-                    if (InstructionPhase)
-                    { // Dr. Thomas wanted the InstructionPhase to be toggleable 
-                        if (!hasExecuted)
-                        {
-                            sxr.WriteHeaderToTaggedFile("AnticipateFile", Anticipateheaders);
-                            sxr.StartTimer(20);
-                            sxr.DisplayText("In this experiment, you will see different colored shapes in the 3d environment. Please keep your focus on the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored shapes and the loud sounds.");
-                            hasExecuted = true; // set to true so this block of code only runs once
-                        }
-
-                        if (sxr.CheckTimer()) // checks if the timer has reached zero
-                        {
-                            sxr.HideAllText();
-                            sxr.NextPhase(); // go to the next phase and set has Executed to false
-                            hasExecuted = false;
-                        }
-                    }
-                    else
+                    switch (sxr.GetStepInTrial())
                     {
-                        sxr.WriteHeaderToTaggedFile("AnticipateFile", Anticipateheaders);
-                        sxr.NextPhase();
+                        case 0: // CS+
+                            if (InstructionPhase)
+                            { // Dr. Thomas wanted the InstructionPhase to be toggleable 
+                                if (!hasExecuted)
+                                {
+                                    sxr.WriteHeaderToTaggedFile("AnticipateFile", Anticipateheaders);
+                                    sxr.StartTimer(20);
+                                    sxr.DisplayText("In this experiment, you will see different colored shapes in the 3d environment. Please keep your focus on the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored shapes and the loud sounds.");
+                                    hasExecuted = true; // set to true so this block of code only runs once
+                                }
+
+                                if (sxr.CheckTimer()) // checks if the timer has reached zero
+                                {
+                                    sxr.HideAllText();
+                                    sxr.NextStep(); // go to the next phase and set has Executed to false
+                                    hasExecuted = false;
+                                }
+                            }
+                            else
+                            {
+                                sxr.WriteHeaderToTaggedFile("AnticipateFile", Anticipateheaders);
+                                sxr.NextStep();
+                            }
+                            break;
+
+                        case 1: // trigger image
+                            sxr.DisplayImage("trigger");
+                            if (sxr.GetTrigger())
+                            {
+                                sxr.HideImagesUI();
+                                sxr.NextStep();
+
+                            }
+                            break;
+                        case 2: // display slider
+                            sxr.InputSlider(0, 9, $"Using the Controller and Trigger Adjust the value to 9 and click submit [{InstructionSlider}]", true); // displays slider that user can input 
+                            if (sxr.ParseInputUI(out InstructionSlider))
+                            {
+                                sxr.NextPhase();
+                            }
+                            break;
+
                     }
 
                     break;
