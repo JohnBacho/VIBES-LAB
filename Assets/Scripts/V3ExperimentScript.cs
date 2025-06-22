@@ -15,6 +15,8 @@ namespace SampleExperimentScene
         public GameObject CS_minus_Object; // drag and drop CS- object
         public float CS_minus_Object_Interval; // Enter time for CS- object to stay active
         public GameObject US_Sound; // drag and drop US sound to get it to play
+        public GameObject US_Sound2;
+        public GameObject US_Sound3;
         public GameObject US_Object; // drag and drop the object you want to be the US
         public float US_Sound_Delay; // Enter time for sound delay to play after CS+ object is activated.
         public bool ABATesting; // Used to determine what context you want Extinction to 
@@ -105,6 +107,8 @@ namespace SampleExperimentScene
         IEnumerator PlaySoundAfterDelay(bool PlaySound, float soundDelay, bool waitForUserInput)
         {
             AudioSource audioSource = US_Sound.GetComponent<AudioSource>(); // grabs audio source from object
+            AudioSource audioSource2 = US_Sound2.GetComponent<AudioSource>();
+            AudioSource audioSource3 = US_Sound3.GetComponent<AudioSource>();
             if (waitForUserInput)
             {
 
@@ -121,7 +125,10 @@ namespace SampleExperimentScene
 
                 if (audioSource != null && PlaySound)
                 {
+                    US_Object.SetActive(true);
                     audioSource.Play(); // plays sound
+                    audioSource2.Play();
+                    audioSource3.Play();
                 }
             }
             else
@@ -129,7 +136,10 @@ namespace SampleExperimentScene
                 yield return new WaitForSeconds(soundDelay); // soundDelay determines how long it should wait to play the sound
                 if (audioSource != null && PlaySound)
                 {
-                    audioSource.Play(); // plays audio attached to object
+                    US_Object.SetActive(true);
+                    audioSource.Play(); // plays sound
+                    audioSource2.Play();
+                    audioSource3.Play();
                 }
             }
         }
@@ -153,7 +163,6 @@ namespace SampleExperimentScene
                 if (PlaySound)
                 {
                     doorOpener.OpenDoor();
-                    US_Object.SetActive(true);
                     characterMover.ResetPosition();
                     characterMover.StartScare(playerCamera);
                 }
@@ -348,9 +357,17 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 2: // display slider
+                            RIGHTContorl.SetActive(true);
+                            RIGHTControlStabilized.SetActive(true);
+                            RightEnviormentController.SetActive(true);
+                            RightControllerEnvironmentStabilized.SetActive(true);
                             sxr.InputSlider(0, 9, $"Using the Controller and Trigger Adjust the value to 9 and click submit [{InstructionSlider}]", true); // displays slider that user can input 
                             if (sxr.ParseInputUI(out InstructionSlider))
                             {
+                                RIGHTContorl.SetActive(false);
+                                RIGHTControlStabilized.SetActive(false);
+                                RightEnviormentController.SetActive(false);
+                                RightControllerEnvironmentStabilized.SetActive(false);
                                 sxr.NextPhase();
                             }
                             break;
