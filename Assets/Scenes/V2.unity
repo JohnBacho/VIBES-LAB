@@ -162,13 +162,36 @@ MonoBehaviour:
   startSpeed: 4
   endSpeed: 8
   scareDuration: 1
-  head: {fileID: 0}
-  heightOffset: -1.3
+  head: {fileID: 1201201588}
+  heightOffset: -1.4
 --- !u!4 &519027813 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 523479d608eb1cb4da7e36358cdce45b, type: 3}
   m_PrefabInstance: {fileID: 2001985763}
   m_PrefabAsset: {fileID: 0}
+--- !u!136 &519027814
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519027809}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &683266764
 GameObject:
   m_ObjectHideFlags: 0
@@ -488,7 +511,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.5
+  m_Intensity: 0.3
   m_Range: 40
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -895,6 +918,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 853481601345591223, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
   m_PrefabInstance: {fileID: 1402697099}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1201201588 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -3321919801592875672, guid: 523479d608eb1cb4da7e36358cdce45b, type: 3}
+  m_PrefabInstance: {fileID: 2001985763}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1208664798 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8426961867524193331, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
@@ -1068,7 +1096,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.5
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -1250,6 +1278,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1390329089}
   - component: {fileID: 1390329088}
+  - component: {fileID: 1390329090}
   m_Layer: 0
   m_Name: Blue Door
   m_TagString: Untagged
@@ -1296,6 +1325,27 @@ Transform:
   - {fileID: 1378010262}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1390329090
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1390329087}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.2, y: 2, z: 1}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1001 &1402697099
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2641,7 +2691,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 523479d608eb1cb4da7e36358cdce45b, type: 3}
       propertyPath: m_Name
-      value: Ch30_nonPBR
+      value: Monster
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 523479d608eb1cb4da7e36358cdce45b, type: 3}
       propertyPath: m_IsActive
@@ -2969,6 +3019,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 523479d608eb1cb4da7e36358cdce45b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 519027812}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 523479d608eb1cb4da7e36358cdce45b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 519027814}
   m_SourcePrefab: {fileID: 100100000, guid: 523479d608eb1cb4da7e36358cdce45b, type: 3}
 --- !u!1 &2090714083
 GameObject:
@@ -3422,6 +3475,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6518997689588287719}
   - component: {fileID: 6518997689581332231}
+  - component: {fileID: 6518997689588716744}
   m_Layer: 0
   m_Name: Red Door
   m_TagString: Untagged
@@ -3429,6 +3483,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 0
+--- !u!65 &6518997689588716744
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6518997689588716743}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.2, y: 2, z: 1}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!65 &6623770859305282915
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -294,15 +294,23 @@ public static class sxr
     /// </summary>
     /// <returns></returns>
     public static int GetStepInTrial() { return ExperimentHandler.Instance.stepInTrial;}
+    
+    /// <summary>
+    /// Returns the current "trial" in the experiment. (Phase > Block > Trial > Step)
+    /// </summary>
+    /// <returns></returns>
+    public static string GetStage(){return ExperimentHandler.Instance.stageInTrial; }
 
     /// <summary>
     /// Increments phase number by 1 and sets block/trial/step numbers to 0
     /// </summary>
-    public static void NextPhase() {
+    public static void NextPhase()
+    {
         ExperimentHandler.Instance.phase++;
         ExperimentHandler.Instance.block = 0;
         ExperimentHandler.Instance.trial = 0;
-        ExperimentHandler.Instance.stepInTrial = 0; }
+        ExperimentHandler.Instance.stepInTrial = 0;
+    }
 
     /// <summary>
     /// Increments block number by 1 and sets trial/step number to 0.
@@ -328,6 +336,11 @@ public static class sxr
     public static void SetStep(int stepNumber) { ExperimentHandler.Instance.stepInTrial = stepNumber;}
 
     /// <summary>
+    /// Sets the current "step" to the specified number
+    /// </summary>
+    /// <param name="stage"></param>
+    public static void SetStage(string stage) { ExperimentHandler.Instance.stageInTrial = stage; }
+    /// <summary>
     /// Starts a timer with the provided name. Will return "true" and the timer will be
     /// deleted if CheckTimer() is used. If no name is provided, uses the default trial
     /// timer. (Default timer is never deleted)
@@ -335,7 +348,7 @@ public static class sxr
     /// <param name="timerName"></param>
     /// <param name="duration"></param>
     public static void StartTimer(string timerName, float duration)
-    {TimerHandler.Instance.StartTimer(timerName, duration:duration);}
+    { TimerHandler.Instance.StartTimer(timerName, duration: duration); }
     public static void StartTimer(string timerName)
     { TimerHandler.Instance.StartTimer(timerName); }
     public static void StartTimer(float duration )
