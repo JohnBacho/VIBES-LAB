@@ -31,12 +31,8 @@ namespace SampleExperimentScene
         public GameObject Floor;
 
         public DoorOpener doorOpener;
+        public VRControllerHandler controllerHandler;
         public SimpleCharacterMover characterMover;
-
-        public GameObject RIGHTContorl;
-        public GameObject RIGHTControlStabilized;
-        public GameObject RightEnviormentController;
-        public GameObject RightControllerEnvironmentStabilized;
 
 
         private Vector3 gazeHitPoint; // used in calculating eye tracking data with collisions
@@ -205,11 +201,7 @@ namespace SampleExperimentScene
                 sxr.StartTimer(TimeForUserToRespond); // starts a new timer for 50s allowing the user to respond 
                 Debug.Log("Paused before disabling object. Waiting for user input...");
                 // enables the user to move the right controller 
-                RIGHTContorl.SetActive(true);
-                RIGHTControlStabilized.SetActive(true);
-                RightEnviormentController.SetActive(true);
-                RightControllerEnvironmentStabilized.SetActive(true);
-
+                controllerHandler.ToggleController();
                 int TempStoreAnticipateNum = -1;
                 while (!sxr.ParseInputUI(out AnticipatedNumber))
                 {
@@ -219,12 +211,8 @@ namespace SampleExperimentScene
                     yield return null;
                 }
                 userInputComplete = true; // this bool is used to tell PlaySoundAfterDelay that it can continue with it's delay.
+                controllerHandler.ToggleController();
 
-                // disables the Right Controller
-                RIGHTContorl.SetActive(false);
-                RIGHTControlStabilized.SetActive(false);
-                RightEnviormentController.SetActive(false);
-                RightControllerEnvironmentStabilized.SetActive(false);
 
                 float ResponseTime = TimeForUserToRespond - sxr.TimeRemaining(); // used to calculate response time
                 sxr.StartTimer(TempStoreTime); // restores the original timer 
@@ -357,17 +345,11 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 2: // display slider
-                            RIGHTContorl.SetActive(true);
-                            RIGHTControlStabilized.SetActive(true);
-                            RightEnviormentController.SetActive(true);
-                            RightControllerEnvironmentStabilized.SetActive(true);
+                            controllerHandler.ToggleController();
                             sxr.InputSlider(0, 9, $"Using the Controller and Trigger Adjust the value to 9 and click submit [{InstructionSlider}]", true); // displays slider that user can input 
                             if (sxr.ParseInputUI(out InstructionSlider))
                             {
-                                RIGHTContorl.SetActive(false);
-                                RIGHTControlStabilized.SetActive(false);
-                                RightEnviormentController.SetActive(false);
-                                RightControllerEnvironmentStabilized.SetActive(false);
+                                controllerHandler.ToggleController();
                                 sxr.NextPhase();
                             }
                             break;
