@@ -6,9 +6,8 @@ using UnityEditor;
 
 namespace SampleExperimentScene
 {
-    public class ExperimentScriptV3 : MonoBehaviour
+    public class ExperimentScriptV2 : MonoBehaviour
     {
-        public bool EyeCalibration; // toggle for eye tracking
         public bool InstructionPhase; // Set to true to toggle on gaze rays to see in real time where user is looking
         public GameObject CS_plus_Object; // drag and drop CS+ object
         public float CS_plus_Object_Interval; // Enter time for CS+ object to stay active
@@ -31,15 +30,9 @@ namespace SampleExperimentScene
         public GameObject Floor;
 
         public DoorOpener doorOpener;
+        public VRControllerHandler controllerHandler;
         public SimpleCharacterMover characterMover;
 
-        public GameObject RIGHTContorl;
-        public GameObject RIGHTControlStabilized;
-        public GameObject RightEnviormentController;
-        public GameObject RightControllerEnvironmentStabilized;
-
-
-        private Vector3 gazeHitPoint; // used in calculating eye tracking data with collisions
         private bool hasExecuted = false; //  used as a way to execute one block of code only once
         private bool hasStartedCS = false; // used to execute the start of the CS+ only once
         private string Anticipateheaders = "Anticipated,ResponseTime"; // Used to write headers to Anticipatedfile
@@ -212,10 +205,7 @@ namespace SampleExperimentScene
                 sxr.StartTimer(TimeForUserToRespond); // starts a new timer for 50s allowing the user to respond 
                 Debug.Log("Paused before disabling object. Waiting for user input...");
                 // enables the user to move the right controller 
-                RIGHTContorl.SetActive(true);
-                RIGHTControlStabilized.SetActive(true);
-                RightEnviormentController.SetActive(true);
-                RightControllerEnvironmentStabilized.SetActive(true);
+                controllerHandler.ToggleController();
 
                 int TempStoreAnticipateNum = -1;
                 string storeStage = sxr.GetStage();
@@ -230,10 +220,7 @@ namespace SampleExperimentScene
                 userInputComplete = true; // this bool is used to tell PlaySoundAfterDelay that it can continue with it's delay.
                 sxr.SetStage(storeStage);
                 // disables the Right Controller
-                RIGHTContorl.SetActive(false);
-                RIGHTControlStabilized.SetActive(false);
-                RightEnviormentController.SetActive(false);
-                RightControllerEnvironmentStabilized.SetActive(false);
+                controllerHandler.ToggleController();
 
                 float ResponseTime = TimeForUserToRespond - sxr.TimeRemaining(); // used to calculate response time
                 sxr.StartTimer(TempStoreTime); // restores the original timer 
@@ -297,10 +284,6 @@ namespace SampleExperimentScene
 
         void Start()
         {
-            if (EyeCalibration) // set to true in the inspector if you would like to auto launch SRanipal eye tracker calibration
-            {
-                sxr.LaunchEyeCalibration();
-            }
 
             // used to save the original color of the object before it changes them for the B part of ABA testing
             originalCeilingColor = Ceiling.GetComponent<Renderer>().material.color;
@@ -367,18 +350,18 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 2: // display slider
-                            RIGHTContorl.SetActive(true);
-                            RIGHTControlStabilized.SetActive(true);
-                            RightEnviormentController.SetActive(true);
-                            RightControllerEnvironmentStabilized.SetActive(true);
+                            if (!hasExecuted)
+                            {
+                                controllerHandler.ToggleController();
+                                hasExecuted = true;
+
+                            }
                             sxr.InputSlider(0, 9, $"Using the Controller and Trigger Adjust the value to 9 and click submit [{InstructionSlider}]", true); // displays slider that user can input 
                             if (sxr.ParseInputUI(out InstructionSlider))
                             {
-                                RIGHTContorl.SetActive(false);
-                                RIGHTControlStabilized.SetActive(false);
-                                RightEnviormentController.SetActive(false);
-                                RightControllerEnvironmentStabilized.SetActive(false);
+                                controllerHandler.ToggleController();
                                 sxr.NextPhase();
+                                hasExecuted = false;
                             }
                             break;
 

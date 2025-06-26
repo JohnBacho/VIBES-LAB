@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731713, g: 0.13414738, b: 0.121078536, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731689, g: 0.13414706, b: 0.1210784, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2222,6 +2222,7 @@ GameObject:
   - component: {fileID: 1970160397}
   - component: {fileID: 1970160399}
   - component: {fileID: 1970160400}
+  - component: {fileID: 1970160401}
   m_Layer: 0
   m_Name: MainDriver
   m_TagString: Untagged
@@ -2271,7 +2272,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4208c2f66e44494479da87938e9d04c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EyeCalibration: 0
   InstructionPhase: 0
   CS_plus_Object: {fileID: 6518997689588716743}
   CS_plus_Object_Interval: 8
@@ -2291,12 +2291,25 @@ MonoBehaviour:
   FrontWall: {fileID: 0}
   Floor: {fileID: 0}
   doorOpener: {fileID: 1000444530}
+  controllerHandler: {fileID: 1970160401}
   characterMover: {fileID: 519027812}
+  playerCamera: {fileID: 1845076978}
+--- !u!114 &1970160401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1970160395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f82a470a9e184f449dc9841c1f8948d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   RIGHTContorl: {fileID: 948993002}
   RIGHTControlStabilized: {fileID: 1126951193}
   RightEnviormentController: {fileID: 1208664798}
   RightControllerEnvironmentStabilized: {fileID: 1572637430}
-  playerCamera: {fileID: 1845076978}
 --- !u!1001 &2001985763
 PrefabInstance:
   m_ObjectHideFlags: 0
