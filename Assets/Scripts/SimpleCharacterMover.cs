@@ -6,7 +6,7 @@ public class SimpleCharacterMover : MonoBehaviour
     public float endSpeed = 5f;
     public float scareDuration = 1f;
     public Transform head;
-
+    public Transform playerCamera;
     public float heightOffset = 0.3f;
 
     private Transform targetPlayer;
@@ -58,14 +58,14 @@ public class SimpleCharacterMover : MonoBehaviour
     }
 
     // Call this from another script
-    public void StartScare(Transform playerTransform)
+    public void StartScare()
     {
-        targetPlayer = playerTransform;
+        targetPlayer = playerCamera;
         timer = 0f;
         isScaring = true;
 
         Vector3 pos = transform.position;
-        pos.y = playerTransform.position.y + heightOffset;
+        pos.y = playerCamera.position.y + heightOffset;
         transform.position = pos;
     }
 

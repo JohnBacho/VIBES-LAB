@@ -19,19 +19,10 @@ namespace SampleExperimentScene
         public GameObject US_Object; // drag and drop the object you want to be the US
         public float US_Sound_Delay; // Enter time for sound delay to play after CS+ object is activated.
         public bool ABATesting; // Used to determine what context you want Extinction to 
-        public Color ABA_Environment_Color = Color.green; // set the color of the room for the ABA testing
 
-        // drag and drop room objects into this so that it can change the color for ABA testing
-        public GameObject Ceiling;
-        public GameObject LeftWall;
-        public GameObject RightWall;
-        public GameObject BackWall;
-        public GameObject FrontWall;
-        public GameObject Floor;
-
-        public DoorOpener doorOpener;
-        public VRControllerHandler controllerHandler;
-        public SimpleCharacterMover characterMover;
+        public DoorOpener doorOpener; // Pulls in the door script that enables the door to open and close
+        public VRControllerHandler controllerHandler; // handles when the controller is on and when it is off
+        public SimpleCharacterMover characterMover; // handles how the monster should move
 
         private bool hasExecuted = false; //  used as a way to execute one block of code only once
         private bool hasStartedCS = false; // used to execute the start of the CS+ only once
@@ -45,14 +36,6 @@ namespace SampleExperimentScene
         private float TimeForUserToRespond = 999; // Used to determine how long the user has to respond
         private float WaitTimeTillUserInput = 5; // Used to determine how long to wait into the CS to display Slider
         private int InstructionSlider = 0; // Used for slider
-        public Transform playerCamera;
-
-        private Color originalCeilingColor;
-        private Color originalLeftWallColor;
-        private Color originalRightWallColor;
-        private Color originalBackWallColor;
-        private Color originalFrontWallColor;
-        private Color originalFloorColor;
 
         public void StartCS(bool IsCSPlus, bool PlaySound, float CS_Sound_Delay, float CS_Object_Interval, bool GetAnticipation)
         {
@@ -62,7 +45,7 @@ namespace SampleExperimentScene
                 sxr.StartTimer(CS_Object_Interval); // sets the timer
                 hasExecuted = true;
                 string result = IsCSPlus ? "CS+" : "CS-";
-                sxr.SetStage(result);
+                sxr.SetStage(result); // writes stage to file
             }
 
 
@@ -124,7 +107,7 @@ namespace SampleExperimentScene
                 if (audioSource != null && PlaySound)
                 {
                     sxr.SetStage("US");
-                    US_Object.SetActive(true);
+                    US_Object.SetActive(true); 
                     audioSource.Play(); // plays sound
                     audioSource2.Play();
                     audioSource3.Play();
@@ -132,7 +115,7 @@ namespace SampleExperimentScene
             }
             else
             {
-                yield return new WaitForSeconds(soundDelay); // soundDelay determines how long it should wait to play the sound
+                yield return new WaitForSeconds(soundDelay); // soundDelay determines how long it should wait until it plays the sound
                 if (audioSource != null && PlaySound)
                 {
                     sxr.SetStage("US");
@@ -164,7 +147,7 @@ namespace SampleExperimentScene
                 {
                     doorOpener.OpenDoor();
                     characterMover.ResetPosition();
-                    characterMover.StartScare(playerCamera);
+                    characterMover.StartScare();
                 }
 
                 yield return new WaitForSeconds(1); // waits for 1 second
@@ -181,7 +164,7 @@ namespace SampleExperimentScene
                 {
                     doorOpener.OpenDoor();
                     characterMover.ResetPosition();
-                    characterMover.StartScare(playerCamera);
+                    characterMover.StartScare();
                     US_Object.SetActive(true);
                 }
 
@@ -262,38 +245,8 @@ namespace SampleExperimentScene
             }
         }
 
-        public void ChangeAllColors(Color newColor) // changes all colors to the color entered in the inspector
-        {
-            ChangeColorTo(Ceiling, newColor);
-            ChangeColorTo(LeftWall, newColor);
-            ChangeColorTo(RightWall, newColor);
-            ChangeColorTo(BackWall, newColor);
-            ChangeColorTo(FrontWall, newColor);
-            ChangeColorTo(Floor, newColor);
-        }
-
-        public void RevertAllColors() // reverts all the objects back to there original colors 
-        {
-            ChangeColorTo(Ceiling, originalCeilingColor);
-            ChangeColorTo(LeftWall, originalLeftWallColor);
-            ChangeColorTo(RightWall, originalRightWallColor);
-            ChangeColorTo(BackWall, originalBackWallColor);
-            ChangeColorTo(FrontWall, originalFrontWallColor);
-            ChangeColorTo(Floor, originalFloorColor);
-        }
-
         void Start()
         {
-
-            // used to save the original color of the object before it changes them for the B part of ABA testing
-            originalCeilingColor = Ceiling.GetComponent<Renderer>().material.color;
-            originalLeftWallColor = LeftWall.GetComponent<Renderer>().material.color;
-            originalRightWallColor = RightWall.GetComponent<Renderer>().material.color;
-            originalBackWallColor = BackWall.GetComponent<Renderer>().material.color;
-            originalFrontWallColor = FrontWall.GetComponent<Renderer>().material.color;
-            originalFloorColor = Floor.GetComponent<Renderer>().material.color;
-
-
             // error handling
             if (US_Sound_Delay > CS_plus_Object_Interval)
             {
@@ -448,7 +401,7 @@ namespace SampleExperimentScene
                                 case 0: // CS-
                                     if (ABATesting)
                                     {
-                                        ChangeAllColors(ABA_Environment_Color);
+                                        // PlaceHolder
                                     }
                                     StartCS(false, false, 7, CS_minus_Object_Interval, false);
                                     break;
@@ -648,7 +601,7 @@ namespace SampleExperimentScene
                                         hasExecuted = false; // sets has Executed Flag to false for the next trial
                                         if (ABATesting)
                                         {
-                                            RevertAllColors();
+                                            // Placeholder
                                         }
                                     }
                                     break;
