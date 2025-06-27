@@ -22,8 +22,10 @@ namespace sxr_internal
         Camera vrCamera; 
 
         private string toWrite = ""; 
-        private Stack<string> InFocusStack;
-        private bool hasExecuted;
+        private Stack<string> InFocusStack = new Stack<string>();
+        private bool hasExecuted = false;
+        private float start;
+        private float TimeLookedAtObject;
         private bool recordEyeTracker; 
         private bool headerPrinted;
         private string FocusedGameObject = ""; // used for Sranipal
@@ -55,21 +57,38 @@ namespace sxr_internal
 
         private string CheckFocusedObject()
         {
-            
+
             // Try to get gaze focus from either eye
             if (!SRanipal_Eye.Focus(GazeIndex.COMBINE, out testRay, out focusInfo) &&
                 !SRanipal_Eye.Focus(GazeIndex.LEFT, out testRay, out focusInfo) &&
                 !SRanipal_Eye.Focus(GazeIndex.RIGHT, out testRay, out focusInfo))
             {
-                return "";  
+                return "";
             }
 
             string focusedGameObject = focusInfo.collider.gameObject.name;
             Vector3 gazeHitPoint = focusInfo.point;
 
-            // Return formatted data
-            return "," + gazeHitPoint.x + "," + gazeHitPoint.y + "," + gazeHitPoint.z + "," + focusedGameObject;
+            if (!hasExecuted && !InFocusStack.Contains(focusedGameObject))
+            {
+                InFocusStack.Push(focusedGameObject);
+                start = Time.realtimeSinceStartup;
+                hasExecuted = true;
+            }
+            if (focusedGameObject == InFocusStack.Peek())
+            {
+                InFocusStack.Push(focusedGameObject);
+                TimeLookedAtObject = Time.realtimeSinceStartup - start;
+            }
+            else
+            {
+                TimeLookedAtObject = 0;
+                start = Time.realtimeSinceStartup;
+                InFocusStack.Push(focusedGameObject);
+            }
 
+            // Return formatted data
+            return "," + gazeHitPoint.x + "," + gazeHitPoint.y + "," + gazeHitPoint.z + "," + focusedGameObject + "," + TimeLookedAtObject;
         }
 
         public bool RecordingGaze() { return recordEyeTracker; }
