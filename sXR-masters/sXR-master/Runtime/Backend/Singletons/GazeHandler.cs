@@ -22,10 +22,11 @@ namespace sxr_internal
         Camera vrCamera; 
 
         private string toWrite = ""; 
-
+        private Stack<string> InFocusStack;
+        private bool hasExecuted;
         private bool recordEyeTracker; 
         private bool headerPrinted;
-                private string FocusedGameObject = ""; // used for Sranipal
+        private string FocusedGameObject = ""; // used for Sranipal
         private Ray testRay; // used for Sranipal
         private FocusInfo focusInfo; // used for Sranipal
         private Vector3 gazeHitPoint; // used in calculating eye tracking data with collisions
@@ -37,7 +38,7 @@ namespace sxr_internal
             "leftEyePositionY,leftEyePositionZ,rightEyePositionX,rightEyePositionY,rightEyePositionZ," +
             "leftEyeRotationX,leftEyeRotationY,leftEyeRotationZ,rightEyeRotationX,rightEyeRotationY," +
             "rightEyeRotationZ,leftEyePupilSize,rightEyePupilSize,leftEyeOpenAmount,rightEyeOpenAmount," +
-            "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus");
+            "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus,TimeLookedAtObject");
 
             headerPrinted=true;}
         
@@ -233,8 +234,26 @@ namespace sxr_internal
             string focusedGameObject = focusInfo.collider.gameObject.name;
             Vector3 gazeHitPoint = focusInfo.point;
 
+            if (!hasExecuted)
+            {
+                InFocusStack.push(focusedGameObject);
+                float start = Time.realtimeSinceStartup;
+                hasExecuted = true;
+            }
+            if (focusedGameObject == InFocusStack.pop())
+            {
+                InFocusStack.push(focusedGameObject);
+                float TimeLookedAtObject = Time.realtimeSinceStartup - start;
+            }
+            else
+            {
+                float TimeLookedAtObject = 0;
+                start = Time.realtimeSinceStartup;
+                InFocusStack.push(focusedGameObject);
+            }
+
             // Return formatted data
-            return "," + gazeHitPoint.x + "," + gazeHitPoint.y + "," + gazeHitPoint.z + "," + focusedGameObject;
+            return "," + gazeHitPoint.x + "," + gazeHitPoint.y + "," + gazeHitPoint.z + "," + focusedGameObject + "," + TimeLookedAtObject;
         }
 
 
