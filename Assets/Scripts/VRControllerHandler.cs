@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+// Simple Script made by Jace that turns the controller on and off
 public class VRControllerHandler : MonoBehaviour
 {
 

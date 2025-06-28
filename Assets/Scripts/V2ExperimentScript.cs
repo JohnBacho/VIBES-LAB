@@ -19,6 +19,7 @@ namespace SampleExperimentScene
         public GameObject US_Object; // drag and drop the object you want to be the US
         public float US_Sound_Delay; // Enter time for sound delay to play after CS+ object is activated.
         public bool ABATesting; // Used to determine what context you want Extinction to 
+        public GameObject WhiteDoor; // Used for the white door in V3
 
         public DoorOpener doorOpener; // Pulls in the door script that enables the door to open and close
         public VRControllerHandler controllerHandler; // handles when the controller is on and when it is off
@@ -37,6 +38,7 @@ namespace SampleExperimentScene
         private float WaitTimeTillUserInput = 5; // Used to determine how long to wait into the CS to display Slider
         private int InstructionSlider = 0; // Used for slider
 
+
         public void StartCS(bool IsCSPlus, bool PlaySound, float CS_Sound_Delay, float CS_Object_Interval, bool GetAnticipation)
         {
             GameObject CS_Object = IsCSPlus ? CS_plus_Object : CS_minus_Object; // if true display CS+ else CS-
@@ -54,6 +56,7 @@ namespace SampleExperimentScene
                 // Activate object and play sound after delay
                 hasStartedCS = true;
                 CS_Object.SetActive(true);
+                WhiteDoor.SetActive(false);
                 StartCoroutine(PlaySoundAfterDelay(PlaySound, CS_Sound_Delay, GetAnticipation)); // calls function to play sound with delay
                 StartCoroutine(DisableObjects(CS_Object, CS_Object_Interval, GetAnticipation)); // calls function to deactivate sound with delay
                 StartCoroutine(JumpScare(US_Object, PlaySound, CS_Sound_Delay, GetAnticipation));
@@ -215,6 +218,7 @@ namespace SampleExperimentScene
                 {
                     yield return new WaitForSeconds(objectDelay - WaitTimeTillUserInput);
                     objectToDisable.SetActive(false); // will deactivate object
+                    WhiteDoor.SetActive(true);
                 }
             }
             else
@@ -225,6 +229,7 @@ namespace SampleExperimentScene
             if (objectToDisable != null)
             {
                 objectToDisable.SetActive(false);
+                WhiteDoor.SetActive(true);
             }
             else
             {
