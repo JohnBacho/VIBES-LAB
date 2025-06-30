@@ -43,9 +43,15 @@ namespace sxr_internal {
         {
             if (activeUpdate)
             {
-                sxrSettings.Instance.vrCamera.cullingMask = (submitButton.activeSelf
-                    ? LayerMask.GetMask("InteractiveUI")
-                    : ~(1 << LayerMask.NameToLayer("InteractiveUI")));
+                if (submitButton.activeSelf)
+                {
+                    sxrSettings.Instance.vrCamera.cullingMask |= LayerMask.GetMask("InteractiveUI");
+                }
+                else
+                {
+                    sxrSettings.Instance.vrCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("InteractiveUI"));
+                }
+
                 
                 inputWindow.SetActive(inputDropdown.activeSelf || inputSlider.activeSelf);
             }
