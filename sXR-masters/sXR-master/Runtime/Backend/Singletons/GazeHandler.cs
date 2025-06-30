@@ -22,7 +22,7 @@ namespace sxr_internal
         Camera vrCamera; 
 
         private string toWrite = ""; 
-        private Stack<string> InFocusStack = new Stack<string>();
+        private string InFocusItem;
         private bool hasExecuted = false;
         private float start;
         private float TimeLookedAtObject;
@@ -69,22 +69,22 @@ namespace sxr_internal
             string focusedGameObject = focusInfo.collider.gameObject.name;
             Vector3 gazeHitPoint = focusInfo.point;
 
-            if (!hasExecuted && !InFocusStack.Contains(focusedGameObject))
+            if (!hasExecuted && InFocusItem == null)
             {
-                InFocusStack.Push(focusedGameObject);
+                InFocusItem = focusedGameObject;
                 start = Time.realtimeSinceStartup;
                 hasExecuted = true;
             }
-            if (focusedGameObject == InFocusStack.Peek())
+            if (focusedGameObject == InFocusItem)
             {
-                InFocusStack.Push(focusedGameObject);
+                InFocusItem = focusedGameObject;
                 TimeLookedAtObject = Time.realtimeSinceStartup - start;
             }
             else
             {
                 TimeLookedAtObject = 0;
                 start = Time.realtimeSinceStartup;
-                InFocusStack.Push(focusedGameObject);
+                InFocusItem = focusedGameObject;
             }
 
             // Return formatted data
@@ -191,13 +191,18 @@ namespace sxr_internal
             UpdateGaze();
             return verboseData.right.eye_openness; }
 
-        public float LeftEyePupilSize() {
+        public float? LeftEyePupilSize() {
             UpdateGaze();
-            return verboseData.left.pupil_diameter_mm; }
+            float value = verboseData.left.pupil_diameter_mm;
+            return value < 0 ? (float?)null : value;
+        }
 
-        public float RightEyePupilSize() {
+        public float? RightEyePupilSize() {
             UpdateGaze();
-            return verboseData.right.pupil_diameter_mm; }
+            float value = verboseData.right.pupil_diameter_mm;
+            return value < 0 ? (float?)null : value;
+        }
+
 
         private void OnApplicationQuit(){
             if(headerPrinted && toWrite != "")
