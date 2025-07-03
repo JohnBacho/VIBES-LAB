@@ -43,7 +43,9 @@ namespace sxr_internal {
         {
             if (activeUpdate)
             {
-                if (submitButton.activeSelf)
+                bool anyUIActive = scrollObject.activeSelf || inputDropdown.activeSelf || inputSlider.activeSelf || submitButton.activeSelf;
+
+                if (anyUIActive)
                 {
                     sxrSettings.Instance.vrCamera.cullingMask |= LayerMask.GetMask("InteractiveUI");
                 }
@@ -51,6 +53,7 @@ namespace sxr_internal {
                 {
                     sxrSettings.Instance.vrCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("InteractiveUI"));
                 }
+
 
                 
                 inputWindow.SetActive(inputDropdown.activeSelf || inputSlider.activeSelf);
