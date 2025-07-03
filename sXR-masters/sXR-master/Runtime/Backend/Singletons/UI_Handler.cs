@@ -95,7 +95,7 @@ namespace sxr_internal {
         {
             if (!submit) submitButton.SetActive(true);
             SetText(buttonText, "Submit"); 
-
+            SetText(scrollTitle, "Instructions");
             scrollObject.SetActive(true);
             scrollText.SetActive(true);
             var slider = inputSlider.GetComponent<Slider>();
@@ -335,9 +335,9 @@ namespace sxr_internal {
 
             inputSlider.SetActive(false);
             inputDropdown.SetActive(false);
+            submitButton.SetActive(false);
             SetText(scrollTitle, "Instructions");
             SetText(scrollText, "Wait for the experimenter to start.");
-            SetText(buttonText, "Start");
 
             if (!TagsAndLayers.LayerExists("InteractiveUI"))
                 TagsAndLayers.CreateLayer("InteractiveUI");
