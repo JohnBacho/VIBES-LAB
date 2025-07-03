@@ -3,24 +3,27 @@ using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
 
-namespace sxr_internal {
-    public class ExperimentHandler : MonoBehaviour {
+namespace sxr_internal
+{
+    public class ExperimentHandler : MonoBehaviour
+    {
         public string subjectID;
         public int phase;
         public int block;
         public int trial;
-        public int stepInTrial; 
-        
+        public int stepInTrial;
+        public string stageInTrial;
+
         private string experimentName = "";
         private string subjectFile = "";
         private string backupFile = "";
 
-        private Timer trialTimer=null;
+        private Timer trialTimer = null;
         private FileHandler fh = new FileHandler();
 
         private float lastTriggerPress;
-        private int lastTrueFrame; 
-        
+        private int lastTrueFrame;
+
         /// <summary>
         /// Offers a combined "Trigger" across joystick trigger, vr controller trigger, left mouse click, and keyboard spacebar
         /// </summary>
@@ -97,9 +100,10 @@ namespace sxr_internal {
                   + DateTime.Now.Minute + "_" +subjectID : ""; 
             StartTimer(); }
 
-        public void WriteHeaderToTaggedFile(string tag, string headerInfo) {
-            if (subjectFile == "") { ParseFileNames();}
-            headerInfo = "SubjectID,Date,LocalTime,UnityTime,Phase,BlockNumber,TrialNumber,Step,TrialTime," + headerInfo;
+        public void WriteHeaderToTaggedFile(string tag, string headerInfo)
+        {
+            if (subjectFile == "") { ParseFileNames(); }
+            headerInfo = "SubjectID,Date,LocalTime,UnityTime,Phase,BlockNumber,TrialNumber,Step,TrialTime,Stage," + headerInfo;
             fh.AppendLine(subjectFile + "_" + tag + ".csv", headerInfo);
             if (backupFile != "") fh.AppendLine(backupFile + "_" + tag + ".csv", headerInfo); }
         
@@ -114,9 +118,9 @@ namespace sxr_internal {
         {
             return subjectID + "," + DateTime.Today.Month + "_" + DateTime.Today.Day + "," + DateTime.Now.Hour + "_" +
                    DateTime.Now.Minute + "_" + DateTime.Now.Second + "," + Time.time + "," + phase + "," + block + "," +
-                   trial + "," + stepInTrial + "," + trialTimer.GetTimePassed() + ",";
+                   trial + "," + stepInTrial + "," + trialTimer.GetTimePassed() + "," + stageInTrial + ",";
         }
-        
+
         // Singleton initiated on Awake()
         public static ExperimentHandler Instance;
         void Awake() {
