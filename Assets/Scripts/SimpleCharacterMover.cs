@@ -8,11 +8,15 @@ public class SimpleCharacterMover : MonoBehaviour
     public Transform head;
     public Transform playerCamera;
     public float heightOffset = 0.3f;
+    public Transform Left;
+    public Transform Middle;
+    public Transform Right;
 
     private Transform targetPlayer;
     private float timer = 0f;
     private bool isScaring = false;
     private Vector3 originalPosition;
+
     private Quaternion originalRotation;
 
     void Start()
@@ -58,7 +62,7 @@ public class SimpleCharacterMover : MonoBehaviour
     }
 
     // Call this from another script
-    public void StartScare()
+    public void StartScare(string Position)
     {
         targetPlayer = playerCamera;
         timer = 0f;
@@ -67,6 +71,19 @@ public class SimpleCharacterMover : MonoBehaviour
         Vector3 pos = transform.position;
         pos.y = playerCamera.position.y + heightOffset;
         transform.position = pos;
+
+        switch (Position)
+        {
+            case "Left":
+                transform.position = Left.position;
+                break;
+            case "Middle":
+                transform.position = Middle.position;
+                break;
+            case "Right":
+                transform.position = Right.position;
+                break;
+        }
     }
 
     public void ResetPosition()
