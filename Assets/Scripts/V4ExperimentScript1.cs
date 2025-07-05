@@ -10,8 +10,10 @@ namespace SampleExperimentScene
     {
         public bool InstructionPhase; // Set to true to toggle on gaze rays to see in real time where user is looking
         public Color CS_Plus_LightColor = Color.blue; // set the color of the room for the ABA testing
+        public bool CSPlusPattern = false; // used to determine if to make the light flash a pattern or not
         public float CS_plus_Object_Interval; // Enter time for CS+ object to stay active
         public Color CS_Minus_LightColor = Color.green; // set the color of the room for the ABA testing
+        public bool CSMinusPattern = false; // used to determine if to make the light flash a pattern or not
         public float CS_minus_Object_Interval; // Enter time for CS- object to stay active
         public GameObject US_Sound; // drag and drop US sound to get it to play
         public GameObject US_Sound2; // drag and drop US sound to get it to play
@@ -90,7 +92,16 @@ namespace SampleExperimentScene
                 // Activate object and play sound after delay
                 hasStartedCS = true;
                 Color LightColor = IsCSPlus ? CS_Plus_LightColor : CS_Minus_LightColor;
-                LightSCRIPT.ChangeLightColor(LightColor);
+                LightSCRIPT.Stop = false;
+                if (CSPlusPattern && IsCSPlus || CSMinusPattern && !IsCSPlus)
+                {
+                    StartCoroutine(LightSCRIPT.PatternLight(LightColor));
+                }
+                else
+                {
+                    LightSCRIPT.ChangeLightColor(LightColor);
+                }
+
                 StartCoroutine(PlaySoundAfterDelay(PlaySound, CS_Sound_Delay, GetAnticipation)); // calls function to play sound with delay
                 StartCoroutine(DisableObjects(CS_Object_Interval, GetAnticipation)); // calls function to deactivate sound with delay
                 StartCoroutine(JumpScare(US_Object, PlaySound, CS_Sound_Delay, GetAnticipation, Position));
@@ -251,21 +262,23 @@ namespace SampleExperimentScene
                 if (objectDelay > WaitTimeTillUserInput)
                 {
                     yield return new WaitForSeconds(objectDelay - WaitTimeTillUserInput);
-                    lightHandlerLeft.ResetLight();
-                    lightHandlerMiddle.ResetLight();
-                    lightHandlerRight.ResetLight();
+                    RestAllLights();
                 }
             }
             else
             {
                 yield return new WaitForSeconds(objectDelay);
             }
-            lightHandlerLeft.ResetLight();
-            lightHandlerMiddle.ResetLight();
-            lightHandlerRight.ResetLight();
+            RestAllLights();
             userInputComplete = false; // rests flag
         }
 
+        public void RestAllLights()
+        {
+            lightHandlerLeft.ResetLight();
+            lightHandlerMiddle.ResetLight();
+            lightHandlerRight.ResetLight();
+        }
 
         public void ChangeColorTo(GameObject obj, Color newColor) // changes each object individually to the color specified in the inspector
         {
@@ -387,7 +400,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(true, "Middle", false, US_Sound_Delay, CS_plus_Object_Interval, true);
+                                    StartCS(true, "Right", false, US_Sound_Delay, CS_plus_Object_Interval, true);
                                     break;
 
                                 case 1: // inter trial interval
@@ -434,7 +447,7 @@ namespace SampleExperimentScene
                                     {
                                         // PlaceHolder
                                     }
-                                    StartCS(false, "Left", false, 7, CS_minus_Object_Interval, false);
+                                    StartCS(false, "Middle", false, 7, CS_minus_Object_Interval, false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -447,7 +460,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(false, "Left", false, 7, CS_minus_Object_Interval, false);
+                                    StartCS(false, "Right", false, 7, CS_minus_Object_Interval, false);
                                     break;
 
                                 case 1: // inter trial interval
