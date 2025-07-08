@@ -23,21 +23,9 @@ namespace SampleExperimentScene
         public bool ABATesting; // Used to determine what context you want Extinction to 
         public GameObject Building1; // used for context switch in ABA
         public GameObject Building2; // used for context switch in ABA
-        public DoorOpener doorOpenerLeft; // Pulls in the door script that enables the door to open and close
-        public DoorOpener doorOpenerMiddle; // Pulls in the door script that enables the door to open and close
-        public DoorOpener doorOpenerRight; // Pulls in the door script that enables the door to open and close
-
-        public ElevatorDoorController ElevatorLeft; // Pulls in the door script that enables the door to open and close
-        public ElevatorDoorController ElevatorMiddle; // Pulls in the door script that enables the door to open and close
-        public ElevatorDoorController ElevatorRight; // Pulls in the door script that enables the door to open and close
-
         public VRControllerHandler controllerHandler; // handles when the controller is on and when it is off
         public SimpleCharacterMover characterMover; // handles how the monster should move
-
-        public LightingHandler lightHandlerLeft; // handles how the light should work
-        public LightingHandler lightHandlerMiddle; // handles how the light should work
-        public LightingHandler lightHandlerRight; // handles how the light should work
-
+        public ScriptHandler scriptHandler;
         private bool hasExecuted = false; //  used as a way to execute one block of code only once
         private bool hasStartedCS = false; // used to execute the start of the CS+ only once
         private string Anticipateheaders = "Anticipated,ResponseTime"; // Used to write headers to Anticipatedfile
@@ -50,9 +38,6 @@ namespace SampleExperimentScene
         private float TimeForUserToRespond = 999; // Used to determine how long the user has to respond
         private float WaitTimeTillUserInput = 5; // Used to determine how long to wait into the CS to display Slider
         private int InstructionSlider = 0; // Used for slider
-        private LightingHandler LightSCRIPT; // Used to dynamically change the lighting script
-        private DoorOpener DoorOpenerSCRIPT; // Used to dynamically change the door script
-        private ElevatorDoorController ElevatorDoorControllerSCRIPT;
         private string result;
 
         public void StartCS(bool IsCSPlus, string Position, bool PlaySound, float CS_Sound_Delay, float CS_Object_Interval, bool GetAnticipation)
@@ -61,51 +46,19 @@ namespace SampleExperimentScene
             {
                 sxr.StartTimer(CS_Object_Interval); // sets the timer
 
+                scriptHandler.AssignScript(Position, ABATesting);
 
                 switch (Position)
                 {
                     case "Left":
-                        LightSCRIPT = lightHandlerLeft;
-                        if (ABATesting && sxr.GetPhase() == 3)
-                        {
-                            ElevatorDoorControllerSCRIPT = ElevatorLeft;
-                        }
-                        else
-                        {
-                            DoorOpenerSCRIPT = doorOpenerLeft;
-                        }
-                        lightHandlerMiddle.ReduceLightIntensity();
-                        lightHandlerRight.ReduceLightIntensity();
                         result = IsCSPlus ? "Left_CS+" : "Left_CS-";
                         sxr.SetStage(result);
                         break;
                     case "Middle":
-                        LightSCRIPT = lightHandlerMiddle;
-                        if (ABATesting && sxr.GetPhase() == 3)
-                        {
-                            ElevatorDoorControllerSCRIPT = ElevatorMiddle;
-                        }
-                        else
-                        {
-                            DoorOpenerSCRIPT = doorOpenerMiddle;
-                        }
-                        lightHandlerRight.ReduceLightIntensity();
-                        lightHandlerLeft.ReduceLightIntensity();
                         result = IsCSPlus ? "Middle_CS+" : "Middle_CS-";
                         sxr.SetStage(result);
                         break;
                     case "Right":
-                        LightSCRIPT = lightHandlerRight;
-                        if (ABATesting && sxr.GetPhase() == 3)
-                        {
-                            ElevatorDoorControllerSCRIPT = ElevatorRight;
-                        }
-                        else
-                        {
-                            DoorOpenerSCRIPT = doorOpenerRight;
-                        }
-                        lightHandlerLeft.ReduceLightIntensity();
-                        lightHandlerMiddle.ReduceLightIntensity();
                         result = IsCSPlus ? "Right_CS+" : "Right_CS-";
                         sxr.SetStage(result);
                         break;
@@ -118,14 +71,14 @@ namespace SampleExperimentScene
                 // Activate object and play sound after delay
                 hasStartedCS = true;
                 Color LightColor = IsCSPlus ? CS_Plus_LightColor : CS_Minus_LightColor;
-                LightSCRIPT.Stop = false;
+                scriptHandler.SetStop();
                 if (CSPlusPattern && IsCSPlus || CSMinusPattern && !IsCSPlus)
                 {
-                    StartCoroutine(LightSCRIPT.PatternLight(LightColor));
+                    scriptHandler.StartLightPattern(LightColor);
                 }
                 else
                 {
-                    LightSCRIPT.ChangeLightColor(LightColor);
+                    scriptHandler.ChangeLightColor(LightColor);
                 }
 
                 StartCoroutine(PlaySoundAfterDelay(PlaySound, CS_Sound_Delay, GetAnticipation)); // calls function to play sound with delay
@@ -135,15 +88,7 @@ namespace SampleExperimentScene
 
             if (sxr.CheckTimer()) // checks if timer is zero
             {
-                if (ABATesting && sxr.GetPhase() == 3)
-                {
-                    ElevatorDoorControllerSCRIPT.CloseDoors();
-
-                }
-                else
-                {
-                    DoorOpenerSCRIPT.ShutDoor();
-                }
+                scriptHandler.AssignCloser();
                 sxr.NextStep(); // advances to inter trial interval and sets hasExecuted and hasStartedCS to false
                 hasExecuted = false;
                 hasStartedCS = false;
@@ -227,15 +172,7 @@ namespace SampleExperimentScene
                 }
                 if (PlaySound)
                 {
-                    if (ABATesting && sxr.GetPhase() == 3)
-                    {
-                        ElevatorDoorControllerSCRIPT.OpenDoors();
-
-                    }
-                    else
-                    {
-                        DoorOpenerSCRIPT.OpenDoor();
-                    }
+                    scriptHandler.AssignOpener();
                     characterMover.ResetPosition();
                     characterMover.StartScare(position);
                 }
@@ -252,15 +189,7 @@ namespace SampleExperimentScene
                 yield return new WaitForSeconds(soundDelay); // soundDelay determines how long it should wait to play the sound
                 if (PlaySound)
                 {
-                    if (ABATesting && sxr.GetPhase() == 3)
-                    {
-                        ElevatorDoorControllerSCRIPT.OpenDoors();
-
-                    }
-                    else
-                    {
-                        DoorOpenerSCRIPT.OpenDoor();
-                    }
+                    scriptHandler.AssignOpener();
                     characterMover.ResetPosition();
                     characterMover.StartScare(position);
                     US_Object.SetActive(true);
@@ -312,31 +241,15 @@ namespace SampleExperimentScene
                 if (objectDelay > WaitTimeTillUserInput)
                 {
                     yield return new WaitForSeconds(objectDelay - WaitTimeTillUserInput);
-                    RestAllLights();
+                    scriptHandler.RestAllLights();
                 }
             }
             else
             {
                 yield return new WaitForSeconds(objectDelay);
             }
-            RestAllLights();
+            scriptHandler.RestAllLights();
             userInputComplete = false; // rests flag
-        }
-
-        public void RestAllLights()
-        {
-            lightHandlerLeft.ResetLight();
-            lightHandlerMiddle.ResetLight();
-            lightHandlerRight.ResetLight();
-        }
-
-        public void ChangeColorTo(GameObject obj, Color newColor) // changes each object individually to the color specified in the inspector
-        {
-            Renderer objRenderer = obj.GetComponent<Renderer>();
-            if (objRenderer != null)
-            {
-                objRenderer.material.color = newColor;
-            }
         }
 
         void Start()

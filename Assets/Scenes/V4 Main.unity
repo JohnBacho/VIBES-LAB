@@ -11944,11 +11944,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2135394455119277098, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -0.00004196167
+      value: -0.000015258789
       objectReference: {fileID: 0}
     - target: {fileID: 2135394455119277098, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000006198883
+      value: -0.000034332275
       objectReference: {fileID: 0}
     - target: {fileID: 2174674378022608793, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchorMax.y
@@ -16767,6 +16767,7 @@ GameObject:
   - component: {fileID: 1970160399}
   - component: {fileID: 1970160402}
   - component: {fileID: 1970160401}
+  - component: {fileID: 1970160403}
   m_Layer: 0
   m_Name: MainDriver
   m_TagString: Untagged
@@ -16837,7 +16838,7 @@ MonoBehaviour:
   CSPlusPattern: 1
   CS_plus_Object_Interval: 8
   CS_Minus_LightColor: {r: 1, g: 0.061523505, b: 0, a: 1}
-  CSMinusPattern: 0
+  CSMinusPattern: 1
   CS_minus_Object_Interval: 8
   US_Sound: {fileID: 2124453806}
   US_Sound2: {fileID: 1103217163}
@@ -16847,14 +16848,27 @@ MonoBehaviour:
   ABATesting: 1
   Building1: {fileID: 2009521960}
   Building2: {fileID: 511789283}
+  controllerHandler: {fileID: 1970160401}
+  characterMover: {fileID: 519027812}
+  scriptHandler: {fileID: 1970160403}
+--- !u!114 &1970160403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1970160395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 519a492eff4671b4a931ae858193363f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   doorOpenerLeft: {fileID: 1948456698}
   doorOpenerMiddle: {fileID: 2017652466}
   doorOpenerRight: {fileID: 2077804482}
   ElevatorLeft: {fileID: 1772361790}
   ElevatorMiddle: {fileID: 1452544617}
   ElevatorRight: {fileID: 1706484912}
-  controllerHandler: {fileID: 1970160401}
-  characterMover: {fileID: 519027812}
   lightHandlerLeft: {fileID: 2116934725}
   lightHandlerMiddle: {fileID: 1056901547}
   lightHandlerRight: {fileID: 1214265305}

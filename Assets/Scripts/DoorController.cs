@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DoorController : MonoBehaviour
+public class DoorOpener : MonoBehaviour
 {
     public GameObject Door;
     public Transform doorHinge;

@@ -40,7 +40,7 @@ public class ElevatorDoorController : MonoBehaviour
         isOpening = true;
     }
 
-    public void CloseDoors()
+    public void ShutDoors()
     {
         isOpening = false;
         StartCoroutine(CloseDoorsSmoothly());
