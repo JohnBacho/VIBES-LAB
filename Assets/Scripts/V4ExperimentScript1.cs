@@ -21,10 +21,15 @@ namespace SampleExperimentScene
         public GameObject US_Object; // drag and drop the object you want to be the US
         public float US_Sound_Delay; // Enter time for sound delay to play after CS+ object is activated.
         public bool ABATesting; // Used to determine what context you want Extinction to 
-
+        public GameObject Building1; // used for context switch in ABA
+        public GameObject Building2; // used for context switch in ABA
         public DoorOpener doorOpenerLeft; // Pulls in the door script that enables the door to open and close
         public DoorOpener doorOpenerMiddle; // Pulls in the door script that enables the door to open and close
         public DoorOpener doorOpenerRight; // Pulls in the door script that enables the door to open and close
+
+        public ElevatorDoorController ElevatorLeft; // Pulls in the door script that enables the door to open and close
+        public ElevatorDoorController ElevatorMiddle; // Pulls in the door script that enables the door to open and close
+        public ElevatorDoorController ElevatorRight; // Pulls in the door script that enables the door to open and close
 
         public VRControllerHandler controllerHandler; // handles when the controller is on and when it is off
         public SimpleCharacterMover characterMover; // handles how the monster should move
@@ -47,8 +52,8 @@ namespace SampleExperimentScene
         private int InstructionSlider = 0; // Used for slider
         private LightingHandler LightSCRIPT; // Used to dynamically change the lighting script
         private DoorOpener DoorOpenerSCRIPT; // Used to dynamically change the door script
+        private ElevatorDoorController ElevatorDoorControllerSCRIPT;
         private string result;
-
 
         public void StartCS(bool IsCSPlus, string Position, bool PlaySound, float CS_Sound_Delay, float CS_Object_Interval, bool GetAnticipation)
         {
@@ -61,7 +66,14 @@ namespace SampleExperimentScene
                 {
                     case "Left":
                         LightSCRIPT = lightHandlerLeft;
-                        DoorOpenerSCRIPT = doorOpenerLeft;
+                        if (ABATesting && sxr.GetPhase() == 3)
+                        {
+                            ElevatorDoorControllerSCRIPT = ElevatorLeft;
+                        }
+                        else
+                        {
+                            DoorOpenerSCRIPT = doorOpenerLeft;
+                        }
                         lightHandlerMiddle.ReduceLightIntensity();
                         lightHandlerRight.ReduceLightIntensity();
                         result = IsCSPlus ? "Left_CS+" : "Left_CS-";
@@ -69,7 +81,14 @@ namespace SampleExperimentScene
                         break;
                     case "Middle":
                         LightSCRIPT = lightHandlerMiddle;
-                        DoorOpenerSCRIPT = doorOpenerMiddle;
+                        if (ABATesting && sxr.GetPhase() == 3)
+                        {
+                            ElevatorDoorControllerSCRIPT = ElevatorMiddle;
+                        }
+                        else
+                        {
+                            DoorOpenerSCRIPT = doorOpenerMiddle;
+                        }
                         lightHandlerRight.ReduceLightIntensity();
                         lightHandlerLeft.ReduceLightIntensity();
                         result = IsCSPlus ? "Middle_CS+" : "Middle_CS-";
@@ -77,7 +96,14 @@ namespace SampleExperimentScene
                         break;
                     case "Right":
                         LightSCRIPT = lightHandlerRight;
-                        DoorOpenerSCRIPT = doorOpenerRight;
+                        if (ABATesting && sxr.GetPhase() == 3)
+                        {
+                            ElevatorDoorControllerSCRIPT = ElevatorRight;
+                        }
+                        else
+                        {
+                            DoorOpenerSCRIPT = doorOpenerRight;
+                        }
                         lightHandlerLeft.ReduceLightIntensity();
                         lightHandlerMiddle.ReduceLightIntensity();
                         result = IsCSPlus ? "Right_CS+" : "Right_CS-";
@@ -109,7 +135,15 @@ namespace SampleExperimentScene
 
             if (sxr.CheckTimer()) // checks if timer is zero
             {
-                DoorOpenerSCRIPT.ShutDoor();
+                if (ABATesting && sxr.GetPhase() == 3)
+                {
+                    ElevatorDoorControllerSCRIPT.CloseDoors();
+
+                }
+                else
+                {
+                    DoorOpenerSCRIPT.ShutDoor();
+                }
                 sxr.NextStep(); // advances to inter trial interval and sets hasExecuted and hasStartedCS to false
                 hasExecuted = false;
                 hasStartedCS = false;
@@ -193,7 +227,15 @@ namespace SampleExperimentScene
                 }
                 if (PlaySound)
                 {
-                    DoorOpenerSCRIPT.OpenDoor();
+                    if (ABATesting && sxr.GetPhase() == 3)
+                    {
+                        ElevatorDoorControllerSCRIPT.OpenDoors();
+
+                    }
+                    else
+                    {
+                        DoorOpenerSCRIPT.OpenDoor();
+                    }
                     characterMover.ResetPosition();
                     characterMover.StartScare(position);
                 }
@@ -210,7 +252,15 @@ namespace SampleExperimentScene
                 yield return new WaitForSeconds(soundDelay); // soundDelay determines how long it should wait to play the sound
                 if (PlaySound)
                 {
-                    DoorOpenerSCRIPT.OpenDoor();
+                    if (ABATesting && sxr.GetPhase() == 3)
+                    {
+                        ElevatorDoorControllerSCRIPT.OpenDoors();
+
+                    }
+                    else
+                    {
+                        DoorOpenerSCRIPT.OpenDoor();
+                    }
                     characterMover.ResetPosition();
                     characterMover.StartScare(position);
                     US_Object.SetActive(true);
@@ -291,6 +341,7 @@ namespace SampleExperimentScene
 
         void Start()
         {
+            Building2.SetActive(false);
             // error handling
             if (US_Sound_Delay > CS_plus_Object_Interval)
             {
@@ -445,7 +496,8 @@ namespace SampleExperimentScene
                                 case 0: // CS-
                                     if (ABATesting)
                                     {
-                                        // PlaceHolder
+                                        Building1.SetActive(false);
+                                        Building2.SetActive(true);
                                     }
                                     StartCS(false, "Middle", false, 7, CS_minus_Object_Interval, false);
                                     break;
@@ -645,7 +697,8 @@ namespace SampleExperimentScene
                                         hasExecuted = false; // sets has Executed Flag to false for the next trial
                                         if (ABATesting)
                                         {
-                                            // Placeholder
+                                            Building1.SetActive(true);
+                                            Building2.SetActive(false);
                                         }
                                     }
                                     break;

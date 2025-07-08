@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class DoorOpener : MonoBehaviour
 {
+    public GameObject Door;
     public Transform doorHinge;
     public float openAngle = -90f;
     public float speed = 4f;
