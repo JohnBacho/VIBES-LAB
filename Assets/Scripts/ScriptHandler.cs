@@ -65,7 +65,6 @@ public class ScriptHandler : MonoBehaviour
         }
     }
 
-
     //Door
     public void ShutDoor()
     {
