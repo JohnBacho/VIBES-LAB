@@ -12082,7 +12082,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 150.00002
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -17103,7 +17103,7 @@ MonoBehaviour:
   US_Sound3: {fileID: 933635399}
   US_Object: {fileID: 519027809}
   US_Sound_Delay: 7
-  ABATesting: 1
+  ABATesting: 0
   Building1: {fileID: 2009521960}
   Building2: {fileID: 511789283}
   controllerHandler: {fileID: 1970160401}

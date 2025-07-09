@@ -24,10 +24,7 @@ public class ScriptHandler : MonoBehaviour
 
     private bool ABA = false;
 
-
-
-
-    public void AssignScript(StimulusLocation position, bool ABATesting)
+    public void AssignLightingAndDoorControllerForStimulusLocation(StimulusLocation position, bool ABATesting)
     {
         ABA = ABATesting;
         LightingHandler[] lights = { lightHandlerLeft, lightHandlerMiddle, lightHandlerRight };

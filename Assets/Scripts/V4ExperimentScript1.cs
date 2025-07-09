@@ -1,6 +1,6 @@
 using UnityEngine;
 using sxr_internal;
-using System.Collections; // Required for IEnumerator
+using System.Collections;
 using UnityEditor;
 public enum StimulusLocation
 {
@@ -41,9 +41,9 @@ namespace SampleExperimentScene
         private string Anticipateheaders = "Anticipated,ResponseTime"; // Used to write headers to Anticipatedfile
         private int AnticipatedNumber; // Used for when the user enters if they anticipated US
         private bool userInputComplete = false; // Used for a check if the user has submitted a value  
-        private float TimeForUserToRespond = 999; // Used to determine how long the user has to respond
-        private float WaitTimeTillUserInput = 5; // Used to determine how long to wait into the CS to display Slider
-        private int InstructionSlider = 0; // Used for slider
+        private const float TimeForUserToRespond = 999; // Used to determine how long the user has to respond
+        private const float DisplayTimeBeforeSlider = 5; // Used to determine how long to wait into the CS to display Slider
+        private int InstructionSliderValue = 0; // Used for slider
         private string result;
 
         public void StartCS(StimulusType type, StimulusLocation position, bool PlaySound, float CS_Sound_Delay, float CS_Object_Interval, bool GetAnticipation)
@@ -52,23 +52,14 @@ namespace SampleExperimentScene
             {
                 sxr.StartTimer(CS_Object_Interval); // sets the timer
 
-                scriptHandler.AssignScript(position, ABATesting);
+                scriptHandler.AssignLightingAndDoorControllerForStimulusLocation(position, ABATesting);
 
-                switch (position)
-                {
-                    case StimulusLocation.Left:
-                        result = type == StimulusType.CS_Plus ? "Left_CS+" : "Left_CS-";
-                        sxr.SetStage(result);
-                        break;
-                    case StimulusLocation.Middle:
-                        result = type == StimulusType.CS_Plus ? "Middle_CS+" : "Middle_CS-";
-                        sxr.SetStage(result);
-                        break;
-                    case StimulusLocation.Right:
-                        result = type == StimulusType.CS_Plus ? "Right_CS+" : "Right_CS-";
-                        sxr.SetStage(result);
-                        break;
-                }
+                string label = position.ToString();
+                string csType = type == StimulusType.CS_Plus ? "CS+" : "CS-";
+
+                result = $"{label}_{csType}";
+                sxr.SetStage(result);
+
                 hasExecuted = true;
             }
 
@@ -126,15 +117,15 @@ namespace SampleExperimentScene
             if (waitForUserInput)
             {
 
-                while (!userInputComplete) // waits for the user to input a response into input 
+                while (!userInputComplete)
                 {
                     yield return null; // Wait until input is complete
                 }
 
                 // Wait the rest of the delay if any
-                if (WaitTimeTillUserInput < soundDelay)
+                if (DisplayTimeBeforeSlider < soundDelay)
                 {
-                    yield return new WaitForSeconds(soundDelay - WaitTimeTillUserInput);
+                    yield return new WaitForSeconds(soundDelay - DisplayTimeBeforeSlider);
                 }
 
                 if (audioSource != null && PlaySound)
@@ -172,9 +163,9 @@ namespace SampleExperimentScene
                 }
 
                 // Wait the rest of the delay if any
-                if (WaitTimeTillUserInput < soundDelay)
+                if (DisplayTimeBeforeSlider < soundDelay)
                 {
-                    yield return new WaitForSeconds(soundDelay - WaitTimeTillUserInput);
+                    yield return new WaitForSeconds(soundDelay - DisplayTimeBeforeSlider);
                 }
                 if (PlaySound)
                 {
@@ -215,7 +206,7 @@ namespace SampleExperimentScene
         {
             if (waitForUserInput)
             {
-                yield return new WaitForSeconds(WaitTimeTillUserInput); // waits 5 seconds
+                yield return new WaitForSeconds(DisplayTimeBeforeSlider); // waits 5 seconds
                 float TempStoreTime = sxr.TimeRemaining(); // stores the trial timer so that it can be restored later
 
                 sxr.StartTimer(TimeForUserToRespond); // starts a new timer for 999s allowing the user to respond 
@@ -244,9 +235,9 @@ namespace SampleExperimentScene
 
 
                 // Wait remaining time if any
-                if (objectDelay > WaitTimeTillUserInput)
+                if (objectDelay > DisplayTimeBeforeSlider)
                 {
-                    yield return new WaitForSeconds(objectDelay - WaitTimeTillUserInput);
+                    yield return new WaitForSeconds(objectDelay - DisplayTimeBeforeSlider);
                     scriptHandler.RestAllLights();
                 }
             }
@@ -323,8 +314,8 @@ namespace SampleExperimentScene
                                 hasExecuted = true;
 
                             }
-                            sxr.InputSlider(0, 9, $"Using the Controller and Trigger Adjust the value to 9 and click submit [{InstructionSlider}]", true); // displays slider that user can input 
-                            if (sxr.ParseInputUI(out InstructionSlider))
+                            sxr.InputSlider(0, 9, $"Using the Controller and Trigger Adjust the value to 9 and click submit [{InstructionSliderValue}]", true); // displays slider that user can input 
+                            if (sxr.ParseInputUI(out InstructionSliderValue))
                             {
                                 controllerHandler.ToggleController();
                                 sxr.NextPhase();
