@@ -27,7 +27,7 @@ public class ScriptHandler : MonoBehaviour
 
 
 
-    public void AssignScript(string position, bool ABATesting)
+    public void AssignScript(StimulusLocation position, bool ABATesting)
     {
         ABA = ABATesting;
         LightingHandler[] lights = { lightHandlerLeft, lightHandlerMiddle, lightHandlerRight };
@@ -36,13 +36,13 @@ public class ScriptHandler : MonoBehaviour
 
         switch (position)
         {
-            case "Left":
+            case StimulusLocation.Left:
                 index = 0;
                 break;
-            case "Middle":
+            case StimulusLocation.Middle:
                 index = 1;
                 break;
-            case "Right":
+            case StimulusLocation.Right:
                 index = 2;
                 break;
             default:

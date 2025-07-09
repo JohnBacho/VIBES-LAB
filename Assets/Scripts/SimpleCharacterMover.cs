@@ -18,6 +18,7 @@ public class SimpleCharacterMover : MonoBehaviour
     private Vector3 originalPosition;
 
     private Quaternion originalRotation;
+    
 
     void Start()
     {
@@ -62,7 +63,7 @@ public class SimpleCharacterMover : MonoBehaviour
     }
 
     // Call this from another script
-    public void StartScare(string Position)
+    public void StartScare(StimulusLocation Position)
     {
         targetPlayer = playerCamera;
         timer = 0f;
@@ -74,13 +75,13 @@ public class SimpleCharacterMover : MonoBehaviour
 
         switch (Position)
         {
-            case "Left":
+            case StimulusLocation.Left:
                 transform.position = Left.position;
                 break;
-            case "Middle":
+            case StimulusLocation.Middle:
                 transform.position = Middle.position;
                 break;
-            case "Right":
+            case StimulusLocation.Right:
                 transform.position = Right.position;
                 break;
         }
