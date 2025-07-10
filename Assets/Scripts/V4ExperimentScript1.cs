@@ -33,21 +33,20 @@ namespace SampleExperimentScene
         public VRControllerHandler controllerHandler; // handles when the controller is on and when it is off
         public SimpleCharacterMover characterMover; // handles how the monster should move
         public ScriptHandler scriptHandler; // manages the doors, elevator, and light scripts
-        private bool hasExecuted = false; //  used as a way to execute one block of code only once
-        private bool hasStartedCS = false; // used to execute the start of the CS+ only once
+        private bool HasExecuted = false; //  used as a way to execute one block of code only once
+        private bool HasStartedCS = false; // used to execute the start of the CS+ only once
         private string Anticipateheaders = "Anticipated,ResponseTime"; // Used to write headers to Anticipatedfile
         private int AnticipatedNumber; // Used for when the user enters if they anticipated US
-        private bool userInputComplete = false; // Used for a check if the user has submitted a value  
+        private bool UserInputComplete = false; // Used for a check if the user has submitted a value  
         private const float TimeForUserToRespond = 999; // Used to determine how long the user has to respond
         private const float DisplayTimeBeforeSlider = 5; // Used to determine how long to wait into the CS to display Slider
-        private const float DisplayDuration = 8;
-        private const float TimeUntilUnconditionedStimulusSound = 7;
+        private const float DisplayDuration = 8; // Determines how long the CS is displayed on screen for
+        private const float TimeUntilUnconditionedStimulusSound = 7; // Determines how long to wait into a trial to activate the US
         private int InstructionSliderValue = 0; // Used for instruction slider
-        private string result;
 
-        public void StartCS(StimulusType type, StimulusLocation position, bool PlaySound, bool GetAnticipation)
+        public void StartCS(StimulusType type, StimulusLocation position, bool ActivateUS, bool GetAnticipation)
         {
-            if (!hasExecuted)
+            if (!HasExecuted)
             {
                 sxr.StartTimer(DisplayDuration); // sets the timer
 
@@ -56,16 +55,16 @@ namespace SampleExperimentScene
                 string label = position.ToString();
                 string csType = type == StimulusType.CS_Plus ? "CS+" : "CS-";
 
-                result = $"{label}_{csType}";
+                string result = $"{label}_{csType}";
                 sxr.SetStage(result);
 
-                hasExecuted = true;
+                HasExecuted = true;
             }
 
-            if (!hasStartedCS)
+            if (!HasStartedCS)
             {
                 // Activate object and play sound after delay
-                hasStartedCS = true;
+                HasStartedCS = true;
                 Color LightColor = type == StimulusType.CS_Plus ? CSPlusLightColor : CSMinusLightColor;
                 scriptHandler.SetStop();
                 if (CSPlusDisplayPattern && type == StimulusType.CS_Plus || CSMinusDisplayPattern && !(type == StimulusType.CS_Plus))
@@ -77,38 +76,38 @@ namespace SampleExperimentScene
                     scriptHandler.ChangeLightColor(LightColor);
                 }
 
-                StartCoroutine(PlaySoundAfterDelay(PlaySound, GetAnticipation)); // calls function to play sound with delay
+                StartCoroutine(PlaySoundAfterDelay(ActivateUS, GetAnticipation)); // calls function to play sound with delay
                 StartCoroutine(DisableObjects(GetAnticipation)); // calls function to deactivate sound with delay
-                StartCoroutine(JumpScare(USObject, PlaySound, GetAnticipation, position));
+                StartCoroutine(JumpScare(USObject, ActivateUS, GetAnticipation, position));
             }
 
             if (sxr.CheckTimer()) // checks if timer is zero
             {
-                scriptHandler.AssignCloser();
-                sxr.NextStep(); // advances to inter trial interval and sets hasExecuted and hasStartedCS to false
-                hasExecuted = false;
-                hasStartedCS = false;
+                scriptHandler.TriggerEntryClose();
+                sxr.NextStep(); // advances to inter trial interval and sets HasExecuted and HasStartedCS to false
+                HasExecuted = false;
+                HasStartedCS = false;
             }
         }
 
         public void InterTrial(float InterTrialWaitTime)  // used to wait till start of next trial
         {
             sxr.SetStage("InterTrial");
-            if (!hasExecuted)
+            if (!HasExecuted)
             {
                 sxr.StartTimer(InterTrialWaitTime); // // inter trial interval time
-                hasExecuted = true; // sets has Executed Flag to true so that it only executes once
+                HasExecuted = true; // sets has Executed Flag to true so that it only executes once
             }
 
             if (sxr.CheckTimer())
             {
                 sxr.NextTrial(); // Goes to the next trial
-                hasExecuted = false; // sets has Executed Flag to false for the next trial
+                HasExecuted = false; // sets has Executed Flag to false for the next trial
             }
         }
 
         // Coroutine to play the sound after a delay
-        IEnumerator PlaySoundAfterDelay(bool PlaySound, bool waitForUserInput)
+        IEnumerator PlaySoundAfterDelay(bool ActivateUS, bool waitForUserInput)
         {
             AudioSource audioSource = USSound.GetComponent<AudioSource>(); // grabs audio source from object
             AudioSource audioSource2 = USSound2.GetComponent<AudioSource>();
@@ -116,7 +115,7 @@ namespace SampleExperimentScene
             if (waitForUserInput)
             {
 
-                while (!userInputComplete)
+                while (!UserInputComplete)
                 {
                     yield return null; // Wait until input is complete
                 }
@@ -127,7 +126,7 @@ namespace SampleExperimentScene
                     yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound - DisplayTimeBeforeSlider);
                 }
 
-                if (audioSource != null && PlaySound)
+                if (audioSource != null && ActivateUS)
                 {
                     sxr.SetStage("US");
                     USObject.SetActive(true);
@@ -139,7 +138,7 @@ namespace SampleExperimentScene
             else
             {
                 yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound); // TimeUntilUnconditionedStimulusSound determines how long it should wait into a trial to play US
-                if (audioSource != null && PlaySound)
+                if (audioSource != null && ActivateUS)
                 {
                     sxr.SetStage("US");
                     USObject.SetActive(true);
@@ -151,12 +150,12 @@ namespace SampleExperimentScene
         }
 
 
-        IEnumerator JumpScare(GameObject USObject, bool PlaySound, bool waitForUserInput, StimulusLocation position)
+        IEnumerator JumpScare(GameObject USObject, bool ActivateUS, bool waitForUserInput, StimulusLocation position)
         {
             if (waitForUserInput)
             {
 
-                while (!userInputComplete) // waits for the user to input a response into input 
+                while (!UserInputComplete) // waits for the user to input a response into input 
                 {
                     yield return null; // Wait until input is complete
                 }
@@ -166,15 +165,15 @@ namespace SampleExperimentScene
                 {
                     yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound - DisplayTimeBeforeSlider);
                 }
-                if (PlaySound)
+                if (ActivateUS)
                 {
-                    scriptHandler.AssignOpener();
+                    scriptHandler.TriggerEntryOpen();
                     characterMover.ResetPosition();
                     characterMover.StartScare(position);
                 }
 
                 yield return new WaitForSeconds(1); // waits for 1 second
-                if (PlaySound)
+                if (ActivateUS)
                 {
                     characterMover.ResetPosition();
                     USObject.SetActive(false);
@@ -183,16 +182,16 @@ namespace SampleExperimentScene
             else
             {
                 yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound); // TimeUntilUnconditionedStimulusSound determines how long it should wait to play the sound
-                if (PlaySound)
+                if (ActivateUS)
                 {
-                    scriptHandler.AssignOpener();
+                    scriptHandler.TriggerEntryOpen();
                     characterMover.ResetPosition();
                     characterMover.StartScare(position);
                     USObject.SetActive(true);
                 }
 
                 yield return new WaitForSeconds(1); // waits for 1 second
-                if (PlaySound)
+                if (ActivateUS)
                 {
                     characterMover.ResetPosition();
                     USObject.SetActive(false);
@@ -223,7 +222,7 @@ namespace SampleExperimentScene
                     Debug.Log($"User entered: {AnticipatedNumber}");
                     yield return null;
                 }
-                userInputComplete = true; // this bool is used to tell PlaySoundAfterDelay that it can continue with it's delay.
+                UserInputComplete = true; // this bool is used to tell PlaySoundAfterDelay that it can continue with it's delay.
                 sxr.SetStage(storeStage);
                 // disables the Right Controller
                 controllerHandler.ToggleController();
@@ -245,7 +244,7 @@ namespace SampleExperimentScene
                 yield return new WaitForSeconds(DisplayDuration);
             }
             scriptHandler.RestAllLights();
-            userInputComplete = false; // rests flag
+            UserInputComplete = false; // rests flag
         }
 
         void Start()
@@ -269,19 +268,19 @@ namespace SampleExperimentScene
                             sxr.SetStage("InstructionPhase");
                             if (InstructionPhase)
                             { // Dr. Thomas wanted the InstructionPhase to be toggleable 
-                                if (!hasExecuted)
+                                if (!HasExecuted)
                                 {
                                     sxr.WriteHeaderToTaggedFile("AnticipateFile", Anticipateheaders);
                                     sxr.StartTimer(20);
                                     sxr.DisplayText("In this experiment, you will see different colored shapes in the 3d environment. Please keep your focus on the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored shapes and the loud sounds.");
-                                    hasExecuted = true; // set to true so this block of code only runs once
+                                    HasExecuted = true; // set to true so this block of code only runs once
                                 }
 
                                 if (sxr.CheckTimer()) // checks if the timer has reached zero
                                 {
                                     sxr.HideAllText();
                                     sxr.NextStep(); // go to the next phase and set has Executed to false
-                                    hasExecuted = false;
+                                    HasExecuted = false;
                                 }
                             }
                             else
@@ -301,10 +300,10 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 2: // display slider
-                            if (!hasExecuted)
+                            if (!HasExecuted)
                             {
                                 controllerHandler.ToggleController();
-                                hasExecuted = true;
+                                HasExecuted = true;
 
                             }
                             sxr.InputSlider(0, 9, $"Using the Controller and Trigger Adjust the value to 9 and click submit [{InstructionSliderValue}]", true); // displays slider that user can input 
@@ -312,7 +311,7 @@ namespace SampleExperimentScene
                             {
                                 controllerHandler.ToggleController();
                                 sxr.NextPhase();
-                                hasExecuted = false;
+                                HasExecuted = false;
                             }
                             break;
 
@@ -328,7 +327,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -341,7 +340,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -354,7 +353,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Right, PlaySound: false, GetAnticipation: true);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: true);
                                     break;
 
                                 case 1: // inter trial interval
@@ -367,21 +366,21 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
-                                    if (!hasExecuted)
+                                    if (!HasExecuted)
                                     {
                                         sxr.SetStage("InterTrial");
                                         sxr.StartTimer(12f); // inter trial interval time
-                                        hasExecuted = true; // sets has Executed Flag to true so that it only executes once
+                                        HasExecuted = true; // sets has Executed Flag to true so that it only executes once
                                     }
 
                                     if (sxr.CheckTimer())
                                     {
                                         sxr.NextPhase(); // Goes to the next trial
-                                        hasExecuted = false; // sets has Executed Flag to false for the next trial
+                                        HasExecuted = false; // sets has Executed Flag to false for the next trial
                                     }
                                     break;
 
@@ -403,7 +402,7 @@ namespace SampleExperimentScene
                                         Building1.SetActive(false);
                                         Building2.SetActive(true);
                                     }
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -416,7 +415,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Right, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -429,7 +428,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Left, PlaySound: true, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -441,7 +440,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Right, PlaySound: true, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: true, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -453,7 +452,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -465,7 +464,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: true, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -477,7 +476,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS+ without US
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -489,7 +488,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -501,7 +500,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: true, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -513,7 +512,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -525,7 +524,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: true, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -537,7 +536,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -549,7 +548,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -561,7 +560,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS+ without US
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -573,7 +572,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -585,21 +584,21 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0:  // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: true, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
-                                    if (!hasExecuted)
+                                    if (!HasExecuted)
                                     {
                                         sxr.SetStage("InterTrial");
                                         sxr.StartTimer(12); // // inter trial interval time
-                                        hasExecuted = true; // sets has Executed Flag to true so that it only executes once
+                                        HasExecuted = true; // sets has Executed Flag to true so that it only executes once
                                     }
 
                                     if (sxr.CheckTimer())
                                     {
                                         sxr.NextPhase(); // Goes to the next Phase
-                                        hasExecuted = false; // sets has Executed Flag to false for the next trial
+                                        HasExecuted = false; // sets has Executed Flag to false for the next trial
                                         if (ABAContextSwitch)
                                         {
                                             Building1.SetActive(true);
@@ -621,7 +620,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -634,7 +633,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -647,7 +646,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -660,7 +659,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -672,7 +671,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -684,7 +683,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -697,7 +696,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -709,7 +708,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -722,7 +721,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -735,7 +734,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -747,7 +746,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -760,7 +759,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -772,7 +771,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -784,7 +783,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -797,7 +796,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -810,7 +809,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -822,7 +821,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -835,7 +834,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -847,7 +846,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -859,7 +858,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -872,7 +871,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -885,7 +884,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -897,7 +896,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -910,7 +909,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -923,7 +922,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -935,7 +934,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -948,7 +947,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -961,7 +960,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -973,7 +972,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -985,7 +984,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -998,7 +997,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -1010,7 +1009,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -1023,7 +1022,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -1035,7 +1034,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -1048,7 +1047,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -1061,7 +1060,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -1073,7 +1072,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -1086,7 +1085,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -1098,7 +1097,7 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
@@ -1110,15 +1109,15 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, PlaySound: false, GetAnticipation: false);
+                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
                                 case 1: // inter trial interval
-                                    if (!hasExecuted)
+                                    if (!HasExecuted)
                                     {
                                         
                                         sxr.DisplayText("Experiment Complete. Thank You!");
-                                        hasExecuted = true;
+                                        HasExecuted = true;
                                     }
                                     InterTrial(InterTrialWaitTime: 10f);
                                     if (sxr.CheckTimer())

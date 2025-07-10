@@ -108,7 +108,7 @@ public class ScriptHandler : MonoBehaviour
         lightHandlerRight.ResetLight();
     }
 
-    public void AssignOpener()
+    public void TriggerEntryOpen()
     {
         if (ABA && sxr.GetPhase() == 3)
         {
@@ -120,7 +120,7 @@ public class ScriptHandler : MonoBehaviour
         }
     }
 
-    public void AssignCloser()
+    public void TriggerEntryClose()
     {
         if (ABA && sxr.GetPhase() == 3)
         {
