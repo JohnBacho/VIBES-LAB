@@ -21,12 +21,10 @@ public class ScriptHandler : MonoBehaviour
     private ElevatorDoorController ElevatorDoorControllerSCRIPT; // Used to dynamically change the elevator script
     private LightingHandler LightSCRIPT; // Used to dynamically change the lighting script
     private int index;
+    private string ContextName;
 
-    private bool ABA = false;
-
-    public void AssignLightingAndDoorControllerForStimulusLocation(StimulusLocation position, bool ABATesting)
+    public void AssignLightingAndDoorControllerForStimulusLocation(StimulusLocation position, ContextType ActiveContext)
     {
-        ABA = ABATesting;
         LightingHandler[] lights = { lightHandlerLeft, lightHandlerMiddle, lightHandlerRight };
         DoorOpener[] doors = { doorOpenerLeft, doorOpenerMiddle, doorOpenerRight };
         ElevatorDoorController[] elevators = { ElevatorLeft, ElevatorMiddle, ElevatorRight };
@@ -49,7 +47,7 @@ public class ScriptHandler : MonoBehaviour
 
         LightSCRIPT = lights[index];
 
-        if (ABATesting && sxr.GetPhase() == 3)
+        if (ActiveContext == ContextType.B)
         {
             ElevatorDoorControllerSCRIPT = elevators[index];
         }
@@ -108,9 +106,9 @@ public class ScriptHandler : MonoBehaviour
         lightHandlerRight.ResetLight();
     }
 
-    public void TriggerEntryOpen()
+    public void TriggerEntryOpen(ContextType ActiveContext)
     {
-        if (ABA && sxr.GetPhase() == 3)
+        if (ActiveContext == ContextType.B)
         {
             OpenElevator();
         }
@@ -120,9 +118,9 @@ public class ScriptHandler : MonoBehaviour
         }
     }
 
-    public void TriggerEntryClose()
+    public void TriggerEntryClose(ContextType ActiveContext)
     {
-        if (ABA && sxr.GetPhase() == 3)
+        if (ActiveContext == ContextType.B)
         {
             ShutElevator();
         }

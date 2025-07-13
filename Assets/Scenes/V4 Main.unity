@@ -4250,7 +4250,7 @@ GameObject:
   m_Component:
   - component: {fileID: 511789284}
   m_Layer: 0
-  m_Name: Building2
+  m_Name: HotelContext
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12082,7 +12082,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 150.00002
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -17100,9 +17100,9 @@ MonoBehaviour:
   USSound2: {fileID: 1103217163}
   USSound3: {fileID: 933635399}
   USObject: {fileID: 519027809}
-  ABAContextSwitch: 1
-  Building1: {fileID: 2009521960}
-  Building2: {fileID: 511789283}
+  ContextTest: 3
+  ContextA: {fileID: 2009521960}
+  ContextB: {fileID: 511789283}
   controllerHandler: {fileID: 1970160401}
   characterMover: {fileID: 519027812}
   scriptHandler: {fileID: 1970160403}
@@ -18082,7 +18082,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2009521961}
   m_Layer: 0
-  m_Name: Building1
+  m_Name: ApartmentContext
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19037,8 +19037,8 @@ SceneRoots:
   - {fileID: 2001985763}
   - {fileID: 2110663370}
   - {fileID: 2009521961}
-  - {fileID: 210579955}
   - {fileID: 511789284}
+  - {fileID: 210579955}
   - {fileID: 1626403617}
   - {fileID: 1387624752}
   - {fileID: 1830911377}

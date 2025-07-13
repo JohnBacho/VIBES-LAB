@@ -14,6 +14,20 @@ public enum StimulusType
     CS_Minus
 }
 
+public enum ContextTest
+{
+    AAA,
+    BBB,
+    ABA,
+    BAB,
+}
+
+public enum ContextType
+{
+    A,
+    B,
+}
+
 namespace SampleExperimentScene
 {
     public class ExperimentScriptV4 : MonoBehaviour
@@ -27,9 +41,10 @@ namespace SampleExperimentScene
         public GameObject USSound2; // drag and drop US sound to get it to play
         public GameObject USSound3; // drag and drop US sound to get it to play
         public GameObject USObject; // drag and drop the object you want to be the US
-        public bool ABAContextSwitch; // Used to determine what context you want Extinction to 
-        public GameObject Building1; // used for context switch in ABA
-        public GameObject Building2; // used for context switch in ABA
+        public ContextTest ContextTest = ContextTest.AAA;
+        private ContextType ActiveContext;
+        public GameObject ContextA; // used for context switch in ABA
+        public GameObject ContextB; // used for context switch in ABA
         public VRControllerHandler controllerHandler; // handles when the controller is on and when it is off
         public SimpleCharacterMover characterMover; // handles how the monster should move
         public ScriptHandler scriptHandler; // manages the doors, elevator, and light scripts
@@ -49,8 +64,7 @@ namespace SampleExperimentScene
             if (!HasExecuted)
             {
                 sxr.StartTimer(DisplayDuration); // sets the timer
-
-                scriptHandler.AssignLightingAndDoorControllerForStimulusLocation(position, ABAContextSwitch);
+                scriptHandler.AssignLightingAndDoorControllerForStimulusLocation(position, ActiveContext);
 
                 string label = position.ToString();
                 string csType = type == StimulusType.CS_Plus ? "CS+" : "CS-";
@@ -83,7 +97,7 @@ namespace SampleExperimentScene
 
             if (sxr.CheckTimer()) // checks if timer is zero
             {
-                scriptHandler.TriggerEntryClose();
+                scriptHandler.TriggerEntryClose(ActiveContext);
                 sxr.NextStep(); // advances to inter trial interval and sets HasExecuted and HasStartedCS to false
                 HasExecuted = false;
                 HasStartedCS = false;
@@ -167,7 +181,7 @@ namespace SampleExperimentScene
                 }
                 if (ActivateUS)
                 {
-                    scriptHandler.TriggerEntryOpen();
+                    scriptHandler.TriggerEntryOpen(ActiveContext);
                     characterMover.ResetPosition();
                     characterMover.StartScare(position);
                 }
@@ -184,7 +198,7 @@ namespace SampleExperimentScene
                 yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound); // TimeUntilUnconditionedStimulusSound determines how long it should wait to play the sound
                 if (ActivateUS)
                 {
-                    scriptHandler.TriggerEntryOpen();
+                    scriptHandler.TriggerEntryOpen(ActiveContext);
                     characterMover.ResetPosition();
                     characterMover.StartScare(position);
                     USObject.SetActive(true);
@@ -249,7 +263,26 @@ namespace SampleExperimentScene
 
         void Start()
         {
-            Building2.SetActive(false);
+            switch (ContextTest)
+            {
+                case ContextTest.AAA:
+                    ActiveContext = ContextType.A;
+                    break;
+                case ContextTest.BBB:
+                    ActiveContext = ContextType.B;
+                    break;
+                case ContextTest.ABA:
+                    ContextA.SetActive(true);
+                    ContextB.SetActive(false);
+                    ActiveContext = ContextType.A;
+                    break;
+                case ContextTest.BAB:
+                    ContextA.SetActive(false);
+                    ContextB.SetActive(true);
+                    ActiveContext = ContextType.B;
+                    break;
+
+            }
         }
 
         void Update()
@@ -397,11 +430,25 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS-
-                                    if (ABAContextSwitch)
+
+                                    switch (ContextTest)
                                     {
-                                        Building1.SetActive(false);
-                                        Building2.SetActive(true);
+                                        case ContextTest.AAA:
+                                            break;
+                                        case ContextTest.BBB:
+                                            break;
+                                        case ContextTest.ABA:
+                                            ContextA.SetActive(false);
+                                            ContextB.SetActive(true);
+                                            ActiveContext = ContextType.B;
+                                            break;
+                                        case ContextTest.BAB:
+                                            ContextA.SetActive(true);
+                                            ContextB.SetActive(false);
+                                            ActiveContext = ContextType.A;
+                                            break;
                                     }
+
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                                     break;
 
@@ -599,17 +646,27 @@ namespace SampleExperimentScene
                                     {
                                         sxr.NextPhase(); // Goes to the next Phase
                                         HasExecuted = false; // sets has Executed Flag to false for the next trial
-                                        if (ABAContextSwitch)
+                                        switch (ContextTest)
                                         {
-                                            Building1.SetActive(true);
-                                            Building2.SetActive(false);
+                                            case ContextTest.AAA:
+                                                break;
+                                            case ContextTest.BBB:
+                                                break;
+                                            case ContextTest.ABA:
+                                                ContextA.SetActive(true);
+                                                ContextB.SetActive(false);
+                                                ActiveContext = ContextType.A;
+                                                break;
+                                            case ContextTest.BAB:
+                                                ContextA.SetActive(false);
+                                                ContextB.SetActive(true);
+                                                ActiveContext = ContextType.B;
+                                                break;
                                         }
                                     }
                                     break;
                             }
                             break;
-
-
                     }
                     break; // End of phase case 3
 
@@ -1115,7 +1172,7 @@ namespace SampleExperimentScene
                                 case 1: // inter trial interval
                                     if (!HasExecuted)
                                     {
-                                        
+
                                         sxr.DisplayText("Experiment Complete. Thank You!");
                                         HasExecuted = true;
                                     }
