@@ -49,7 +49,8 @@ namespace SampleExperimentScene
         public SimpleCharacterMover characterMover; // handles how the monster should move
         public ScriptHandler scriptHandler; // manages the doors, elevator, and light scripts
         private bool HasExecuted = false; //  used as a way to execute one block of code only once
-        private bool HasStartedCS = false; // used to execute the start of the CS+ only once
+        private bool HasStartedCS = false; // used to execute the start of the CS only once
+        private bool HasStartedTracker = false;
         private string Anticipateheaders = "Anticipated,ResponseTime"; // Used to write headers to Anticipatedfile
         private int AnticipatedNumber; // Used for when the user enters if they anticipated US
         private bool UserInputComplete = false; // Used for a check if the user has submitted a value  
@@ -106,9 +107,9 @@ namespace SampleExperimentScene
 
         public void InterTrial(float InterTrialWaitTime)  // used to wait till start of next trial
         {
-            sxr.SetStage("InterTrial");
             if (!HasExecuted)
             {
+                sxr.SetStage("InterTrial");
                 sxr.StartTimer(InterTrialWaitTime); // // inter trial interval time
                 HasExecuted = true; // sets has Executed Flag to true so that it only executes once
             }
@@ -267,9 +268,11 @@ namespace SampleExperimentScene
             {
                 case ContextTest.AAA:
                     ActiveContext = ContextType.A;
+                    ContextB.SetActive(false);
                     break;
                 case ContextTest.BBB:
                     ActiveContext = ContextType.B;
+                    ContextA.SetActive(false);
                     break;
                 case ContextTest.ABA:
                     ContextA.SetActive(true);
@@ -284,397 +287,421 @@ namespace SampleExperimentScene
 
             }
         }
-
         void Update()
         {
-            switch (sxr.GetPhase()) // gets the phase
+            int phase = sxr.GetPhase();
+            int trial = sxr.GetTrial();
+            int step = sxr.GetStepInTrial();
+
+            switch (phase)
             {
                 case 0: // Start Screen Phase
                     break;
 
                 case 1: // Instruction Phase
-                    sxr.StartRecordingCameraPos();
-                    sxr.StartRecordingEyeTrackerInfo();
-                    switch (sxr.GetStepInTrial())
-                    {
-                        case 0: // CS+
-                            sxr.SetStage("InstructionPhase");
-                            if (InstructionPhase)
-                            { // Dr. Thomas wanted the InstructionPhase to be toggleable 
-                                if (!HasExecuted)
-                                {
-                                    sxr.WriteHeaderToTaggedFile("AnticipateFile", Anticipateheaders);
-                                    sxr.StartTimer(20);
-                                    sxr.DisplayText("In this experiment, you will see different colored shapes in the 3d environment. Please keep your focus on the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored shapes and the loud sounds.");
-                                    HasExecuted = true; // set to true so this block of code only runs once
-                                }
-
-                                if (sxr.CheckTimer()) // checks if the timer has reached zero
-                                {
-                                    sxr.HideAllText();
-                                    sxr.NextStep(); // go to the next phase and set has Executed to false
-                                    HasExecuted = false;
-                                }
-                            }
-                            else
-                            {
-                                sxr.WriteHeaderToTaggedFile("AnticipateFile", Anticipateheaders);
-                                sxr.NextStep();
-                            }
-                            break;
-
-                        case 1: // trigger image
-                            sxr.DisplayImage("trigger");
-                            if (sxr.GetTrigger())
-                            {
-                                sxr.HideImagesUI();
-                                sxr.NextStep();
-
-                            }
-                            break;
-                        case 2: // display slider
-                            if (!HasExecuted)
-                            {
-                                controllerHandler.ToggleController();
-                                HasExecuted = true;
-
-                            }
-                            sxr.InputSlider(0, 9, $"Using the Controller and Trigger Adjust the value to 9 and click submit [{InstructionSliderValue}]", true); // displays slider that user can input 
-                            if (sxr.ParseInputUI(out InstructionSliderValue))
-                            {
-                                controllerHandler.ToggleController();
-                                sxr.NextPhase();
-                                HasExecuted = false;
-                            }
-                            break;
-
-                    }
-
+                    ProcessInstructionPhase(step);
                     break;
 
                 case 2: // Habituation Phase
-                    switch (sxr.GetTrial())
-                    {
-
-                        case 0: // CS+
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 9f);
-                                    break;
-                            }
-                            break;
-
-                        case 1: // CS-
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 14f);
-                                    break;
-                            }
-                            break;
-
-                        case 2: // CS+
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: true);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 10f);
-
-                                    break;
-                            }
-                            break;
-                        case 3: // CS-
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    if (!HasExecuted)
-                                    {
-                                        sxr.SetStage("InterTrial");
-                                        sxr.StartTimer(12f); // inter trial interval time
-                                        HasExecuted = true; // sets has Executed Flag to true so that it only executes once
-                                    }
-
-                                    if (sxr.CheckTimer())
-                                    {
-                                        sxr.NextPhase(); // Goes to the next trial
-                                        HasExecuted = false; // sets has Executed Flag to false for the next trial
-                                    }
-                                    break;
-
-                            }
-                            break;
-
-                    }
-                    break; // End of phase case 2
+                    ProcessHabituationPhase(trial, step);
+                    break;
 
                 case 3: // Fear Acquisition training
-                    switch (sxr.GetTrial())
+                    ProcessFearAcquisitionPhase(trial, step);
+                    break;
+                case 4: // Fear Acquisition training
+                    ProcessFearExtinctionPhase(trial, step);
+                    break;
+            }
+        }
+
+        private void ProcessInstructionPhase(int step)
+        {
+            if (!HasStartedTracker)
+            {
+                sxr.StartRecordingCameraPos();
+                sxr.StartRecordingEyeTrackerInfo();
+                HasStartedTracker = true;      
+            }
+            switch (step)
+            {
+                case 0: // CS+
+                    sxr.SetStage("InstructionPhase");
+                    if (InstructionPhase)
+                    { // Dr. Thomas wanted the InstructionPhase to be toggleable 
+                        if (!HasExecuted)
+                        {
+                            sxr.WriteHeaderToTaggedFile("AnticipateFile", Anticipateheaders);
+                            sxr.StartTimer(20);
+                            sxr.DisplayText("In this experiment, you will see different colored shapes in the 3d environment. Please keep your focus on the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored shapes and the loud sounds.");
+                            HasExecuted = true; // set to true so this block of code only runs once
+                        }
+
+                        if (sxr.CheckTimer()) // checks if the timer has reached zero
+                        {
+                            sxr.HideAllText();
+                            sxr.NextStep(); // go to the next phase and set has Executed to false
+                            HasExecuted = false;
+                        }
+                    }
+                    else
+                    {
+                        sxr.WriteHeaderToTaggedFile("AnticipateFile", Anticipateheaders);
+                        sxr.NextStep();
+                    }
+                    break;
+
+                case 1: // trigger image
+                    sxr.DisplayImage("trigger");
+                    if (sxr.GetTrigger())
+                    {
+                        sxr.HideImagesUI();
+                        sxr.NextStep();
+
+                    }
+                    break;
+                case 2: // display slider
+                    if (!HasExecuted)
+                    {
+                        controllerHandler.ToggleController();
+                        HasExecuted = true;
+
+                    }
+                    sxr.InputSlider(0, 9, $"Using the Controller and Trigger Adjust the value to 9 and click submit [{InstructionSliderValue}]", true); // displays slider that user can input 
+                    if (sxr.ParseInputUI(out InstructionSliderValue))
+                    {
+                        controllerHandler.ToggleController();
+                        sxr.NextPhase();
+                        HasExecuted = false;
+                    }
+                    break;
+            }
+        } 
+
+        private void ProcessHabituationPhase(int trial, int step)
+        {
+            switch (trial)
+            {
+                case 0: // CS+
+                    switch (step)
+                    {
+                        case 0: // CS+
+                            StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 9f);
+                            break;
+                    }
+                    break;
+
+                case 1: // CS-
+                    switch (step)
                     {
                         case 0: // CS-
-                            switch (sxr.GetStepInTrial())
+                            StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 14f);
+                            break;
+                    }
+                    break;
+
+                case 2: // CS+
+                    switch (step)
+                    {
+                        case 0: // CS+
+                            StartCS(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: true);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 10f);
+
+                            break;
+                    }
+                    break;
+                case 3: // CS-
+                    switch (step)
+                    {
+                        case 0: // CS-
+                            StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            if (!HasExecuted)
                             {
-                                case 0: // CS-
+                                sxr.SetStage("InterTrial");
+                                sxr.StartTimer(12f); // inter trial interval time
+                                HasExecuted = true; // sets has Executed Flag to true so that it only executes once
+                            }
 
-                                    switch (ContextTest)
-                                    {
-                                        case ContextTest.AAA:
-                                            break;
-                                        case ContextTest.BBB:
-                                            break;
-                                        case ContextTest.ABA:
-                                            ContextA.SetActive(false);
-                                            ContextB.SetActive(true);
-                                            ActiveContext = ContextType.B;
-                                            break;
-                                        case ContextTest.BAB:
-                                            ContextA.SetActive(true);
-                                            ContextB.SetActive(false);
-                                            ActiveContext = ContextType.A;
-                                            break;
-                                    }
-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 11f);
-                                    break;
+                            if (sxr.CheckTimer())
+                            {
+                                sxr.NextPhase(); // Goes to the next trial
+                                HasExecuted = false; // sets has Executed Flag to false for the next trial
                             }
                             break;
 
-                        case 1: // CS-
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0: // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false);
-                                    break;
+                    }
+                    break;
+            }
+        }
 
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 14f);
+        private void ProcessFearAcquisitionPhase(int trial, int step)
+        {
+            switch (trial)
+            {
+                case 0: // CS-
+                    switch (step)
+                    {
+                        case 0: // CS-
+
+                            switch (ContextTest)
+                            {
+                                case ContextTest.AAA:
+                                    break;
+                                case ContextTest.BBB:
+                                    break;
+                                case ContextTest.ABA:
+                                    ContextA.SetActive(false);
+                                    ContextB.SetActive(true);
+                                    ActiveContext = ContextType.B;
+                                    break;
+                                case ContextTest.BAB:
+                                    ContextA.SetActive(true);
+                                    ContextB.SetActive(false);
+                                    ActiveContext = ContextType.A;
                                     break;
                             }
+
+                            StartCS(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
                             break;
 
-                        case 2: // CS+
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0: // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, GetAnticipation: false);
-                                    break;
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 11f);
+                            break;
+                    }
+                    break;
 
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 9f);
-                                    break;
+                case 1: // CS-
+                    switch (step)
+                    {
+                        case 0: // CS-
+                            StartCS(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 14f);
+                            break;
+                    }
+                    break;
+
+                case 2: // CS+
+                    switch (step)
+                    {
+                        case 0: // CS+
+                            StartCS(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 9f);
+                            break;
+                    }
+                    break;
+                case 3:  // CS+
+                    switch (step)
+                    {
+                        case 0:  // CS+
+                            StartCS(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: true, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 15f);
+                            break;
+                    }
+                    break;
+                case 4:  // CS-
+                    switch (step)
+                    {
+                        case 0:  // CS-
+                            StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 12f);
+                            break;
+                    }
+                    break;
+                case 5:   // CS+
+                    switch (step)
+                    {
+                        case 0:  // CS+
+                            StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 10f);
+                            break;
+                    }
+                    break;
+                case 6:   // CS+ without US
+                    switch (step)
+                    {
+                        case 0:  // CS+ without US
+                            StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 13f);
+                            break;
+                    }
+                    break;
+                case 7:  // CS-
+                    switch (step)
+                    {
+                        case 0:  // CS-
+                            StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 11f);
+                            break;
+                    }
+                    break;
+                case 8:   // CS+
+                    switch (step)
+                    {
+                        case 0:  // CS+
+                            StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 9f);
+                            break;
+                    }
+                    break;
+                case 9:  // CS-
+                    switch (step)
+                    {
+                        case 0:  // CS-
+                            StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 12f);
+                            break;
+                    }
+                    break;
+                case 10:   // CS+
+                    switch (step)
+                    {
+                        case 0:  // CS+
+                            StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 15f);
+                            break;
+                    }
+                    break;
+                case 11:  // CS-
+                    switch (step)
+                    {
+                        case 0:  // CS-
+                            StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 12f);
+                            break;
+                    }
+                    break;
+                case 12:  // CS-
+                    switch (step)
+                    {
+                        case 0:  // CS-
+                            StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 10f);
+                            break;
+                    }
+                    break;
+                case 13:   // CS+ without US
+                    switch (step)
+                    {
+                        case 0:  // CS+ without US
+                            StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 13f);
+                            break;
+                    }
+                    break;
+                case 14:  // CS-
+                    switch (step)
+                    {
+                        case 0:  // CS-
+                            StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            InterTrial(InterTrialWaitTime: 9f);
+                            break;
+                    }
+                    break;
+                case 15:   // CS+
+                    switch (step)
+                    {
+                        case 0:  // CS+
+                            StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, GetAnticipation: false);
+                            break;
+
+                        case 1: // inter trial interval
+                            if (!HasExecuted)
+                            {
+                                sxr.SetStage("InterTrial");
+                                sxr.StartTimer(12); // // inter trial interval time
+                                HasExecuted = true; // sets has Executed Flag to true so that it only executes once
                             }
-                            break;
-                        case 3:  // CS+
-                            switch (sxr.GetStepInTrial())
+
+                            if (sxr.CheckTimer())
                             {
-                                case 0:  // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: true, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 15f);
-                                    break;
-                            }
-                            break;
-                        case 4:  // CS-
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0:  // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 12f);
-                                    break;
-                            }
-                            break;
-                        case 5:   // CS+
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0:  // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 10f);
-                                    break;
-                            }
-                            break;
-                        case 6:   // CS+ without US
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0:  // CS+ without US
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 13f);
-                                    break;
-                            }
-                            break;
-                        case 7:  // CS-
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0:  // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 11f);
-                                    break;
-                            }
-                            break;
-                        case 8:   // CS+
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0:  // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 9f);
-                                    break;
-                            }
-                            break;
-                        case 9:  // CS-
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0:  // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 12f);
-                                    break;
-                            }
-                            break;
-                        case 10:   // CS+
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0:  // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 15f);
-                                    break;
-                            }
-                            break;
-                        case 11:  // CS-
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0:  // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 12f);
-                                    break;
-                            }
-                            break;
-                        case 12:  // CS-
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0:  // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 10f);
-                                    break;
-                            }
-                            break;
-                        case 13:   // CS+ without US
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0:  // CS+ without US
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 13f);
-                                    break;
-                            }
-                            break;
-                        case 14:  // CS-
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0:  // CS-
-                                    StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    InterTrial(InterTrialWaitTime: 9f);
-                                    break;
-                            }
-                            break;
-                        case 15:   // CS+
-                            switch (sxr.GetStepInTrial())
-                            {
-                                case 0:  // CS+
-                                    StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, GetAnticipation: false);
-                                    break;
-
-                                case 1: // inter trial interval
-                                    if (!HasExecuted)
-                                    {
-                                        sxr.SetStage("InterTrial");
-                                        sxr.StartTimer(12); // // inter trial interval time
-                                        HasExecuted = true; // sets has Executed Flag to true so that it only executes once
-                                    }
-
-                                    if (sxr.CheckTimer())
-                                    {
-                                        sxr.NextPhase(); // Goes to the next Phase
-                                        HasExecuted = false; // sets has Executed Flag to false for the next trial
-                                        switch (ContextTest)
-                                        {
-                                            case ContextTest.AAA:
-                                                break;
-                                            case ContextTest.BBB:
-                                                break;
-                                            case ContextTest.ABA:
-                                                ContextA.SetActive(true);
-                                                ContextB.SetActive(false);
-                                                ActiveContext = ContextType.A;
-                                                break;
-                                            case ContextTest.BAB:
-                                                ContextA.SetActive(false);
-                                                ContextB.SetActive(true);
-                                                ActiveContext = ContextType.B;
-                                                break;
-                                        }
-                                    }
-                                    break;
+                                sxr.NextPhase(); // Goes to the next Phase
+                                HasExecuted = false; // sets has Executed Flag to false for the next trial
+                                switch (ContextTest)
+                                {
+                                    case ContextTest.AAA:
+                                        break;
+                                    case ContextTest.BBB:
+                                        break;
+                                    case ContextTest.ABA:
+                                        ContextA.SetActive(true);
+                                        ContextB.SetActive(false);
+                                        ActiveContext = ContextType.A;
+                                        break;
+                                    case ContextTest.BAB:
+                                        ContextA.SetActive(false);
+                                        ContextB.SetActive(true);
+                                        ActiveContext = ContextType.B;
+                                        break;
+                                }
                             }
                             break;
                     }
-                    break; // End of phase case 3
+                    break;
+            }
+        }
 
-                case 4: // Fear Extinction
-                    switch (sxr.GetTrial())
+        private void ProcessFearExtinctionPhase(int trial, int step)
+        {
+            switch (trial)
                     {
                         case 0: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -687,7 +714,7 @@ namespace SampleExperimentScene
                             break;
 
                         case 1: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -700,7 +727,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 2: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -713,7 +740,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 3: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -725,7 +752,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 4: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -737,7 +764,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 5: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -750,7 +777,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 6: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -762,7 +789,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 7: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -775,7 +802,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 8: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -788,7 +815,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 9: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -800,7 +827,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 10: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -813,7 +840,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 11: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -825,7 +852,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 12: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -837,7 +864,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 13: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -850,7 +877,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 14: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -863,7 +890,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 15: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -875,7 +902,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 16: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -888,7 +915,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 17: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -900,7 +927,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 18: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -912,7 +939,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 19: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -925,7 +952,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 20: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -938,7 +965,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 21: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -950,7 +977,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 22: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -963,7 +990,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 23: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -976,7 +1003,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 24: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -988,7 +1015,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 25: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -1001,7 +1028,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 26: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -1014,7 +1041,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 27: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -1026,7 +1053,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 28: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -1038,7 +1065,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 29: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -1051,7 +1078,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 30: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -1063,7 +1090,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 31: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -1076,7 +1103,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 32: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -1088,7 +1115,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 33: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -1101,7 +1128,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 34: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -1114,7 +1141,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 35: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -1126,7 +1153,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 36: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -1139,7 +1166,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 37: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -1151,7 +1178,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 38: // CS-
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS-
                                     StartCS(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false);
@@ -1163,7 +1190,7 @@ namespace SampleExperimentScene
                             }
                             break;
                         case 39: // CS+
-                            switch (sxr.GetStepInTrial())
+                            switch (step)
                             {
                                 case 0: // CS+
                                     StartCS(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false);
@@ -1185,9 +1212,6 @@ namespace SampleExperimentScene
                             }
                             break;
                     }
-                    break; // End of phase case 4
-            }
-
         }
     }
 }
