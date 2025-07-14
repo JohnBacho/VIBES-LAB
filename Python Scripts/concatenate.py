@@ -81,7 +81,7 @@ df2.drop(columns=['LookedGameObject'], inplace=True)
 df2.to_csv(filename_full, index=False)
 
 filename_reduced = f"Reduced-Subject{int(subject_id)}Date{str(date)}.csv"
-step = df2[(df2['Stage'] != "InstructionPhase") & (df2['Stage'] != "InterTrial")]
+step = df2[(df2['Stage'] != "InstructionPhase") & (df2['Stage'] == "InterTrial")]
 step.to_csv(filename_reduced, index=False)
 
 # Computes average eye movement distance per (Phase, TrialNumber)
