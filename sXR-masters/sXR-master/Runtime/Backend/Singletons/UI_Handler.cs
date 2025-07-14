@@ -43,7 +43,9 @@ namespace sxr_internal {
         {
             if (activeUpdate)
             {
-                if (submitButton.activeSelf)
+                bool anyUIActive = scrollObject.activeSelf || inputDropdown.activeSelf || inputSlider.activeSelf || submitButton.activeSelf;
+
+                if (anyUIActive)
                 {
                     sxrSettings.Instance.vrCamera.cullingMask |= LayerMask.GetMask("InteractiveUI");
                 }
@@ -51,6 +53,7 @@ namespace sxr_internal {
                 {
                     sxrSettings.Instance.vrCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("InteractiveUI"));
                 }
+
 
                 
                 inputWindow.SetActive(inputDropdown.activeSelf || inputSlider.activeSelf);
@@ -95,7 +98,7 @@ namespace sxr_internal {
         {
             if (!submit) submitButton.SetActive(true);
             SetText(buttonText, "Submit"); 
-
+            SetText(scrollTitle, "Instructions");
             scrollObject.SetActive(true);
             scrollText.SetActive(true);
             var slider = inputSlider.GetComponent<Slider>();
@@ -335,9 +338,9 @@ namespace sxr_internal {
 
             inputSlider.SetActive(false);
             inputDropdown.SetActive(false);
+            submitButton.SetActive(false);
             SetText(scrollTitle, "Instructions");
             SetText(scrollText, "Wait for the experimenter to start.");
-            SetText(buttonText, "Start");
 
             if (!TagsAndLayers.LayerExists("InteractiveUI"))
                 TagsAndLayers.CreateLayer("InteractiveUI");

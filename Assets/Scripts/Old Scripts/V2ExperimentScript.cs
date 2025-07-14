@@ -19,11 +19,12 @@ namespace SampleExperimentScene
         public GameObject US_Object; // drag and drop the object you want to be the US
         public float US_Sound_Delay; // Enter time for sound delay to play after CS+ object is activated.
         public bool ABATesting; // Used to determine what context you want Extinction to 
-        public GameObject WhiteDoor; // Used for the white door in V3
 
         public DoorOpener doorOpener; // Pulls in the door script that enables the door to open and close
         public VRControllerHandler controllerHandler; // handles when the controller is on and when it is off
         public SimpleCharacterMover characterMover; // handles how the monster should move
+
+        public LightingHandler lightHandlerMiddle; // handles how the monster should move
 
         private bool hasExecuted = false; //  used as a way to execute one block of code only once
         private bool hasStartedCS = false; // used to execute the start of the CS+ only once
@@ -56,10 +57,9 @@ namespace SampleExperimentScene
                 // Activate object and play sound after delay
                 hasStartedCS = true;
                 CS_Object.SetActive(true);
-                WhiteDoor.SetActive(false);
                 StartCoroutine(PlaySoundAfterDelay(PlaySound, CS_Sound_Delay, GetAnticipation)); // calls function to play sound with delay
                 StartCoroutine(DisableObjects(CS_Object, CS_Object_Interval, GetAnticipation)); // calls function to deactivate sound with delay
-                StartCoroutine(JumpScare(US_Object, PlaySound, CS_Sound_Delay, GetAnticipation));
+                // StartCoroutine(JumpScare(US_Object, PlaySound, CS_Sound_Delay, GetAnticipation));
             }
 
             if (sxr.CheckTimer()) // checks if timer is zero
@@ -110,7 +110,7 @@ namespace SampleExperimentScene
                 if (audioSource != null && PlaySound)
                 {
                     sxr.SetStage("US");
-                    US_Object.SetActive(true); 
+                    US_Object.SetActive(true);
                     audioSource.Play(); // plays sound
                     audioSource2.Play();
                     audioSource3.Play();
@@ -131,54 +131,54 @@ namespace SampleExperimentScene
         }
 
 
-        IEnumerator JumpScare(GameObject US_Object, bool PlaySound, float soundDelay, bool waitForUserInput)
-        {
-            if (waitForUserInput)
-            {
+        // IEnumerator JumpScare(GameObject US_Object, bool PlaySound, float soundDelay, bool waitForUserInput)
+        // {
+        //     if (waitForUserInput)
+        //     {
 
-                while (!userInputComplete) // waits for the user to input a response into input 
-                {
-                    yield return null; // Wait until input is complete
-                }
+        //         while (!userInputComplete) // waits for the user to input a response into input 
+        //         {
+        //             yield return null; // Wait until input is complete
+        //         }
 
-                // Wait the rest of the delay if any
-                if (WaitTimeTillUserInput < soundDelay)
-                {
-                    yield return new WaitForSeconds(soundDelay - WaitTimeTillUserInput);
-                }
-                if (PlaySound)
-                {
-                    doorOpener.OpenDoor();
-                    characterMover.ResetPosition();
-                    characterMover.StartScare();
-                }
+        //         // Wait the rest of the delay if any
+        //         if (WaitTimeTillUserInput < soundDelay)
+        //         {
+        //             yield return new WaitForSeconds(soundDelay - WaitTimeTillUserInput);
+        //         }
+        //         if (PlaySound)
+        //         {
+        //             doorOpener.OpenDoor();
+        //             characterMover.ResetPosition();
+        //             characterMover.StartScare();
+        //         }
 
-                yield return new WaitForSeconds(1); // waits for 1 second
-                if (PlaySound)
-                {
-                    characterMover.ResetPosition();
-                    US_Object.SetActive(false);
-                }
-            }
-            else
-            {
-                yield return new WaitForSeconds(soundDelay); // soundDelay determines how long it should wait to play the sound
-                if (PlaySound)
-                {
-                    doorOpener.OpenDoor();
-                    characterMover.ResetPosition();
-                    characterMover.StartScare();
-                    US_Object.SetActive(true);
-                }
+        //         yield return new WaitForSeconds(1); // waits for 1 second
+        //         if (PlaySound)
+        //         {
+        //             characterMover.ResetPosition();
+        //             US_Object.SetActive(false);
+        //         }
+        //     }
+        //     else
+        //     {
+        //         yield return new WaitForSeconds(soundDelay); // soundDelay determines how long it should wait to play the sound
+        //         if (PlaySound)
+        //         {
+        //             doorOpener.OpenDoor();
+        //             characterMover.ResetPosition();
+        //             characterMover.StartScare();
+        //             US_Object.SetActive(true);
+        //         }
 
-                yield return new WaitForSeconds(1); // waits for 1 second
-                if (PlaySound)
-                {
-                    characterMover.ResetPosition();
-                    US_Object.SetActive(false);
-                }
-            }
-        }
+        //         yield return new WaitForSeconds(1); // waits for 1 second
+        //         if (PlaySound)
+        //         {
+        //             characterMover.ResetPosition();
+        //             US_Object.SetActive(false);
+        //         }
+        //     }
+        // }
 
         // Coroutine to disable the object after a delay
         IEnumerator DisableObjects(GameObject objectToDisable, float objectDelay, bool waitForUserInput)
@@ -218,7 +218,6 @@ namespace SampleExperimentScene
                 {
                     yield return new WaitForSeconds(objectDelay - WaitTimeTillUserInput);
                     objectToDisable.SetActive(false); // will deactivate object
-                    WhiteDoor.SetActive(true);
                 }
             }
             else
@@ -229,7 +228,6 @@ namespace SampleExperimentScene
             if (objectToDisable != null)
             {
                 objectToDisable.SetActive(false);
-                WhiteDoor.SetActive(true);
             }
             else
             {
@@ -335,10 +333,12 @@ namespace SampleExperimentScene
                             switch (sxr.GetStepInTrial())
                             {
                                 case 0: // CS+
+                                    lightHandlerMiddle.ChangeLightColor(Color.blue);
                                     StartCS(true, false, US_Sound_Delay, CS_plus_Object_Interval, false);
                                     break;
 
                                 case 1: // inter trial interval
+                                    lightHandlerMiddle.ResetLight();
                                     InterTrial(9f);
                                     break;
                             }

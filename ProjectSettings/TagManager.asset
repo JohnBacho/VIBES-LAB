@@ -5,6 +5,13 @@ TagManager:
   serializedVersion: 2
   tags:
   - ColorTarget
+  - button f3
+  - button f5
+  - button f1
+  - button f4
+  - button f2
+  - button f6
+  - door
   layers:
   - Default
   - TransparentFX
