@@ -1568,37 +1568,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6433478931817329565, guid: 87b837bc5f2c7db4787b6fb7663c16d1, type: 3}
   m_PrefabInstance: {fileID: 204503812}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &210579954
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 210579955}
-  m_Layer: 0
-  m_Name: LeftDoor
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &210579955
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 210579954}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.22804664, y: 3.50444, z: 22.218475}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &212952435
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4370,7 +4339,7 @@ MonoBehaviour:
   scareDuration: 1
   head: {fileID: 1201201588}
   playerCamera: {fileID: 1845076978}
-  heightOffset: -1.4
+  heightOffset: -1.6
   Left: {fileID: 686458419}
   Middle: {fileID: 168013755}
   Right: {fileID: 678039546}
@@ -12082,7 +12051,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 150.00002
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -19038,7 +19007,6 @@ SceneRoots:
   - {fileID: 2110663370}
   - {fileID: 2009521961}
   - {fileID: 511789284}
-  - {fileID: 210579955}
   - {fileID: 1626403617}
   - {fileID: 1387624752}
   - {fileID: 1830911377}
