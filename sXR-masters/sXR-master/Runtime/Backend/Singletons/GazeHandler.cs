@@ -40,7 +40,7 @@ namespace sxr_internal
             "leftEyePositionY,leftEyePositionZ,rightEyePositionX,rightEyePositionY,rightEyePositionZ," +
             "leftEyeRotationX,leftEyeRotationY,leftEyeRotationZ,rightEyeRotationX,rightEyeRotationY," +
             "rightEyeRotationZ,leftEyePupilSize,rightEyePupilSize,leftEyeOpenAmount,rightEyeOpenAmount," +
-            "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus,TimeLookedAtObject");
+            "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus");
 
             headerPrinted=true;}
         
@@ -68,27 +68,7 @@ namespace sxr_internal
 
             string focusedGameObject = focusInfo.collider.gameObject.name;
             Vector3 gazeHitPoint = focusInfo.point;
-
-            if (!hasExecuted && InFocusItem == null)
-            {
-                InFocusItem = focusedGameObject;
-                start = Time.realtimeSinceStartup;
-                hasExecuted = true;
-            }
-            if (focusedGameObject == InFocusItem)
-            {
-                InFocusItem = focusedGameObject;
-                TimeLookedAtObject = Time.realtimeSinceStartup - start;
-            }
-            else
-            {
-                TimeLookedAtObject = 0;
-                start = Time.realtimeSinceStartup;
-                InFocusItem = focusedGameObject;
-            }
-
-            // Return formatted data
-            return "," + gazeHitPoint.x + "," + gazeHitPoint.y + "," + gazeHitPoint.z + "," + focusedGameObject + "," + TimeLookedAtObject;
+            return "," + gazeHitPoint.x + "," + gazeHitPoint.y + "," + gazeHitPoint.z + "," + focusedGameObject;
         }
 
         public bool RecordingGaze() { return recordEyeTracker; }
