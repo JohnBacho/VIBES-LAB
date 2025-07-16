@@ -301,6 +301,9 @@ public static class sxr
     /// <returns></returns>
     public static string GetStage(){return ExperimentHandler.Instance.stageInTrial; }
 
+    public static string GetContext(){return ExperimentHandler.Instance.currentContext; }
+
+
     /// <summary>
     /// Increments phase number by 1 and sets block/trial/step numbers to 0
     /// </summary>
@@ -340,6 +343,12 @@ public static class sxr
     /// </summary>
     /// <param name="stage"></param>
     public static void SetStage(string stage) { ExperimentHandler.Instance.stageInTrial = stage; }
+
+        /// <summary>
+    /// Sets the current "step" to the specified number
+    /// </summary>
+    /// <param name="context"></param>
+    public static void SetContext(string context) { ExperimentHandler.Instance.currentContext = context; }
     /// <summary>
     /// Starts a timer with the provided name. Will return "true" and the timer will be
     /// deleted if CheckTimer() is used. If no name is provided, uses the default trial

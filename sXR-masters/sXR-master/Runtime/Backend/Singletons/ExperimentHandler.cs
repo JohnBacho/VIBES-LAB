@@ -13,6 +13,7 @@ namespace sxr_internal
         public int trial;
         public int stepInTrial;
         public string stageInTrial;
+        public string currentContext;
 
         private string experimentName = "";
         private string subjectFile = "";
@@ -103,7 +104,7 @@ namespace sxr_internal
         public void WriteHeaderToTaggedFile(string tag, string headerInfo)
         {
             if (subjectFile == "") { ParseFileNames(); }
-            headerInfo = "SubjectID,Date,LocalTime,UnityTime,Phase,BlockNumber,TrialNumber,Step,TrialTime,Stage," + headerInfo;
+            headerInfo = "SubjectID,Date,LocalTime,UnityTime,Phase,BlockNumber,TrialNumber,Step,TrialTime,Stage,Context," + headerInfo;
             fh.AppendLine(subjectFile + "_" + tag + ".csv", headerInfo);
             if (backupFile != "") fh.AppendLine(backupFile + "_" + tag + ".csv", headerInfo); }
         
@@ -118,7 +119,7 @@ namespace sxr_internal
         {
             return subjectID + "," + DateTime.Today.Month + "_" + DateTime.Today.Day + "," + DateTime.Now.Hour + "_" +
                    DateTime.Now.Minute + "_" + DateTime.Now.Second + "," + Time.time + "," + phase + "," + block + "," +
-                   trial + "," + stepInTrial + "," + trialTimer.GetTimePassed() + "," + stageInTrial + ",";
+                   trial + "," + stepInTrial + "," + trialTimer.GetTimePassed() + "," + stageInTrial + "," + currentContext + ",";
         }
 
         // Singleton initiated on Awake()

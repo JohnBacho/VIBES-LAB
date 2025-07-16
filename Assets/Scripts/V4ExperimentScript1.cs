@@ -266,8 +266,9 @@ namespace ExperimentScene
                     ContextB.SetActive(true);
                     ActiveContext = ContextType.B;
                     break;
-
             }
+
+            sxr.SetContext(ActiveContext.ToString());
         }
 
         void Update()
@@ -362,6 +363,7 @@ namespace ExperimentScene
                     ActiveContext = ContextType.A;
                     break;
             }
+            sxr.SetContext(ActiveContext.ToString());
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 11f); // Trial 0
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 14f); // Trial 1
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, GetAnticipation: false, InterTrialWaitTime: 9f); // Trial 2
@@ -396,6 +398,7 @@ namespace ExperimentScene
                     ActiveContext = ContextType.B;
                     break;
             }
+            sxr.SetContext(ActiveContext.ToString());
             StartCoroutine(RunFearExtinctionTrials());
         }
 
