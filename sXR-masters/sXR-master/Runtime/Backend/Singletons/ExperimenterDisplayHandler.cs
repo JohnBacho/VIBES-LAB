@@ -105,9 +105,7 @@ namespace sxr_internal {
             if (!displayText5) displayText5 = sxr.GetObject("DisplayText5").GetComponent<TextMeshProUGUI>();
             eh = ExperimentHandler.Instance;
             
-            displayText4.text = "'Textbox4'";
-            displayText5.text = "'Textbox5'"; 
-            
+           
             #if SXR_USE_STARTSCREEN
             #else
             StartButton();
