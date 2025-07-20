@@ -81,9 +81,13 @@ namespace ExperimentScene
                 scriptHandler.ChangeLightColor(LightColor);
             }
 
-            StartCoroutine(PlaySoundAfterDelay(ActivateUS, GetAnticipation)); // calls function to play sound with delay
             StartCoroutine(DisableObjects(GetAnticipation)); // calls function to deactivate sound with delay
-            StartCoroutine(JumpScare(USObject, ActivateUS, GetAnticipation, position));
+            if (ActivateUS)
+            {
+                StartCoroutine(JumpScare(USObject, GetAnticipation, position));
+                StartCoroutine(PlaySoundAfterDelay(GetAnticipation)); // calls function to play sound with delay
+            }
+            
         }
 
         private IEnumerator InterTrial(float InterTrialWaitTime)  // used to wait till start of next trial
@@ -95,7 +99,7 @@ namespace ExperimentScene
         }
 
         // Coroutine to play the sound after a delay
-        IEnumerator PlaySoundAfterDelay(bool ActivateUS, bool waitForUserInput)
+        IEnumerator PlaySoundAfterDelay(bool waitForUserInput)
         {
             AudioSource audioSource = USSound.GetComponent<AudioSource>(); // grabs audio source from object
             AudioSource audioSource2 = USSound2.GetComponent<AudioSource>();
@@ -114,7 +118,7 @@ namespace ExperimentScene
                     yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound - DisplayTimeBeforeSlider);
                 }
 
-                if (audioSource != null && ActivateUS)
+                if (audioSource != null)
                 {
                     sxr.SetStage("US");
                     USObject.SetActive(true);
@@ -126,7 +130,7 @@ namespace ExperimentScene
             else
             {
                 yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound); // TimeUntilUnconditionedStimulusSound determines how long it should wait into a trial to play US
-                if (audioSource != null && ActivateUS)
+                if (audioSource != null)
                 {
                     sxr.SetStage("US");
                     USObject.SetActive(true);
@@ -138,7 +142,7 @@ namespace ExperimentScene
         }
 
 
-        IEnumerator JumpScare(GameObject USObject, bool ActivateUS, bool waitForUserInput, StimulusLocation position)
+        IEnumerator JumpScare(GameObject USObject, bool waitForUserInput, StimulusLocation position)
         {
             if (waitForUserInput)
             {
@@ -153,37 +157,24 @@ namespace ExperimentScene
                 {
                     yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound - DisplayTimeBeforeSlider);
                 }
-                if (ActivateUS)
-                {
-                    scriptHandler.TriggerEntryOpen(ActiveContext);
-                    characterMover.ResetPosition();
-                    characterMover.StartScare(position);
-                }
-
+                scriptHandler.TriggerEntryOpen(ActiveContext);
+                characterMover.ResetPosition();
+                characterMover.StartScare(position);
                 yield return new WaitForSeconds(1); // waits for 1 second
-                if (ActivateUS)
-                {
-                    characterMover.ResetPosition();
-                    USObject.SetActive(false);
-                }
+                characterMover.ResetPosition();
+                USObject.SetActive(false);
             }
             else
             {
                 yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound); // TimeUntilUnconditionedStimulusSound determines how long it should wait to play the sound
-                if (ActivateUS)
-                {
-                    scriptHandler.TriggerEntryOpen(ActiveContext);
-                    characterMover.ResetPosition();
-                    characterMover.StartScare(position);
-                    USObject.SetActive(true);
-                }
-
+                scriptHandler.TriggerEntryOpen(ActiveContext);
+                characterMover.ResetPosition();
+                characterMover.StartScare(position);
+                USObject.SetActive(true);
                 yield return new WaitForSeconds(1); // waits for 1 second
-                if (ActivateUS)
-                {
-                    characterMover.ResetPosition();
-                    USObject.SetActive(false);
-                }
+                characterMover.ResetPosition();
+                USObject.SetActive(false);
+                
             }
         }
 
