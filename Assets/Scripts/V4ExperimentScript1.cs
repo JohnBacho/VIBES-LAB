@@ -37,12 +37,10 @@ namespace ExperimentScene
         public bool CSPlusDisplayPattern = false; // used to determine if to make the light flash a pattern or not
         public Color CSMinusLightColor = Color.green; // set the color of the room for the ABA testing
         public bool CSMinusDisplayPattern = false; // used to determine if to make the light flash a pattern or not
-        public GameObject USSound; // drag and drop US sound to get it to play
-        public GameObject USSound2; // drag and drop US sound to get it to play
-        public GameObject USSound3; // drag and drop US sound to get it to play
+        public AudioSource[] USAudiosSources; // takes in an array of audio sources
         public GameObject USObject; // drag and drop the object you want to be the US
-        public ContextTest ContextTest = ContextTest.AAA;
-        private ContextType ActiveContext;
+        public ContextTest ContextTest = ContextTest.AAA; // determines context testing
+        private ContextType ActiveContext; // used to keep track of the current context the user is in
         public GameObject ContextA; // used for context switch in ABA
         public GameObject ContextB; // used for context switch in ABA
         public VRControllerHandler controllerHandler; // handles when the controller is on and when it is off
@@ -84,8 +82,7 @@ namespace ExperimentScene
             StartCoroutine(DisableObjects(GetAnticipation)); // calls function to deactivate sound with delay
             if (ActivateUS)
             {
-                StartCoroutine(JumpScare(USObject, GetAnticipation, position));
-                StartCoroutine(PlaySoundAfterDelay(GetAnticipation)); // calls function to play sound with delay
+                StartCoroutine(RunUnconditionalStimuli(USObject, GetAnticipation, position)); // calls function to play sound with delay
             }
             
         }
@@ -99,11 +96,8 @@ namespace ExperimentScene
         }
 
         // Coroutine to play the sound after a delay
-        IEnumerator PlaySoundAfterDelay(bool waitForUserInput)
+        IEnumerator RunUnconditionalStimuli(GameObject USObject, bool waitForUserInput, StimulusLocation position)
         {
-            AudioSource audioSource = USSound.GetComponent<AudioSource>(); // grabs audio source from object
-            AudioSource audioSource2 = USSound2.GetComponent<AudioSource>();
-            AudioSource audioSource3 = USSound3.GetComponent<AudioSource>();
             if (waitForUserInput)
             {
 
@@ -117,45 +111,19 @@ namespace ExperimentScene
                 {
                     yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound - DisplayTimeBeforeSlider);
                 }
-
-                if (audioSource != null)
-                {
-                    sxr.SetStage("US");
-                    USObject.SetActive(true);
-                    audioSource.Play(); // plays sound
-                    audioSource2.Play();
-                    audioSource3.Play();
-                }
             }
             else
             {
                 yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound); // TimeUntilUnconditionedStimulusSound determines how long it should wait into a trial to play US
-                if (audioSource != null)
+            }
+                if (USAudiosSources.Length != 0)
                 {
                     sxr.SetStage("US");
                     USObject.SetActive(true);
-                    audioSource.Play(); // plays sound
-                    audioSource2.Play();
-                    audioSource3.Play();
-                }
-            }
-        }
-
-
-        IEnumerator JumpScare(GameObject USObject, bool waitForUserInput, StimulusLocation position)
-        {
-            if (waitForUserInput)
-            {
-
-                while (!UserInputComplete) // waits for the user to input a response into input 
-                {
-                    yield return null; // Wait until input is complete
-                }
-
-                // Wait the rest of the delay if any
-                if (DisplayTimeBeforeSlider < TimeUntilUnconditionedStimulusSound)
-                {
-                    yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound - DisplayTimeBeforeSlider);
+                    for (int i = 0; i < USAudiosSources.Length; i++)
+                    {
+                        USAudiosSources[i].Play();
+                    }
                 }
                 scriptHandler.TriggerEntryOpen(ActiveContext);
                 characterMover.ResetPosition();
@@ -163,19 +131,6 @@ namespace ExperimentScene
                 yield return new WaitForSeconds(1); // waits for 1 second
                 characterMover.ResetPosition();
                 USObject.SetActive(false);
-            }
-            else
-            {
-                yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound); // TimeUntilUnconditionedStimulusSound determines how long it should wait to play the sound
-                scriptHandler.TriggerEntryOpen(ActiveContext);
-                characterMover.ResetPosition();
-                characterMover.StartScare(position);
-                USObject.SetActive(true);
-                yield return new WaitForSeconds(1); // waits for 1 second
-                characterMover.ResetPosition();
-                USObject.SetActive(false);
-                
-            }
         }
 
         // Coroutine to disable the object after a delay
@@ -285,7 +240,7 @@ namespace ExperimentScene
         {
             sxr.StartRecordingCameraPos();
             sxr.StartRecordingEyeTrackerInfo();
-            StartCoroutine(InstructionSteps());
+            StartCoroutine(RunFearAcquisitionTrials());
         }
 
         private IEnumerator InstructionSteps()
@@ -440,4 +395,3 @@ namespace ExperimentScene
 
     }
 }
-
