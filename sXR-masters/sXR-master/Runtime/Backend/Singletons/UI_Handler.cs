@@ -32,6 +32,7 @@ namespace sxr_internal {
         public RawImage[] UI_overlays = new RawImage[18];
         public RawImage pleaseWait, finished, eyeError, emergencyStop;
         public TextMeshProUGUI textboxTop, textboxTopMiddle, textboxBottomMiddle, textboxBottom, textboxTopLeft;
+        public Image image; 
 
         [SerializeField]  GameObject leftLaser, rightLaser, interactiveUI, scrollObject, submitButton, inputWindow, inputSlider, inputDropdown;
         [SerializeField]  GameObject scrollTitle, scrollText, inputText, buttonText;

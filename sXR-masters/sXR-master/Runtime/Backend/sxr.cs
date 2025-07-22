@@ -132,6 +132,7 @@ public static class sxr
                 break;
             case TextPosition.MiddleTop: UI_Handler.Instance.textboxTopMiddle.text = text; 
                 UI_Handler.Instance.textboxTopMiddle.enabled = true;
+                UI_Handler.Instance.image.enabled = true;
                 break; 
             case TextPosition.MiddleBottom: UI_Handler.Instance.textboxBottomMiddle.text = text; 
                 UI_Handler.Instance.textboxBottomMiddle.enabled = true;
@@ -153,7 +154,9 @@ public static class sxr
         switch (position) {
             case TextPosition.Top: UI_Handler.Instance.textboxTop.enabled = false; 
                 break;
-            case TextPosition.MiddleTop: UI_Handler.Instance.textboxTopMiddle.enabled = false; 
+            case TextPosition.MiddleTop:
+                UI_Handler.Instance.textboxTopMiddle.enabled = false;
+                UI_Handler.Instance.image.enabled = false;
                 break; 
             case TextPosition.MiddleBottom: UI_Handler.Instance.textboxBottomMiddle.enabled = false; 
                 break; 
@@ -163,16 +166,19 @@ public static class sxr
                 break; 
             default: sxr.DebugLog("Text position not found");
                 break; } }
-    
+
     /// <summary>
     /// Hides all textboxes displayed to the VR user interface
     /// </summary>
-    public static void HideAllText() {
+    public static void HideAllText()
+    {
         UI_Handler.Instance.textboxTop.enabled = false;
         UI_Handler.Instance.textboxTopMiddle.enabled = false;
         UI_Handler.Instance.textboxBottomMiddle.enabled = false;
         UI_Handler.Instance.textboxBottom.enabled = false;
-        UI_Handler.Instance.textboxTopLeft.enabled = false; }
+        UI_Handler.Instance.textboxTopLeft.enabled = false;
+        UI_Handler.Instance.image.enabled = false;
+    }
     
     /// <summary>
     /// Displays the specified image (searches by image name without the extension, e.g. "myImage" not "myImage.jpeg".

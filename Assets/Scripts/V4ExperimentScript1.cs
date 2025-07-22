@@ -32,7 +32,6 @@ namespace ExperimentScene
 {
     public class ExperimentScriptV4 : MonoBehaviour
     {
-        public bool InstructionPhase; // Set to true to toggle on gaze rays to see in real time where user is looking
         public Color CSPlusLightColor = Color.blue; // set the color of the room for the ABA testing
         public bool CSPlusDisplayPattern = false; // used to determine if to make the light flash a pattern or not
         public Color CSMinusLightColor = Color.green; // set the color of the room for the ABA testing
@@ -240,41 +239,20 @@ namespace ExperimentScene
         {
             sxr.StartRecordingCameraPos();
             sxr.StartRecordingEyeTrackerInfo();
-            StartCoroutine(RunFearAcquisitionTrials());
+            StartCoroutine(InstructionSteps());
         }
 
         private IEnumerator InstructionSteps()
         {
             sxr.SetStage("InstructionPhase");
-
-            sxr.WriteHeaderToTaggedFile("AnticipateFile", Anticipateheaders);
-
-            if (InstructionPhase)
-            {
-                sxr.DisplayText("In this experiment, you will see different colored shapes in the 3d environment. Please keep your focus on the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored shapes and the loud sounds.");
-                sxr.StartTimer(20);
-                yield return new WaitForSeconds(20);
-                sxr.HideAllText();
-            }
+            controllerHandler.ToggleController();
             sxr.DisplayImage("trigger");
             yield return new WaitUntil(() => sxr.GetTrigger());
             sxr.HideImagesUI();
-            controllerHandler.ToggleController();
-            bool submitted = false;
-
-            // Continuously check for slider input
-            while (!submitted)
-            {
-                sxr.InputSlider(0, 9, $"Using the Controller and Trigger Adjust the value to 9 and click submit [{InstructionSliderValue}]", true);
-
-                if (sxr.ParseInputUI(out InstructionSliderValue))
-                {
-                    submitted = true;
-                }
-
-                yield return null; // wait for next frame
-            }
-
+            yield return new WaitForSeconds(0.5f);
+            sxr.DisplayText("In this experiment, you will see different colored lights in the 3d environment. Please keep your focus on the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored lights and the loud sounds. (Press trigger to continue)");
+            yield return new WaitUntil(() => sxr.GetTrigger());
+            sxr.HideAllText();
             controllerHandler.ToggleController();
             sxr.NextPhase();
             StartCoroutine(RunHabituationTrials());
