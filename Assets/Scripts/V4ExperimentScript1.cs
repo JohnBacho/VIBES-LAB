@@ -46,44 +46,48 @@ namespace ExperimentScene
         public SimpleCharacterMover characterMover; // handles how the monster should move
         public ScriptHandler scriptHandler; // manages the doors, elevator, and light scripts
         private bool HasExecuted = false; //  used as a way to execute one block of code only once
-        private string Anticipateheaders = "Anticipated,ResponseTime"; // Used to write headers to Anticipatedfile
-        private int AnticipatedNumber; // Used for when the user enters if they anticipated US
-        private bool UserInputComplete = false; // Used for a check if the user has submitted a value  
-        private const float TimeForUserToRespond = 999; // Used to determine how long the user has to respond
         private const float DisplayTimeBeforeSlider = 5; // Used to determine how long to wait into the CS to display Slider
         private const float DisplayDuration = 8; // Determines how long the CS is displayed on screen for
         private const float TimeUntilUnconditionedStimulusSound = 7; // Determines how long to wait into a trial to activate the US
         private int InstructionSliderValue = 0; // Used for instruction slider
 
-        private void StartCS(StimulusType type, StimulusLocation position, bool ActivateUS, bool GetAnticipation)
+        private void StartCS(StimulusType type, StimulusLocation position, bool ActivateUS)
         {
-            sxr.StartTimer(DisplayDuration); // sets the timer
-            scriptHandler.AssignLightingAndDoorControllerForStimulusLocation(position, ActiveContext);
+            SetupTimerAndControllers(position);
+            SetStageLabel(type, position);
+            HandleLighting(type);
+            StartCoroutine(RunStimulus());
 
+            if (ActivateUS)
+            {
+                StartCoroutine(RunUnconditionalStimuli(USObject, position));
+            }
+        }
+        private void SetStageLabel(StimulusType type, StimulusLocation position)
+        {
             string label = position.ToString();
             string csType = type == StimulusType.CS_Plus ? "CS+" : "CS-";
-
             string result = $"{label}_{csType}";
             sxr.SetStage(result);
+        }
 
-            // Activate object and play sound after delay
-            Color LightColor = type == StimulusType.CS_Plus ? CSPlusLightColor : CSMinusLightColor;
+        private void SetupTimerAndControllers(StimulusLocation position)
+        {
+            sxr.StartTimer(DisplayDuration);
+            scriptHandler.AssignLightingAndDoorControllerForStimulusLocation(position, ActiveContext);
+        }
+        private void HandleLighting(StimulusType type)
+        {
+            Color lightColor = type == StimulusType.CS_Plus ? CSPlusLightColor : CSMinusLightColor;
             scriptHandler.SetStop();
             if (CSPlusDisplayPattern && type == StimulusType.CS_Plus || CSMinusDisplayPattern && !(type == StimulusType.CS_Plus))
             {
-                scriptHandler.StartLightPattern(LightColor);
+                scriptHandler.StartLightPattern(lightColor);
             }
             else
             {
-                scriptHandler.ChangeLightColor(LightColor);
+                scriptHandler.ChangeLightColor(lightColor);
             }
-
-            StartCoroutine(DisableObjects(GetAnticipation)); // calls function to deactivate sound with delay
-            if (ActivateUS)
-            {
-                StartCoroutine(RunUnconditionalStimuli(USObject, GetAnticipation, position)); // calls function to play sound with delay
-            }
-            
         }
 
         private IEnumerator InterTrial(float InterTrialWaitTime)  // used to wait till start of next trial
@@ -95,96 +99,37 @@ namespace ExperimentScene
         }
 
         // Coroutine to play the sound after a delay
-        IEnumerator RunUnconditionalStimuli(GameObject USObject, bool waitForUserInput, StimulusLocation position)
+        IEnumerator RunUnconditionalStimuli(GameObject USObject, StimulusLocation position)
         {
-            if (waitForUserInput)
+            yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound); // TimeUntilUnconditionedStimulusSound determines how long it should wait into a trial to play US
+            sxr.SetStage("US");
+            USObject.SetActive(true);
+            for (int i = 0; i < USAudiosSources.Length; i++)
             {
-
-                while (!UserInputComplete)
-                {
-                    yield return null; // Wait until input is complete
-                }
-
-                // Wait the rest of the delay if any
-                if (DisplayTimeBeforeSlider < TimeUntilUnconditionedStimulusSound)
-                {
-                    yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound - DisplayTimeBeforeSlider);
-                }
+                USAudiosSources[i].Play();
             }
-            else
-            {
-                yield return new WaitForSeconds(TimeUntilUnconditionedStimulusSound); // TimeUntilUnconditionedStimulusSound determines how long it should wait into a trial to play US
-            }
-                if (USAudiosSources.Length != 0)
-                {
-                    sxr.SetStage("US");
-                    USObject.SetActive(true);
-                    for (int i = 0; i < USAudiosSources.Length; i++)
-                    {
-                        USAudiosSources[i].Play();
-                    }
-                }
-                scriptHandler.TriggerEntryOpen(ActiveContext);
-                characterMover.ResetPosition();
-                characterMover.StartScare(position);
-                yield return new WaitForSeconds(1); // waits for 1 second
-                characterMover.ResetPosition();
-                USObject.SetActive(false);
+            scriptHandler.TriggerEntryOpen(ActiveContext);
+            characterMover.ResetPosition();
+            characterMover.StartScare(position);
+            sxr.SendHaptic(amp: 1.0f, dur: 1.0f, rightHand: true, chan: 0); // for right hand
+            sxr.SendHaptic(amp: 1.0f, dur: 1.0f, rightHand: false, chan: 0); // for left hand
+            yield return new WaitForSeconds(1); // waits for 1 second
+            characterMover.ResetPosition();
+            USObject.SetActive(false);
         }
-
-        // Coroutine to disable the object after a delay
-        IEnumerator DisableObjects(bool waitForUserInput)
+        IEnumerator RunStimulus()
         {
-            if (waitForUserInput)
-            {
-                yield return new WaitForSeconds(DisplayTimeBeforeSlider); // waits 5 seconds
-                float TempStoreTime = sxr.TimeRemaining(); // stores the trial timer so that it can be restored later
-
-                sxr.StartTimer(TimeForUserToRespond); // starts a new timer for 999s allowing the user to respond 
-                Debug.Log("Paused before disabling object. Waiting for user input...");
-                // enables the user to move the right controller 
-                controllerHandler.ToggleController();
-
-                int TempStoreAnticipateNum = -1;
-                string storeStage = sxr.GetStage();
-                sxr.SetStage("InputSlider");
-                while (!sxr.ParseInputUI(out AnticipatedNumber))
-                {
-                    sxr.InputSlider(0, 9, $"How likely is it that a scream will follow? 0 (certainly no scream) to 9 (certainly a scream) [{AnticipatedNumber}]", true); // displays slider that user can input 
-                    TempStoreAnticipateNum = AnticipatedNumber; // for some reason I am unable to get anticipatedNumber to save to file out side of the loop so we create a new var to save it 
-                    Debug.Log($"User entered: {AnticipatedNumber}");
-                    yield return null;
-                }
-                UserInputComplete = true; // this bool is used to tell PlaySoundAfterDelay that it can continue with it's delay.
-                sxr.SetStage(storeStage);
-                // disables the Right Controller
-                controllerHandler.ToggleController();
-
-                float ResponseTime = TimeForUserToRespond - sxr.TimeRemaining(); // used to calculate response time
-                sxr.StartTimer(TempStoreTime); // restores the original timer 
-                sxr.WriteToTaggedFile("AnticipateFile", TempStoreAnticipateNum.ToString() + "," + ResponseTime.ToString()); // writes user response as well as response time to AnticipateFile
-
-
-                // Wait remaining time if any
-                if (DisplayDuration > DisplayTimeBeforeSlider)
-                {
-                    yield return new WaitForSeconds(DisplayDuration - DisplayTimeBeforeSlider);
-                    scriptHandler.RestAllLights();
-                }
-            }
-            else
-            {
-                yield return new WaitForSeconds(DisplayDuration);
-            }
-            scriptHandler.RestAllLights();
-            UserInputComplete = false; // rests flag
-        }
-
-        private IEnumerator RunTrial(StimulusType type, StimulusLocation location, bool ActivateUS, bool GetAnticipation, float InterTrialWaitTime)
-        {
-            StartCS(type, location, ActivateUS, GetAnticipation);
-            yield return new WaitForSeconds(DisplayDuration);
+            yield return new WaitForSeconds(DisplayDuration - 1);
+            scriptHandler.TriggerEntryOpen(ActiveContext);
+            yield return new WaitForSeconds(1);
             scriptHandler.TriggerEntryClose(ActiveContext);
+            scriptHandler.RestAllLights();
+        }
+
+        private IEnumerator RunTrial(StimulusType type, StimulusLocation location, bool ActivateUS, float InterTrialWaitTime)
+        {
+            StartCS(type, location, ActivateUS);
+            yield return new WaitForSeconds(DisplayDuration);
             sxr.NextStep();
             yield return InterTrial(InterTrialWaitTime);
         }
@@ -260,10 +205,10 @@ namespace ExperimentScene
 
         private IEnumerator RunHabituationTrials()
         {
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 9f);   // Trial 0
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f);  // Trial 1
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 10f);  // Trial 2
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f);  // Trial 3
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 9f);   // Trial 0
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 12f);  // Trial 1
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 10f);  // Trial 2
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 12f);  // Trial 3
             sxr.NextPhase();
             StartCoroutine(RunFearAcquisitionTrials());
         }
@@ -288,22 +233,22 @@ namespace ExperimentScene
                     break;
             }
             sxr.SetContext(ActiveContext.ToString());
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 11f); // Trial 0
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 13f); // Trial 1
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: true, GetAnticipation: false, InterTrialWaitTime: 9f); // Trial 2
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, GetAnticipation: false, InterTrialWaitTime: 14f); // Trial 3
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f); // Trial 4
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, GetAnticipation: false, InterTrialWaitTime: 10f); // Trial 5
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 11f); // Trial 6
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f); // Trial 7
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, GetAnticipation: false, InterTrialWaitTime: 9f); // Trial 8
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f); // Trial 9
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, GetAnticipation: false, InterTrialWaitTime: 13f); // Trial 10
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f); // Trial 11
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 10f); // Trial 12
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f); // Trial 13
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 9f); // Trial 14
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, GetAnticipation: false, InterTrialWaitTime: 12f); // // Trial 15
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 0
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 1
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: true, InterTrialWaitTime: 9f); // Trial 2
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, InterTrialWaitTime: 14f); // Trial 3
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 4
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, InterTrialWaitTime: 10f); // Trial 5
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 6
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 7
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, InterTrialWaitTime: 9f); // Trial 8
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 9
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, InterTrialWaitTime: 13f); // Trial 10
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 11
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 12
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 13
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 14
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, InterTrialWaitTime: 12f); // // Trial 15
             sxr.NextPhase();
             switch (ContextTest)
             {
@@ -328,48 +273,47 @@ namespace ExperimentScene
 
         private IEnumerator RunFearExtinctionTrials()
         {
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f); // Trial 0
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 10f); // Trial 1
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f); // Trial 2
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 9f); // Trial 3
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 11f); // Trial 4
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 9f); // Trial 5
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 13f); // Trial 6
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 10f); // Trial 7
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 14f); // Trial 8
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f); // Trial 9
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 9f); // Trial 10
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f); // Trial 11
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 10f); // Trial 12
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 13f); // Trial 13
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f); // Trial 14
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 10f); // Trial 15
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f); // Trial 16
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 9f); // Trial 17
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 11f); // Trial 18
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 13f); // Trial 19
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 10f); // Trial 20
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f); // Trial 21
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 9f); // Trial 22
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f); // Trial 23
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 13f); // Trial 24
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 11f); // Trial 25
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 13f); // Trial 26
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 10f); // Trial 27
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 9f); // Trial 28
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 12f); // Trial 29
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 9f);  // Trial 30
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 13f); // Trial 31
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 11f); // Trial 32
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 13f); // Trial 33
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 10f); // Trial 34
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 13f); // Trial 35
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 11f); // Trial 36
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 13f); // Trial 37
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 9f); // Trial 38
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, GetAnticipation: false, InterTrialWaitTime: 10f); // Trial 39
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 0
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 1
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 2
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 3
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 4
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 5
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 6
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 7
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 14f); // Trial 8
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 9
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 10
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 11
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 12
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 13
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 14
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 15
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 16
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 17
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 18
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 19
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 20
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 21
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 22
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 23
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 24
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 25
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 26
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 27
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 28
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 29
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 9f);  // Trial 30
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 31
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 32
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 33
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 34
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 35
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 36
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 37
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 38
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 39
             EditorApplication.isPlaying = false;
         }
-
     }
 }
