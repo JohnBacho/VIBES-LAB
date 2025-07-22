@@ -49,7 +49,6 @@ namespace ExperimentScene
         private const float DisplayTimeBeforeSlider = 5; // Used to determine how long to wait into the CS to display Slider
         private const float DisplayDuration = 8; // Determines how long the CS is displayed on screen for
         private const float TimeUntilUnconditionedStimulusSound = 7; // Determines how long to wait into a trial to activate the US
-        private int InstructionSliderValue = 0; // Used for instruction slider
 
         private void StartCS(StimulusType type, StimulusLocation position, bool ActivateUS)
         {
