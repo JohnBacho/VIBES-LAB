@@ -1,9 +1,7 @@
- 
-using UnityEditor;
 using UnityEngine;
-using System.Collections;
-
- // Courtesy of https://forum.unity.com/members/dubiduboni.2659696/
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace sxr_internal
 {
@@ -12,42 +10,56 @@ namespace sxr_internal
         private static int maxTags = 10000;
         private static int maxLayers = 31;
 
+        // Runtime tag and layer storage
+        private static HashSet<string> runtimeTags = new HashSet<string>();
+        private static Dictionary<string, int> runtimeLayers = new Dictionary<string, int>();
+        private static bool initialized = false;
+
+        private static void InitializeIfNeeded()
+        {
+            if (!initialized)
+            {
+                // Initialize with Unity's built-in tags
+                runtimeTags.Add("Untagged");
+                runtimeTags.Add("Respawn");
+                runtimeTags.Add("Finish");
+                runtimeTags.Add("EditorOnly");
+                runtimeTags.Add("MainCamera");
+                runtimeTags.Add("Player");
+                runtimeTags.Add("GameController");
+
+                // Initialize with Unity's built-in layers
+                runtimeLayers.Add("Default", 0);
+                runtimeLayers.Add("TransparentFX", 1);
+                runtimeLayers.Add("Ignore Raycast", 2);
+                runtimeLayers.Add("Water", 4);
+                runtimeLayers.Add("UI", 5);
+
+                initialized = true;
+            }
+        }
+
         /// <summary>
-        /// Adds the tag.
+        /// Creates a tag (runtime version)
         /// </summary>
-        /// <returns><c>true</c>, if tag was added, <c>false</c> otherwise.</returns>
-        /// <param name="tagName">Tag name.</param>
         public static bool CreateTag(string tagName)
         {
-            // Open tag manager
-            SerializedObject tagManager =
-                new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
-            // Tags Property
-            SerializedProperty tagsProp = tagManager.FindProperty("tags");
-            if (tagsProp.arraySize >= maxTags)
+            InitializeIfNeeded();
+
+            if (string.IsNullOrEmpty(tagName))
+                return false;
+
+            if (runtimeTags.Count >= maxTags)
             {
-                Debug.Log("No more tags can be added to the Tags property. You have " + tagsProp.arraySize + " tags");
+                Debug.Log("No more tags can be added. You have " + runtimeTags.Count + " tags");
                 return false;
             }
 
-            // if not found, add it
-            if (!PropertyExists(tagsProp, 0, tagsProp.arraySize, tagName))
+            if (!runtimeTags.Contains(tagName))
             {
-                int index = tagsProp.arraySize;
-                // Insert new array element
-                tagsProp.InsertArrayElementAtIndex(index);
-                SerializedProperty sp = tagsProp.GetArrayElementAtIndex(index);
-                // Set array element to tagName
-                sp.stringValue = tagName;
+                runtimeTags.Add(tagName);
                 Debug.Log("Tag: " + tagName + " has been added");
-                // Save settings
-                tagManager.ApplyModifiedProperties();
-
                 return true;
-            }
-            else
-            {
-                //Debug.Log ("Tag: " + tagName + " already exists");
             }
 
             return false;
@@ -57,7 +69,7 @@ namespace sxr_internal
         {
             CreateTag(name);
 
-            if (name == null || name == "")
+            if (string.IsNullOrEmpty(name))
             {
                 name = "Untagged";
             }
@@ -66,105 +78,62 @@ namespace sxr_internal
         }
 
         /// <summary>
-        /// Removes the tag.
+        /// Removes a tag (runtime version)
         /// </summary>
-        /// <returns><c>true</c>, if tag was removed, <c>false</c> otherwise.</returns>
-        /// <param name="tagName">Tag name.</param>
-        ///
         public static bool RemoveTag(string tagName)
         {
+            InitializeIfNeeded();
 
-            // Open tag manager
-            SerializedObject tagManager =
-                new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
-
-            // Tags Property
-            SerializedProperty tagsProp = tagManager.FindProperty("tags");
-
-            if (PropertyExists(tagsProp, 0, tagsProp.arraySize, tagName))
+            if (runtimeTags.Contains(tagName))
             {
-                SerializedProperty sp;
-
-                for (int i = 0, j = tagsProp.arraySize; i < j; i++)
-                {
-
-                    sp = tagsProp.GetArrayElementAtIndex(i);
-                    if (sp.stringValue == tagName)
-                    {
-                        tagsProp.DeleteArrayElementAtIndex(i);
-                        Debug.Log("Tag: " + tagName + " has been removed");
-                        // Save settings
-                        tagManager.ApplyModifiedProperties();
-                        return true;
-                    }
-
-                }
+                runtimeTags.Remove(tagName);
+                Debug.Log("Tag: " + tagName + " has been removed");
+                return true;
             }
 
             return false;
-
         }
 
         /// <summary>
-        /// Checks to see if tag exists.
+        /// Checks if tag exists (runtime version)
         /// </summary>
-        /// <returns><c>true</c>, if tag exists, <c>false</c> otherwise.</returns>
-        /// <param name="tagName">Tag name.</param>
         public static bool TagExists(string tagName)
         {
-            // Open tag manager
-            SerializedObject tagManager =
-                new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
-
-            // Layers Property
-            SerializedProperty tagsProp = tagManager.FindProperty("tags");
-            return PropertyExists(tagsProp, 0, maxTags, tagName);
+            InitializeIfNeeded();
+            return runtimeTags.Contains(tagName);
         }
 
         /// <summary>
-        /// Adds the layer.
+        /// Creates a layer (runtime version)
         /// </summary>
-        /// <returns><c>true</c>, if layer was added, <c>false</c> otherwise.</returns>
-        /// <param name="layerName">Layer name.</param>
         public static bool CreateLayer(string layerName)
         {
-            // Open tag manager
-            SerializedObject tagManager =
-                new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
-            // Layers Property
-            SerializedProperty layersProp = tagManager.FindProperty("layers");
-            if (!PropertyExists(layersProp, 0, maxLayers, layerName))
-            {
-                SerializedProperty sp;
-                // Start at layer 9th index -> 8 (zero based) => first 8 reserved for unity / greyed out
-                for (int i = 8, j = maxLayers; i < j; i++)
-                {
-                    sp = layersProp.GetArrayElementAtIndex(i);
-                    if (sp.stringValue == "")
-                    {
-                        // Assign string value to layer
-                        sp.stringValue = layerName;
-                        Debug.Log("Layer: " + layerName + " has been added");
-                        // Save settings
-                        tagManager.ApplyModifiedProperties();
-                        return true;
-                    }
+            InitializeIfNeeded();
 
-                    if (i == j)
-                        Debug.Log("All allowed layers have been filled");
+            if (string.IsNullOrEmpty(layerName))
+                return false;
+
+            if (runtimeLayers.ContainsKey(layerName))
+                return false;
+
+            // Find next available layer slot (starting from layer 8)
+            for (int i = 8; i < maxLayers; i++)
+            {
+                if (!runtimeLayers.ContainsValue(i))
+                {
+                    runtimeLayers.Add(layerName, i);
+                    Debug.Log("Layer: " + layerName + " has been added at index " + i);
+                    return true;
                 }
             }
-            else
-            {
-                //Debug.Log ("Layer: " + layerName + " already exists");
-            }
 
+            Debug.Log("All allowed layers have been filled");
             return false;
         }
 
         public static string NewLayer(string name)
         {
-            if (name != null || name != "")
+            if (!string.IsNullOrEmpty(name))
             {
                 CreateLayer(name);
             }
@@ -173,83 +142,60 @@ namespace sxr_internal
         }
 
         /// <summary>
-        /// Removes the layer.
+        /// Removes a layer (runtime version)
         /// </summary>
-        /// <returns><c>true</c>, if layer was removed, <c>false</c> otherwise.</returns>
-        /// <param name="layerName">Layer name.</param>
         public static bool RemoveLayer(string layerName)
         {
+            InitializeIfNeeded();
 
-            // Open tag manager
-            SerializedObject tagManager =
-                new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
-
-            // Tags Property
-            SerializedProperty layersProp = tagManager.FindProperty("layers");
-
-            if (PropertyExists(layersProp, 0, layersProp.arraySize, layerName))
+            if (runtimeLayers.ContainsKey(layerName))
             {
-                SerializedProperty sp;
-
-                for (int i = 0, j = layersProp.arraySize; i < j; i++)
-                {
-
-                    sp = layersProp.GetArrayElementAtIndex(i);
-
-                    if (sp.stringValue == layerName)
-                    {
-                        sp.stringValue = "";
-                        Debug.Log("Layer: " + layerName + " has been removed");
-                        // Save settings
-                        tagManager.ApplyModifiedProperties();
-                        return true;
-                    }
-
-                }
+                int layerIndex = runtimeLayers[layerName];
+                runtimeLayers.Remove(layerName);
+                Debug.Log("Layer: " + layerName + " has been removed from index " + layerIndex);
+                return true;
             }
 
             return false;
-
         }
 
         /// <summary>
-        /// Checks to see if layer exists.
+        /// Checks if layer exists (runtime version)
         /// </summary>
-        /// <returns><c>true</c>, if layer exists, <c>false</c> otherwise.</returns>
-        /// <param name="layerName">Layer name.</param>
         public static bool LayerExists(string layerName)
         {
-            // Open tag manager
-            SerializedObject tagManager =
-                new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
-
-            // Layers Property
-            SerializedProperty layersProp = tagManager.FindProperty("layers");
-            return PropertyExists(layersProp, 0, maxLayers, layerName);
+            InitializeIfNeeded();
+            return runtimeLayers.ContainsKey(layerName);
         }
 
         /// <summary>
-        /// Checks if the value exists in the property.
+        /// Gets the layer index for a layer name
         /// </summary>
-        /// <returns><c>true</c>, if exists was propertyed, <c>false</c> otherwise.</returns>
-        /// <param name="property">Property.</param>
-        /// <param name="start">Start.</param>
-        /// <param name="end">End.</param>
-        /// <param name="value">Value.</param>
-        private static bool PropertyExists(SerializedProperty property, int start, int end, string value)
+        public static int GetLayerIndex(string layerName)
         {
-            for (int i = start; i < end; i++)
-            {
-                SerializedProperty t = property.GetArrayElementAtIndex(i);
-                if (t.stringValue.Equals(value))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            InitializeIfNeeded();
+            return runtimeLayers.TryGetValue(layerName, out int index) ? index : -1;
         }
 
+        /// <summary>
+        /// Gets all current tags
+        /// </summary>
+        public static string[] GetAllTags()
+        {
+            InitializeIfNeeded();
+            return runtimeTags.ToArray();
+        }
+
+        /// <summary>
+        /// Gets all current layers
+        /// </summary>
+        public static string[] GetAllLayers()
+        {
+            InitializeIfNeeded();
+            return runtimeLayers.Keys.ToArray();
+        }
+
+        // Instance methods for backwards compatibility
         public void AddNewTag(string name)
         {
             CreateTag(name);
@@ -269,7 +215,7 @@ namespace sxr_internal
         {
             RemoveLayer(name);
         }
-        
+
         public static void SetLayerRecursively(GameObject obj, int layer)
         {
             obj.layer = layer;
@@ -277,6 +223,22 @@ namespace sxr_internal
             foreach (Transform child in obj.transform)
             {
                 SetLayerRecursively(child.gameObject, layer);
+            }
+        }
+
+        /// <summary>
+        /// Alternative method that uses layer name instead of index
+        /// </summary>
+        public static void SetLayerRecursively(GameObject obj, string layerName)
+        {
+            int layerIndex = GetLayerIndex(layerName);
+            if (layerIndex != -1)
+            {
+                SetLayerRecursively(obj, layerIndex);
+            }
+            else
+            {
+                Debug.LogWarning("Layer '" + layerName + "' does not exist!");
             }
         }
     }

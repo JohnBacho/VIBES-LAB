@@ -312,7 +312,6 @@ namespace ExperimentScene
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 37
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 38
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 39
-            EditorApplication.isPlaying = false;
         }
     }
 }
