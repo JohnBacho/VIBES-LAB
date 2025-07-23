@@ -13110,6 +13110,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 697777116264440787, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
+      propertyPath: vrCamera
+      value: 
+      objectReference: {fileID: 1845076979}
     - target: {fileID: 853481601345591223, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -17292,6 +17296,11 @@ Transform:
 --- !u!4 &1845076978 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3295782610802991647, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
+  m_PrefabInstance: {fileID: 1402697099}
+  m_PrefabAsset: {fileID: 0}
+--- !u!20 &1845076979 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 3295782610802991642, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
   m_PrefabInstance: {fileID: 1402697099}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1850246656
