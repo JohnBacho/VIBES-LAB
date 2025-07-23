@@ -1,7 +1,6 @@
 using UnityEngine;
 using sxr_internal;
 using System.Collections;
-using UnityEditor;
 public enum StimulusLocation
 {
     Left,
@@ -191,6 +190,7 @@ namespace ExperimentScene
             sxr.SetStage("InstructionPhase");
             controllerHandler.ToggleController();
             sxr.DisplayImage("trigger");
+            yield return null;
             yield return new WaitUntil(() => sxr.GetTrigger());
             sxr.HideImagesUI();
             yield return new WaitForSeconds(0.5f);
