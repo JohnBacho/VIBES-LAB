@@ -4578,7 +4578,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &511789284
 Transform:
   m_ObjectHideFlags: 0
@@ -13332,7 +13332,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 150.00002
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -16951,7 +16951,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7618384276434467300, guid: fb28b01c668360548b1caee1ee42ac7e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -15.050357
+      value: -15.06
       objectReference: {fileID: 0}
     - target: {fileID: 7618384276434467300, guid: fb28b01c668360548b1caee1ee42ac7e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -18618,6 +18618,7 @@ GameObject:
   - component: {fileID: 1970160402}
   - component: {fileID: 1970160401}
   - component: {fileID: 1970160403}
+  - component: {fileID: 1970160404}
   m_Layer: 0
   m_Name: MainDriver
   m_TagString: Untagged
@@ -18719,6 +18720,23 @@ MonoBehaviour:
   lightHandlerLeft: {fileID: 2116934725}
   lightHandlerMiddle: {fileID: 1056901547}
   lightHandlerRight: {fileID: 1214265305}
+--- !u!114 &1970160404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1970160395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6caaf0a175dab7e4e848bfbeb7f8ec36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetFPS: 90
+  minScale: 0.7
+  maxScale: 1
+  sampleCount: 20
+  lerpSpeed: 1.5
 --- !u!1 &1976838736
 GameObject:
   m_ObjectHideFlags: 0
