@@ -32,33 +32,29 @@ public class EyeTrackerManager : MonoBehaviour
         if (SRanipal_Eye_Framework.Status != SRanipal_Eye_Framework.FrameworkStatus.WORKING)
         {
             Debug.LogError($"[EyeTrackerManager] SRanipal did not become WORKING after {calibrationTimeout} seconds. Current status: {SRanipal_Eye_Framework.Status}");
+            sxr.DisplayImage("EyeError");
             yield break;
         }
 
         Debug.Log("[EyeTrackerManager] SRanipal is WORKING. Attempting eye calibration...");
 
-        if (!TryLaunchEyeCalibration())
+        bool calibrationLaunched = TryLaunchEyeCalibration();
+
+        if (!calibrationLaunched && enableRetry)
         {
-            Debug.Log("[EyeTrackerManager] --> RETRYING calibration now.");
+            Debug.Log("[EyeTrackerManager] Calibration failed. Retrying in 0.5 seconds...");
+            yield return new WaitForSeconds(0.5f);
+            calibrationLaunched = TryLaunchEyeCalibration();
+        }
 
-            if (enableRetry)
-            {
-                Debug.Log("[EyeTrackerManager] Retrying calibration in 0.5 seconds...");
-                yield return new WaitForSeconds(0.5f);
-
-                if (!TryLaunchEyeCalibration())
-                {
-                    Debug.LogError("[EyeTrackerManager] Calibration still failed after retry.");
-                }
-                else
-                {
-                    Debug.Log("[EyeTrackerManager] Calibration successful on retry.");
-                }
-            }
+        if (calibrationLaunched)
+        {
+            Debug.Log("[EyeTrackerManager] Calibration launched. Waiting to verify success...");
+            yield return StartCoroutine(WaitAndCheckEyeData());
         }
         else
         {
-            Debug.Log("[EyeTrackerManager] Eye calibration launched successfully.");
+            Debug.LogError("[EyeTrackerManager] Calibration failed after retry.");
         }
     }
 
@@ -71,5 +67,28 @@ public class EyeTrackerManager : MonoBehaviour
 
         Debug.LogWarning("[EyeTrackerManager] Both v1 and v2 calibration calls returned false.");
         return false;
+    }
+
+    private IEnumerator WaitAndCheckEyeData()
+    {
+        yield return new WaitForSeconds(5f); // Give time for user to complete calibration
+
+        bool enableEye = SRanipal_Eye_Framework.Instance.EnableEye;
+
+        VerboseData eyeData = new VerboseData();
+        bool gotData = SRanipal_Eye.GetVerboseData(out eyeData);
+        bool validEyeData = gotData &&
+                            eyeData.left.eye_data_validata_bit_mask > 0 &&
+                            eyeData.right.eye_data_validata_bit_mask > 0;
+
+        if (enableEye || validEyeData)
+        {
+            Debug.Log("[EyeTrackerManager] Calibration likely successful: eye tracking is enabled OR valid eye data received.");
+        }
+        else
+        {
+            Debug.LogWarning("[EyeTrackerManager] Calibration may have failed: eye tracking disabled AND invalid eye data.");
+            sxr.DisplayImage("EyeError");
+        }
     }
 }
