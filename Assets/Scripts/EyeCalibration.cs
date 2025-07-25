@@ -70,25 +70,35 @@ public class EyeTrackerManager : MonoBehaviour
     }
 
     private IEnumerator WaitAndCheckEyeData()
+{
+    yield return new WaitForSeconds(5f); // time for user to finish calibration
+
+    VerboseData data;
+    bool valid = false;
+
+    // Try both APIs
+    if (SRanipal_Eye_Framework.Instance.EnableEyeDataCallback)
     {
-        yield return new WaitForSeconds(5f); // Give time for user to complete calibration
-
-        bool enableEye = SRanipal_Eye_Framework.Instance.EnableEye;
-
-        VerboseData eyeData = new VerboseData();
-        bool gotData = SRanipal_Eye.GetVerboseData(out eyeData);
-        bool validEyeData = gotData &&
-                            eyeData.left.eye_data_validata_bit_mask > 0 &&
-                            eyeData.right.eye_data_validata_bit_mask > 0;
-
-        if (enableEye || validEyeData)
-        {
-            Debug.Log("[EyeTrackerManager] Calibration likely successful: eye tracking is enabled OR valid eye data received.");
-        }
-        else
-        {
-            Debug.LogWarning("[EyeTrackerManager] Calibration may have failed: eye tracking disabled AND invalid eye data.");
-            sxr.DisplayImage("EyeError");
-        }
+        SRanipal_Eye.GetVerboseData(out data);
+        valid = data.left.GetValidity(SingleEyeDataValidity.SINGLE_EYE_DATA_GAZE_ORIGIN_VALIDITY) &&
+                data.right.GetValidity(SingleEyeDataValidity.SINGLE_EYE_DATA_GAZE_ORIGIN_VALIDITY);
     }
+    else
+    {
+        valid = SRanipal_Eye_v2.GetVerboseData(out data) &&
+                data.left.GetValidity(SingleEyeDataValidity.SINGLE_EYE_DATA_GAZE_ORIGIN_VALIDITY) &&
+                data.right.GetValidity(SingleEyeDataValidity.SINGLE_EYE_DATA_GAZE_ORIGIN_VALIDITY);
+    }
+
+    if (!valid)
+    {
+        Debug.LogError("[EyeTrackerManager] Calibration completed but eye data is invalid.");
+        sxr.DisplayImage("EyeError");
+        // Optionally restart calibration here
+    }
+    else
+    {
+        Debug.Log("[EyeTrackerManager] Eye tracking data is valid after calibration.");
+    }
+}
 }
