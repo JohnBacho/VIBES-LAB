@@ -94,7 +94,6 @@ public class EyeTrackerManager : MonoBehaviour
     {
         Debug.LogError("[EyeTrackerManager] Calibration completed but eye data is invalid.");
         sxr.DisplayImage("EyeError");
-        // Optionally restart calibration here
     }
     else
     {
