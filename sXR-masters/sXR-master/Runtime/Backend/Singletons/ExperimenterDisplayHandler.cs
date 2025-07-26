@@ -72,19 +72,35 @@ namespace sxr_internal {
                 replayMode.StartReplays(cameraFiles); 
 
         }
+        // Original functionality for displaying text in the experimenter screen
+            //     private void Update() {
+        // if (defaultDisplayTexts && ExperimentHandler.Instance.phase > 0) {
+        //     displayText1.text = "'Textbox1' [Phase] - Block: trial(step)  =  [" + eh.phase + "] - " + eh.block + ": " 
+        //                         + eh.trial +"(" + eh.stepInTrial + ")";
+        //     displayText1.enabled = true; 
 
-        private void Update() {
-            if (defaultDisplayTexts && ExperimentHandler.Instance.phase > 0) {
-                displayText1.text = "'Textbox1' [Phase] - Block: trial(step)  =  [" + eh.phase + "] - " + eh.block + ": " 
-                                    + eh.trial +"(" + eh.stepInTrial + ")";
-                displayText1.enabled = true; 
-                
+        //     displayText2.text = "'Textbox2' Player Position: " + sxrSettings.Instance.vrCamera.transform.position;
+        //     displayText2.enabled = true;
+
+        //     displayText3.text = "'Textbox3' Trial Timer: " + sxr.TimeRemaining();
+
+        // } }
+
+        private void Update()
+        {
+            if (false && ExperimentHandler.Instance.phase > 0)
+            {
+                displayText1.text = "'Textbox1' [Phase] - Block: trial(step)  =  [" + eh.phase + "] - " + eh.block + ": "
+                                    + eh.trial + "(" + eh.stepInTrial + ")";
+                displayText1.enabled = true;
+
                 displayText2.text = "'Textbox2' Player Position: " + sxrSettings.Instance.vrCamera.transform.position;
                 displayText2.enabled = true;
 
                 displayText3.text = "'Textbox3' Trial Timer: " + sxr.TimeRemaining();
-                
-            } }
+
+            }
+        }
 
         public void ChangeTextbox(int whichBox, string text) {
             if (whichBox > 0 && whichBox < 6) {
@@ -105,9 +121,7 @@ namespace sxr_internal {
             if (!displayText5) displayText5 = sxr.GetObject("DisplayText5").GetComponent<TextMeshProUGUI>();
             eh = ExperimentHandler.Instance;
             
-            displayText4.text = "'Textbox4'";
-            displayText5.text = "'Textbox5'"; 
-            
+           
             #if SXR_USE_STARTSCREEN
             #else
             StartButton();

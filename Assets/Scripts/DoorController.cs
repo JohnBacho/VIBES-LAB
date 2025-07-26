@@ -24,7 +24,7 @@ public class DoorOpener : MonoBehaviour
 
     public void ShutDoor()
     {
-        speed = 100f;
+        speed = 20f;
         isOpen = false;
     }
 

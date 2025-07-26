@@ -132,6 +132,7 @@ public static class sxr
                 break;
             case TextPosition.MiddleTop: UI_Handler.Instance.textboxTopMiddle.text = text; 
                 UI_Handler.Instance.textboxTopMiddle.enabled = true;
+                UI_Handler.Instance.image.enabled = true;
                 break; 
             case TextPosition.MiddleBottom: UI_Handler.Instance.textboxBottomMiddle.text = text; 
                 UI_Handler.Instance.textboxBottomMiddle.enabled = true;
@@ -153,7 +154,9 @@ public static class sxr
         switch (position) {
             case TextPosition.Top: UI_Handler.Instance.textboxTop.enabled = false; 
                 break;
-            case TextPosition.MiddleTop: UI_Handler.Instance.textboxTopMiddle.enabled = false; 
+            case TextPosition.MiddleTop:
+                UI_Handler.Instance.textboxTopMiddle.enabled = false;
+                UI_Handler.Instance.image.enabled = false;
                 break; 
             case TextPosition.MiddleBottom: UI_Handler.Instance.textboxBottomMiddle.enabled = false; 
                 break; 
@@ -163,16 +166,19 @@ public static class sxr
                 break; 
             default: sxr.DebugLog("Text position not found");
                 break; } }
-    
+
     /// <summary>
     /// Hides all textboxes displayed to the VR user interface
     /// </summary>
-    public static void HideAllText() {
+    public static void HideAllText()
+    {
         UI_Handler.Instance.textboxTop.enabled = false;
         UI_Handler.Instance.textboxTopMiddle.enabled = false;
         UI_Handler.Instance.textboxBottomMiddle.enabled = false;
         UI_Handler.Instance.textboxBottom.enabled = false;
-        UI_Handler.Instance.textboxTopLeft.enabled = false; }
+        UI_Handler.Instance.textboxTopLeft.enabled = false;
+        UI_Handler.Instance.image.enabled = false;
+    }
     
     /// <summary>
     /// Displays the specified image (searches by image name without the extension, e.g. "myImage" not "myImage.jpeg".
@@ -301,6 +307,9 @@ public static class sxr
     /// <returns></returns>
     public static string GetStage(){return ExperimentHandler.Instance.stageInTrial; }
 
+    public static string GetContext(){return ExperimentHandler.Instance.currentContext; }
+
+
     /// <summary>
     /// Increments phase number by 1 and sets block/trial/step numbers to 0
     /// </summary>
@@ -340,6 +349,12 @@ public static class sxr
     /// </summary>
     /// <param name="stage"></param>
     public static void SetStage(string stage) { ExperimentHandler.Instance.stageInTrial = stage; }
+
+        /// <summary>
+    /// Sets the current "step" to the specified number
+    /// </summary>
+    /// <param name="context"></param>
+    public static void SetContext(string context) { ExperimentHandler.Instance.currentContext = context; }
     /// <summary>
     /// Starts a timer with the provided name. Will return "true" and the timer will be
     /// deleted if CheckTimer() is used. If no name is provided, uses the default trial
