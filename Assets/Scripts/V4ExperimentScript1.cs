@@ -132,6 +132,11 @@ namespace ExperimentScene
             yield return InterTrial(InterTrialWaitTime);
         }
 
+        void Awake()
+        {
+            AudioListener.pause = true;
+        }
+
         void Start()
         {
             switch (ContextTest)
@@ -193,9 +198,10 @@ namespace ExperimentScene
             yield return null;
             yield return new WaitUntil(() => sxr.GetTrigger());
             sxr.HideImagesUI();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
             sxr.DisplayText("In this experiment, you will see different colored lights in the 3d environment. Please keep your focus on the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored lights and the loud sounds. (Press trigger to continue)");
             yield return new WaitUntil(() => sxr.GetTrigger());
+            AudioListener.pause = false;
             sxr.HideAllText();
             controllerHandler.ToggleController();
             sxr.NextPhase();
