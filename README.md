@@ -43,7 +43,7 @@ This project is a collaborative research initiative between the Psychology, Neur
 
   - Clone the repository:
 
-  - git clone https://github.com/YOUR_USERNAME/VR-LAB.git
+  - git clone https://github.com/YOUR_USERNAME/VIBES-LAB.git
     
   - cd VIBES-Lab
     
