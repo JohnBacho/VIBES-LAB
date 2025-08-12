@@ -13406,7 +13406,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 150.00002
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4396898903633666120, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -18697,6 +18697,7 @@ GameObject:
   - component: {fileID: 1970160402}
   - component: {fileID: 1970160401}
   - component: {fileID: 1970160403}
+  - component: {fileID: 1970160404}
   m_Layer: 0
   m_Name: MainDriver
   m_TagString: Untagged
@@ -18798,6 +18799,18 @@ MonoBehaviour:
   lightHandlerLeft: {fileID: 2116934725}
   lightHandlerMiddle: {fileID: 1056901547}
   lightHandlerRight: {fileID: 1214265305}
+--- !u!114 &1970160404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1970160395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 167ec0b26c077df40aa3a67e9a5a359e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1976838736
 GameObject:
   m_ObjectHideFlags: 0
