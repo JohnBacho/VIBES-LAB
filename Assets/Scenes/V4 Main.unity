@@ -8762,6 +8762,52 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 87b837bc5f2c7db4787b6fb7663c16d1, type: 3}
+--- !u!1 &984412354
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 984412356}
+  - component: {fileID: 984412355}
+  m_Layer: 0
+  m_Name: GazePlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &984412355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984412354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ab1ed402b5c6b94784d5e910965e4d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  csvFilePath: C:\Users\Kevin\Downloads\2025_7_25_1208_0_eyetracker.csv
+  pointPrefab: {fileID: 1537080331460046412, guid: d9bbdaa387df3b34795ca2d39e203b44, type: 3}
+--- !u!4 &984412356
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984412354}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.0938436, y: -4.856553, z: 39.58763}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &989209318
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12958,6 +13004,10 @@ PrefabInstance:
     - target: {fileID: 697777116264440785, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_Name
       value: sXR_prefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 697777116264440785, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 697777116264440786, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_LocalPosition.x
@@ -18371,7 +18421,7 @@ MonoBehaviour:
   - {fileID: 1103217165}
   - {fileID: 933635401}
   USObject: {fileID: 519027809}
-  ContextTest: 3
+  ContextTest: 2
   ContextA: {fileID: 2009521960}
   ContextB: {fileID: 511789283}
   controllerHandler: {fileID: 1970160401}
@@ -20562,3 +20612,4 @@ SceneRoots:
   - {fileID: 1830911377}
   - {fileID: 489584789}
   - {fileID: 2007413483}
+  - {fileID: 984412356}
