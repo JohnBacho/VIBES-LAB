@@ -41,6 +41,8 @@ namespace ExperimentScene
         private ContextType ActiveContext; // used to keep track of the current context the user is in
         public GameObject ContextA; // used for context switch in ABA
         public GameObject ContextB; // used for context switch in ABA
+        public GameObject InstructionContext; //used for Instruction Phase
+
         public VRControllerHandler controllerHandler; // handles when the controller is on and when it is off
         public SimpleCharacterMover characterMover; // handles how the monster should move
         public ScriptHandler scriptHandler; // manages the doors, elevator, and light scripts
@@ -139,29 +141,8 @@ namespace ExperimentScene
 
         void Start()
         {
-            switch (ContextTest)
-            {
-                case ContextTest.AAA:
-                    ActiveContext = ContextType.A;
-                    ContextB.SetActive(false);
-                    break;
-                case ContextTest.BBB:
-                    ActiveContext = ContextType.B;
-                    ContextA.SetActive(false);
-                    break;
-                case ContextTest.ABA:
-                    ContextA.SetActive(true);
-                    ContextB.SetActive(false);
-                    ActiveContext = ContextType.A;
-                    break;
-                case ContextTest.BAB:
-                    ContextA.SetActive(false);
-                    ContextB.SetActive(true);
-                    ActiveContext = ContextType.B;
-                    break;
-            }
-
-            sxr.SetContext(ActiveContext.ToString());
+            ContextA.SetActive(false);
+            ContextB.SetActive(false);
         }
 
         void Update()
@@ -199,12 +180,43 @@ namespace ExperimentScene
             yield return new WaitUntil(() => sxr.GetTrigger());
             sxr.HideImagesUI();
             yield return new WaitForSeconds(0.2f);
+            sxr.DisplayText("Pupil Calibration is about to begin please keep your eyes on the screen at all times (Press trigger to continue)");
+            yield return new WaitUntil(() => sxr.GetTrigger());
+            sxr.HideAllText();
+            scriptHandler.StartBrightnessCalibration();
+            yield return new WaitForSeconds(60f);
+            scriptHandler.RestoreLights();
             sxr.DisplayText("In this experiment, you will see different colored lights in the 3d environment. Please keep your focus on the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored lights and the loud sounds. (Press trigger to continue)");
             yield return new WaitUntil(() => sxr.GetTrigger());
+            InstructionContext.SetActive(false);
             AudioListener.pause = false;
             sxr.HideAllText();
             controllerHandler.ToggleController();
             sxr.NextPhase();
+
+            switch (ContextTest)
+            {
+                case ContextTest.AAA:
+                    ActiveContext = ContextType.A;
+                    ContextB.SetActive(false);
+                    break;
+                case ContextTest.BBB:
+                    ActiveContext = ContextType.B;
+                    ContextA.SetActive(false);
+                    break;
+                case ContextTest.ABA:
+                    ContextA.SetActive(true);
+                    ContextB.SetActive(false);
+                    ActiveContext = ContextType.A;
+                    break;
+                case ContextTest.BAB:
+                    ContextA.SetActive(false);
+                    ContextB.SetActive(true);
+                    ActiveContext = ContextType.B;
+                    break;
+            }
+
+            sxr.SetContext(ActiveContext.ToString());
             StartCoroutine(RunHabituationTrials());
         }
 
