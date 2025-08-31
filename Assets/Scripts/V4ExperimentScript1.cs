@@ -180,7 +180,7 @@ namespace ExperimentScene
             yield return new WaitUntil(() => sxr.GetTrigger());
             sxr.HideImagesUI();
             yield return new WaitForSeconds(0.2f);
-            sxr.DisplayText("Pupil Calibration is about to begin please keep your eyes on the screen at all times (Press trigger to continue)");
+            sxr.DisplayText("Pupil calibration will begin once you press the trigger. Please keep your eyes on the screen at all times. (Press trigger to continue)");
             yield return new WaitUntil(() => sxr.GetTrigger());
             sxr.HideAllText();
             scriptHandler.StartBrightnessCalibration();
