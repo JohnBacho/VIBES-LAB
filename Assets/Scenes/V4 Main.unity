@@ -13325,6 +13325,10 @@ PrefabInstance:
       propertyPath: vrCamera
       value: 
       objectReference: {fileID: 1845076979}
+    - target: {fileID: 697777116264440787, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
+      propertyPath: interpolateGaze
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 853481601345591223, guid: eeaf7a457e6633d44b7f00bcde3ffdcf, type: 3}
       propertyPath: m_IsActive
       value: 0
