@@ -198,11 +198,13 @@ namespace ExperimentScene
             {
                 case ContextTest.AAA:
                     ActiveContext = ContextType.A;
+                    ContextA.SetActive(true);
                     ContextB.SetActive(false);
                     break;
                 case ContextTest.BBB:
                     ActiveContext = ContextType.B;
                     ContextA.SetActive(false);
+                    ContextB.SetActive(true);
                     break;
                 case ContextTest.ABA:
                     ContextA.SetActive(true);
