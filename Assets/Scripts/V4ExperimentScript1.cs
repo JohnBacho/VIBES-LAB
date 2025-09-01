@@ -41,7 +41,6 @@ namespace ExperimentScene
         private ContextType ActiveContext; // used to keep track of the current context the user is in
         public GameObject ContextA; // used for context switch in ABA
         public GameObject ContextB; // used for context switch in ABA
-        public GameObject InstructionContext; //used for Instruction Phase
 
         public VRControllerHandler controllerHandler; // handles when the controller is on and when it is off
         public SimpleCharacterMover characterMover; // handles how the monster should move
@@ -94,7 +93,9 @@ namespace ExperimentScene
         {
             sxr.SetStage("InterTrial");
             sxr.StartTimer(InterTrialWaitTime); // // inter trial interval time
-            yield return new WaitForSeconds(InterTrialWaitTime);
+            yield return new WaitForSeconds(InterTrialWaitTime-1);
+            sxr.SetStage("Baseline" + sxr.GetPhase().ToString() + sxr.GetTrial().ToString());
+            yield return new WaitForSeconds(1);
             sxr.NextTrial(); // Goes to the next trial
         }
 
@@ -141,8 +142,33 @@ namespace ExperimentScene
 
         void Start()
         {
-            ContextA.SetActive(false);
-            ContextB.SetActive(false);
+            switch (ContextTest)
+            {
+                case ContextTest.AAA:
+                    ActiveContext = ContextType.A;
+                    ContextA.SetActive(true);
+                    ContextB.SetActive(false);
+                    break;
+                case ContextTest.BBB:
+                    ActiveContext = ContextType.B;
+                    ContextA.SetActive(false);
+                    ContextB.SetActive(true);
+                    RenderSettings.ambientIntensity = 1.25f;
+                    break;
+                case ContextTest.ABA:
+                    ContextA.SetActive(true);
+                    ContextB.SetActive(false);
+                    ActiveContext = ContextType.A;
+                    break;
+                case ContextTest.BAB:
+                    ContextA.SetActive(false);
+                    ContextB.SetActive(true);
+                    ActiveContext = ContextType.B;
+                    RenderSettings.ambientIntensity = 1.25f;
+                    break;
+            }
+
+            sxr.SetContext(ActiveContext.ToString());
         }
 
         void Update()
@@ -164,6 +190,8 @@ namespace ExperimentScene
             }
         }
 
+
+
         public void StartInstructionPhase()
         {
             sxr.StartRecordingCameraPos();
@@ -180,45 +208,13 @@ namespace ExperimentScene
             yield return new WaitUntil(() => sxr.GetTrigger());
             sxr.HideImagesUI();
             yield return new WaitForSeconds(0.2f);
-            sxr.DisplayText("Pupil calibration will begin once you press the trigger. Please keep your eyes on the screen at all times. (Press trigger to continue)");
-            yield return new WaitUntil(() => sxr.GetTrigger());
-            sxr.HideAllText();
-            scriptHandler.StartBrightnessCalibration();
-            yield return new WaitForSeconds(60f);
-            scriptHandler.RestoreLights();
             sxr.DisplayText("In this experiment, you will see different colored lights in the 3d environment. Please keep your focus on the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored lights and the loud sounds. (Press trigger to continue)");
+            yield return new WaitForSeconds(1f);
             yield return new WaitUntil(() => sxr.GetTrigger());
-            InstructionContext.SetActive(false);
             AudioListener.pause = false;
             sxr.HideAllText();
             controllerHandler.ToggleController();
             sxr.NextPhase();
-
-            switch (ContextTest)
-            {
-                case ContextTest.AAA:
-                    ActiveContext = ContextType.A;
-                    ContextA.SetActive(true);
-                    ContextB.SetActive(false);
-                    break;
-                case ContextTest.BBB:
-                    ActiveContext = ContextType.B;
-                    ContextA.SetActive(false);
-                    ContextB.SetActive(true);
-                    break;
-                case ContextTest.ABA:
-                    ContextA.SetActive(true);
-                    ContextB.SetActive(false);
-                    ActiveContext = ContextType.A;
-                    break;
-                case ContextTest.BAB:
-                    ContextA.SetActive(false);
-                    ContextB.SetActive(true);
-                    ActiveContext = ContextType.B;
-                    break;
-            }
-
-            sxr.SetContext(ActiveContext.ToString());
             StartCoroutine(RunHabituationTrials());
         }
 
@@ -244,6 +240,7 @@ namespace ExperimentScene
                     ContextA.SetActive(false);
                     ContextB.SetActive(true);
                     ActiveContext = ContextType.B;
+                    RenderSettings.ambientIntensity = 1.25f;
                     break;
                 case ContextTest.BAB:
                     ContextA.SetActive(true);
@@ -284,6 +281,7 @@ namespace ExperimentScene
                     ContextA.SetActive(false);
                     ContextB.SetActive(true);
                     ActiveContext = ContextType.B;
+                    RenderSettings.ambientIntensity = 1.25f;
                     break;
             }
             sxr.SetContext(ActiveContext.ToString());

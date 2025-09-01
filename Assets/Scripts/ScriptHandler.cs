@@ -17,8 +17,6 @@ public class ScriptHandler : MonoBehaviour
     public LightingHandler lightHandlerMiddle; // handles how the light should work
     public LightingHandler lightHandlerRight; // handles how the light should work
 
-    public BrightnessCalibration brightnessCalibration; // Handles the brightness ramp
-
     private DoorOpener DoorControllerSCRIPT; // Used to dynamically change the door script
     private ElevatorDoorController ElevatorDoorControllerSCRIPT; // Used to dynamically change the elevator script
     private LightingHandler LightSCRIPT; // Used to dynamically change the lighting script
@@ -132,14 +130,4 @@ public class ScriptHandler : MonoBehaviour
         }
     }
 
-    public void StartBrightnessCalibration()
-    {
-        brightnessCalibration.StartCalibration();
-    }
-
-    public void RestoreLights()
-    {
-        brightnessCalibration.RestoreLights();
-    }
-
-}
+   }
