@@ -33,11 +33,6 @@ namespace sxr_internal
         private FocusInfo focusInfo; // used for Sranipal
         private Vector3 gazeHitPoint; // used in calculating eye tracking data with collisions
 
-        RenderTexture rt;
-        Texture2D tex;
-
-        private float currentLuminance = 0f;
-
 
         public void WriteEyeTrackerHeader() {
         ExperimentHandler.Instance.WriteHeaderToTaggedFile("eyetracker",
@@ -46,7 +41,7 @@ namespace sxr_internal
             "leftEyePositionY,leftEyePositionZ,rightEyePositionX,rightEyePositionY,rightEyePositionZ," +
             "leftEyeRotationX,leftEyeRotationY,leftEyeRotationZ,rightEyeRotationX,rightEyeRotationY," +
             "rightEyeRotationZ,leftEyePupilSize,rightEyePupilSize,leftEyeOpenAmount,rightEyeOpenAmount," +
-            "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus,Luminance");
+            "GazeHitPointX,GazeHitPointY,GazeHitPointZ,GameObjectInFocus");
 
             headerPrinted=true;}
         
@@ -59,39 +54,6 @@ namespace sxr_internal
             recordEyeTracker = false;
             if(toWrite != "") ExperimentHandler.Instance.WriteToTaggedFile("eyetracker", toWrite, includeTimeStepInfo:false);
             toWrite = ""; 
-        }
-
-        private void CalculateAverageLuminance(Camera cam) {
-            if (cam == null) return;
-
-            // Setup RenderTexture if not done yet
-            if (rt == null) {
-                rt = new RenderTexture(128, 128, 24); // 128x128 for performance
-                tex = new Texture2D(128, 128, TextureFormat.RGB24, false);
-            }
-
-            // Render camera to texture
-            cam.targetTexture = rt;
-            cam.Render();
-
-            // Read pixels into CPU memory
-            RenderTexture.active = rt;
-            tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
-            tex.Apply();
-            cam.targetTexture = null;
-            RenderTexture.active = null;
-
-            // Get all pixels
-            Color[] pixels = tex.GetPixels();
-
-            // Calculate luminance (average across image)
-            double totalLum = 0;
-            for (int i = 0; i < pixels.Length; i++) {
-                Color c = pixels[i];
-                float lum = (0.2126f * c.r) + (0.7152f * c.g) + (0.0722f * c.b);
-                totalLum += lum;
-            }
-            currentLuminance = (float)(totalLum / pixels.Length);
         }
 
         private string CheckFocusedObject()
@@ -129,12 +91,9 @@ namespace sxr_internal
         
     public void Update() {
         if (sxrSettings.Instance.RecordThisFrame() & recordEyeTracker) {
-            CalculateAverageLuminance(vrCamera);
             toWrite += ExperimentHandler.Instance.timeStepToWriteInfo() 
                        + GetFullGazeInfo() 
                        + CheckFocusedObject()
-                       + ","
-                       + currentLuminance.ToString()
                        + "\n";
         }
     }
