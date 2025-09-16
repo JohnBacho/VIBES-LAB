@@ -148,6 +148,7 @@ namespace ExperimentScene
                     ActiveContext = ContextType.A;
                     ContextA.SetActive(true);
                     ContextB.SetActive(false);
+                    RenderSettings.ambientIntensity = 1.4f;
                     break;
                 case ContextTest.BBB:
                     ActiveContext = ContextType.B;
@@ -159,6 +160,7 @@ namespace ExperimentScene
                     ContextA.SetActive(true);
                     ContextB.SetActive(false);
                     ActiveContext = ContextType.A;
+                    RenderSettings.ambientIntensity = 1.4f;
                     break;
                 case ContextTest.BAB:
                     ContextA.SetActive(false);
@@ -246,19 +248,20 @@ namespace ExperimentScene
                     ContextA.SetActive(true);
                     ContextB.SetActive(false);
                     ActiveContext = ContextType.A;
+                    RenderSettings.ambientIntensity = 1.4f;
                     break;
             }
             sxr.SetContext(ActiveContext.ToString());
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 0
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 1
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: true, InterTrialWaitTime: 9f); // Trial 2
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, InterTrialWaitTime: 14f); // Trial 3
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 1
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: true, InterTrialWaitTime: 11f); // Trial 2
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, InterTrialWaitTime: 13f); // Trial 3
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 4
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, InterTrialWaitTime: 10f); // Trial 5
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 6
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 7
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, InterTrialWaitTime: 9f); // Trial 8
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 9
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, InterTrialWaitTime: 10f); // Trial 8
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 9
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, InterTrialWaitTime: 13f); // Trial 10
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 11
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 12
@@ -276,6 +279,7 @@ namespace ExperimentScene
                     ContextA.SetActive(true);
                     ContextB.SetActive(false);
                     ActiveContext = ContextType.A;
+                    RenderSettings.ambientIntensity = 1.4f;
                     break;
                 case ContextTest.BAB:
                     ContextA.SetActive(false);
@@ -314,7 +318,7 @@ namespace ExperimentScene
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 21
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 22
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 23
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 24
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 24
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 25
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 26
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 27
@@ -323,9 +327,9 @@ namespace ExperimentScene
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 9f);  // Trial 30
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 31
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 32
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 33
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 33
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 34
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 35
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 35
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 36
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 37
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 38
