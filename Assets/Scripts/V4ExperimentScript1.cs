@@ -36,6 +36,7 @@ namespace ExperimentScene
         public Color CSMinusLightColor = Color.green; // set the color of the room for the ABA testing
         public bool CSMinusDisplayPattern = false; // used to determine if to make the light flash a pattern or not
         public AudioSource[] USAudiosSources; // takes in an array of audio sources
+        public AudioSource Testsound; // used to test if the sound is working
         public GameObject USObject; // drag and drop the object you want to be the US
         public ContextTest ContextTest = ContextTest.AAA; // determines context testing
         private ContextType ActiveContext; // used to keep track of the current context the user is in
@@ -209,11 +210,22 @@ namespace ExperimentScene
             yield return null;
             yield return new WaitUntil(() => sxr.GetTrigger());
             sxr.HideImagesUI();
+
+            yield return new WaitForSeconds(0.2f);
+            sxr.DisplayText("Press the trigger to play a test sound.");
+            AudioListener.pause = false;
+            yield return new WaitUntil(() => sxr.GetTrigger());
+            sxr.HideAllText();
+            Testsound.Play();
+            yield return new WaitForSeconds(0.8f);
+            sxr.DisplayText("Did you hear the sound? If you did not hear the sound, please inform the researcher. (Press trigger to continue)");
+            yield return new WaitUntil(() => sxr.GetTrigger());
+            sxr.HideAllText();
+
             yield return new WaitForSeconds(0.2f);
             sxr.DisplayText("In this experiment, you will see different colored lights in the 3d environment. Please keep your focus on the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored lights and the loud sounds. (Press trigger to continue)");
             yield return new WaitForSeconds(1f);
             yield return new WaitUntil(() => sxr.GetTrigger());
-            AudioListener.pause = false;
             sxr.HideAllText();
             controllerHandler.ToggleController();
             sxr.NextPhase();
