@@ -33,6 +33,7 @@ namespace sxr_internal
         private FocusInfo focusInfo; // used for Sranipal
         private Vector3 gazeHitPoint; // used in calculating eye tracking data with collisions
 
+
         public void WriteEyeTrackerHeader() {
         ExperimentHandler.Instance.WriteHeaderToTaggedFile("eyetracker",
             "screenFixationX,screenFixationY,gazeFixationX,gazeFixationY," +
@@ -88,10 +89,14 @@ namespace sxr_internal
                     LeftEyeOpenAmount() +","+ RightEyeOpenAmount()).Replace("(","").Replace(")","");
         }
         
-        public void Update() {
-            if (sxrSettings.Instance.RecordThisFrame() & recordEyeTracker)
-                toWrite += ExperimentHandler.Instance.timeStepToWriteInfo()+GetFullGazeInfo() + CheckFocusedObject() + "\n"; }
-
+    public void Update() {
+        if (sxrSettings.Instance.RecordThisFrame() & recordEyeTracker) {
+            toWrite += ExperimentHandler.Instance.timeStepToWriteInfo() 
+                       + GetFullGazeInfo() 
+                       + CheckFocusedObject()
+                       + "\n";
+        }
+    }
         void UpdateGaze() {
             if (lastUpdate != sxrSettings.Instance.GetCurrentFrame()) {
                 previousGazeDirectionCombinedLocal = gazeDirectionCombinedLocal;

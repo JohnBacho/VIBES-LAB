@@ -29,7 +29,7 @@ public class LightingHandler : MonoBehaviour
         if (SpotLight.TryGetComponent<Light>(out var light))
         {
             light.color = newColor;
-            light.intensity = 2f;
+            light.intensity = 2.2f;
         }
 
         ChangeColorTo(newColor);
@@ -65,28 +65,42 @@ public class LightingHandler : MonoBehaviour
         if (SpotLight.TryGetComponent<Light>(out var light))
         {
             light.color = originalColor;
-            light.intensity = 1f;
+            light.intensity = 2.2f;
             light.range = 3f;
         }
     }
 
     public IEnumerator PatternLight(Color newColor)
     {
+        const float duration = 2.0f; 
+        const float maxIntensity = 3f;
+        const float minIntensity = 0.1f;
+
+        if (!SpotLight.TryGetComponent<Light>(out var light)) yield break;
+        if (!Glow.TryGetComponent<Renderer>(out var renderer)) yield break;
+
+        Material glowMat = renderer.material;
+
         while (!Stop)
         {
-            if (!Stop)
+            float t = 0f;
+            while (t < duration && !Stop)
             {
-                ChangeLightColor(newColor);
+                t += Time.deltaTime;
+                float pulse = Mathf.PingPong(t * (maxIntensity - minIntensity), maxIntensity - minIntensity) + minIntensity;
+
+                light.intensity = pulse;
+                light.color = newColor;
+
+                glowMat.SetColor("_EmissionColor", newColor * pulse);
+
+                yield return null;
             }
-            yield return new WaitForSeconds(1);
-            if (!Stop)
-            {
-                ReduceLightIntensity();
-            }
-            yield return new WaitForSeconds(1);
         }
+
         yield break;
     }
+
 
 
 }

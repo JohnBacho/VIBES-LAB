@@ -36,11 +36,13 @@ namespace ExperimentScene
         public Color CSMinusLightColor = Color.green; // set the color of the room for the ABA testing
         public bool CSMinusDisplayPattern = false; // used to determine if to make the light flash a pattern or not
         public AudioSource[] USAudiosSources; // takes in an array of audio sources
+        public AudioSource Testsound; // used to test if the sound is working
         public GameObject USObject; // drag and drop the object you want to be the US
         public ContextTest ContextTest = ContextTest.AAA; // determines context testing
         private ContextType ActiveContext; // used to keep track of the current context the user is in
         public GameObject ContextA; // used for context switch in ABA
         public GameObject ContextB; // used for context switch in ABA
+
         public VRControllerHandler controllerHandler; // handles when the controller is on and when it is off
         public SimpleCharacterMover characterMover; // handles how the monster should move
         public ScriptHandler scriptHandler; // manages the doors, elevator, and light scripts
@@ -92,7 +94,9 @@ namespace ExperimentScene
         {
             sxr.SetStage("InterTrial");
             sxr.StartTimer(InterTrialWaitTime); // // inter trial interval time
-            yield return new WaitForSeconds(InterTrialWaitTime);
+            yield return new WaitForSeconds(InterTrialWaitTime - 1);
+            sxr.SetStage("Baseline" + sxr.GetPhase().ToString() + sxr.GetTrial().ToString());
+            yield return new WaitForSeconds(1);
             sxr.NextTrial(); // Goes to the next trial
         }
 
@@ -132,27 +136,38 @@ namespace ExperimentScene
             yield return InterTrial(InterTrialWaitTime);
         }
 
+        void Awake()
+        {
+            AudioListener.pause = true;
+        }
+
         void Start()
         {
             switch (ContextTest)
             {
                 case ContextTest.AAA:
                     ActiveContext = ContextType.A;
+                    ContextA.SetActive(true);
                     ContextB.SetActive(false);
+                    RenderSettings.ambientIntensity = 1.4f;
                     break;
                 case ContextTest.BBB:
                     ActiveContext = ContextType.B;
                     ContextA.SetActive(false);
+                    ContextB.SetActive(true);
+                    RenderSettings.ambientIntensity = 1.25f;
                     break;
                 case ContextTest.ABA:
                     ContextA.SetActive(true);
                     ContextB.SetActive(false);
                     ActiveContext = ContextType.A;
+                    RenderSettings.ambientIntensity = 1.4f;
                     break;
                 case ContextTest.BAB:
                     ContextA.SetActive(false);
                     ContextB.SetActive(true);
                     ActiveContext = ContextType.B;
+                    RenderSettings.ambientIntensity = 1.25f;
                     break;
             }
 
@@ -178,6 +193,8 @@ namespace ExperimentScene
             }
         }
 
+
+
         public void StartInstructionPhase()
         {
             sxr.StartRecordingCameraPos();
@@ -193,8 +210,21 @@ namespace ExperimentScene
             yield return null;
             yield return new WaitUntil(() => sxr.GetTrigger());
             sxr.HideImagesUI();
-            yield return new WaitForSeconds(0.5f);
+
+            yield return new WaitForSeconds(0.2f);
+            sxr.DisplayText("Press the trigger to play a test sound.");
+            AudioListener.pause = false;
+            yield return new WaitUntil(() => sxr.GetTrigger());
+            sxr.HideAllText();
+            Testsound.Play();
+            yield return new WaitForSeconds(0.8f);
+            sxr.DisplayText("Did you hear the sound? If you did not hear the sound, please inform the researcher. (Press trigger to continue)");
+            yield return new WaitUntil(() => sxr.GetTrigger());
+            sxr.HideAllText();
+
+            yield return new WaitForSeconds(0.2f);
             sxr.DisplayText("In this experiment, you will see different colored lights in the 3d environment. Please keep your focus on the screen at all times. You will also hear loud sounds. There may or may not be a relationship between the colored lights and the loud sounds. (Press trigger to continue)");
+            yield return new WaitForSeconds(1f);
             yield return new WaitUntil(() => sxr.GetTrigger());
             sxr.HideAllText();
             controllerHandler.ToggleController();
@@ -224,24 +254,26 @@ namespace ExperimentScene
                     ContextA.SetActive(false);
                     ContextB.SetActive(true);
                     ActiveContext = ContextType.B;
+                    RenderSettings.ambientIntensity = 1.25f;
                     break;
                 case ContextTest.BAB:
                     ContextA.SetActive(true);
                     ContextB.SetActive(false);
                     ActiveContext = ContextType.A;
+                    RenderSettings.ambientIntensity = 1.4f;
                     break;
             }
             sxr.SetContext(ActiveContext.ToString());
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 0
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 1
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: true, InterTrialWaitTime: 9f); // Trial 2
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, InterTrialWaitTime: 14f); // Trial 3
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 1
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: true, InterTrialWaitTime: 11f); // Trial 2
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, InterTrialWaitTime: 13f); // Trial 3
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 4
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, InterTrialWaitTime: 10f); // Trial 5
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 6
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 7
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, InterTrialWaitTime: 9f); // Trial 8
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 9
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: true, InterTrialWaitTime: 10f); // Trial 8
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 9
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: true, InterTrialWaitTime: 13f); // Trial 10
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 11
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 12
@@ -259,11 +291,13 @@ namespace ExperimentScene
                     ContextA.SetActive(true);
                     ContextB.SetActive(false);
                     ActiveContext = ContextType.A;
+                    RenderSettings.ambientIntensity = 1.4f;
                     break;
                 case ContextTest.BAB:
                     ContextA.SetActive(false);
                     ContextB.SetActive(true);
                     ActiveContext = ContextType.B;
+                    RenderSettings.ambientIntensity = 1.25f;
                     break;
             }
             sxr.SetContext(ActiveContext.ToString());
@@ -296,7 +330,7 @@ namespace ExperimentScene
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 21
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 22
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 23
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 24
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 24
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 25
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 26
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 27
@@ -305,14 +339,46 @@ namespace ExperimentScene
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 9f);  // Trial 30
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 31
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 32
-            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 33
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 33
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 34
-            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 35
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 12f); // Trial 35
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 36
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 13f); // Trial 37
             yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 38
             yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 39
+            sxr.NextPhase();
+            switch (ContextTest)
+            {
+                case ContextTest.AAA:
+                    break;
+                case ContextTest.BBB:
+                    break;
+                case ContextTest.ABA:
+                    ContextA.SetActive(false);
+                    ContextB.SetActive(true);
+                    ActiveContext = ContextType.B;
+                    RenderSettings.ambientIntensity = 1.25f;
+                    break;
+                case ContextTest.BAB:
+                    ContextA.SetActive(true);
+                    ContextB.SetActive(false);
+                    ActiveContext = ContextType.A;
+                    RenderSettings.ambientIntensity = 1.4f;
+                    break;
+            }
+            sxr.SetContext(ActiveContext.ToString());
+            StartCoroutine(RunFearRenewalTrials());
+
+        }
+
+        private IEnumerator RunFearRenewalTrials()
+        {
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 0
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Middle, ActivateUS: false, InterTrialWaitTime: 9f); // Trial 1
+            yield return RunTrial(StimulusType.CS_Plus, StimulusLocation.Right, ActivateUS: false, InterTrialWaitTime: 11f); // Trial 2
+            yield return RunTrial(StimulusType.CS_Minus, StimulusLocation.Left, ActivateUS: false, InterTrialWaitTime: 10f); // Trial 3
             Application.Quit(); // Ends the experiment
         }
+
     }
 }
