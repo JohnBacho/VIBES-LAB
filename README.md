@@ -43,9 +43,9 @@ This project is a collaborative research initiative between the Psychology, Neur
 
   - Clone the repository:
 
-  - git clone https://github.com/YOUR_USERNAME/VIBES-LAB.git
+  - git clone https://github.com/YOUR_USERNAME/VIBES-LAB-Project1.git
     
-  - cd VIBES-Lab
+  - cd VIBES-Lab-Project1
     
   - Open the project in Unity (recommended version: 2023.1.5f1).
 
