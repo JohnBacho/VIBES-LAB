@@ -1,86 +1,236 @@
+# Virtual Immersive Behavioral Sciences (VIBES) Lab
+
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/aa04e915-eb9d-4558-b735-069c5ad0871e" alt="VIBES_LAB_Logo-Transparent" width="300"/>
+<img width="500" alt="VIBES Lab Logo" src="https://github.com/user-attachments/assets/89824d3a-373a-448f-9b5c-256f4c459466" />
+
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+[![Unity Version](https://img.shields.io/badge/Unity-2023.1.5f1-blue.svg)](https://unity.com/)
+[![Platform](https://img.shields.io/badge/Platform-VR-brightgreen.svg)](https://github.com/)
+
+</div>
+
+## 📖 Overview
+
+The **Virtual Immersive Behavioral Sciences (VIBES) Lab** is a cutting-edge collaborative research initiative at **Baldwin Wallace University**, bringing together students from:
+
+- 🧠 **Psychology Department**
+- 🔬 **Neuroscience Department**
+- 💻 **Computer Science Department**
+
+### Mission
+
+We develop **high-fidelity VR experimental environments** that enable researchers to investigate psychological and neuroscientific phenomena in controlled, immersive settings with precise measurement and analysis of behavioral and visual responses.
+
+---
+
+## ✨ Key Features
+
+### 🏞️ **Realistic 3D Environments**
+Immersive virtual worlds built in Unity using professional asset packs for maximum ecological validity.
+<div style="display: flex; gap: 10px;">
+  <img src="https://github.com/user-attachments/assets/c3185c32-9209-48fe-ac60-05b90b49f913" alt="Screenshot 1" style="width: 45%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/082ec372-44dc-453e-b848-5c3f73012bc2" alt="Screenshot 2" style="width: 45%; height: auto;">
 </div>
 
 
-# Virtual Immersive Behavioral Sciences (VIBES) Lab
+### 👁️ **Advanced Eye & Camera Tracking**
+- **HTC VIVE Pro Eye** with Tobii integration
+- High-resolution gaze and head-tracking via Custom Scripts & SRanipal + SimpleOmnia
+- Real-time data collection and synchronization
 
-## Overview
+### ⚙️ **SimpleOmnia Integration**
+Powerful suite by **Justin Kasowski** that streamlines:
+- Data collection workflows
+- Event timing precision
+- VR interaction logging
 
-This project is a collaborative research initiative between the Psychology, Neuroscience, and Computer Science departments at Baldwin Wallace University. Our goal is to develop realistic 3D environments using the Unity Engine to study fear conditioning and fear extinction in a controlled virtual setting. By leveraging VR technology, we aim to provide new insights into how fear responses can be triggered and diminished over time.
+### 🧠 Project 1 Behavioral Paradigm
 
-## Features
+For Project 1, participants engage in a single integrated experimental environment that allows researchers to examine:
 
-- Realistic 3D Environments: Built using Unity with assets from the Unity Asset Store.
+* **Development of emotional responses** to aversive stimuli
+* **Reduction or modulation of emotional responses** over time
+* **Patterns of visual attention and behavioral reactions** during these experiences
 
-- Eye & Camera Tracking: Utilizes the HTC VIVE Pro Eye to gather precise tracking data.
+### 📊 **Comprehensive Data Analysis**
+Python-based toolkit for:
+- Gaze data mapping onto virtual environments
+- Fixation and saccade pattern extraction
+- Behavioral response visualization across trials
 
-- SimpleOmnia Integration: Developed by Justin Kasowski, SimpleOmnia accelerates development and enhances our ability to collect eye-tracking and camera-tracking data efficiently.
+### 🌐 **Web-Based Data Processing**
+Access our online tool: [VIBES Lab CSV Formatter](https://johnbacho.github.io/VIBESLab-CSV-Formatter/)
 
-- Fear Conditioning & Extinction Models: Designed to simulate real-world scenarios that induce and measure fear responses.
+---
 
-- Developed Python scripts to map and analyze eye-tracking data for visual behavior insights
+## 👁️ Eye-Tracking Systems
 
-![Screen Recording 2025-03-27 at 3 53 53 PM 2](https://github.com/user-attachments/assets/ee3b9917-993f-42b7-bbb1-4edee87478eb)
+The VIBES Lab supports two major eye-tracking configurations:
 
-## Technology Stack
+### 🔷 **HTC VIVE Pro Eye** (Primary System)
 
-- Game Engine: [Unity](https://unity.com/)
+**Tobii-powered eye tracking** integrated into the HMD, accessed through:
+- **SRanipal SDK** for real-time gaze data
+- **SimpleOmnia** for synchronized event tracking
 
-- VR Hardware: HTC VIVE Pro Eye
+**Captured Data:**
+- Gaze origin & direction vectors
+- Combined & per-eye tracking
+- Eye openness metrics
+- Pupil diameter
+- Blink detection
+- Game Object being looked at
 
-- Data Collection: [SimpleOmnia](https://github.com/simpleOmnia/sXR?tab=readme-ov-file)
+### 🔶 **Tobii External Eye Trackers** (Latest Stable Release)
 
-- SDKs & Libraries: SteamVr, [SRanipal](https://docs.vrcft.io/docs/v4.0/hardware/VIVE/sranipal)
+Support for standalone Tobii devices:
+- All Tobii Eye Trackers
+- Verified on Tobii Nano
 
-- Programming Languages: C#, Unity Scripts, Python
+**Captured Data:**
+- Gaze origin & direction vectors
+- Combined & per-eye tracking
+- Pupil diameter
+- Game Object being looked at
 
-<img src="https://github.com/user-attachments/assets/25181e6c-d4bd-42f2-bacc-719134e4decb" width="500"/>
+> **Note:** Tobii External Eye Trackers support is available only in the latest stable release. Please contact for code.
 
-## Collaboration: GitHub for version control and project management
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/f67f041d-40cf-46a4-9fb3-63cfcd494b20" alt="IMG_0024" width="200" style="margin-right:10px;"/>
+  <img src="https://github.com/user-attachments/assets/a52553ac-c8fd-4f7f-8226-e9db07bb6143" alt="IMG_0028" width="200"/>
+</p>
 
-- Installation & Setup
 
-  - Clone the repository:
+---
 
-  - git clone https://github.com/YOUR_USERNAME/VIBES-LAB-Project1.git
-    
-  - cd VIBES-Lab-Project1
-    
-  - Open the project in Unity (recommended version: 2023.1.5f1).
+## 🛠️ Technology Stack
 
-  - Ensure that the HTC VIVE Pro Eye is properly set up and recognized by SteamVR and SRanipal if using eyetracking.
+| Component | Technology |
+|-----------|-----------|
+| **Game Engine** | Unity 2023.1.5f1 |
+| **VR Hardware** | HTC VIVE Pro Eye |
+| **Flat Panel** | Tobii Nano|
+| **Data Collection** | SimpleOmnia |
+| **SDKs** | SteamVR, SRanipal, Tobii |
+| **Programming** | C#, Python |
+| **Analysis** | Python (Pandas, Matplotlib) |
 
-  - Install SimpleOmnia package following the [instructions](https://github.com/simpleOmnia/sXR/wiki/Installation) provided by Justin Kasowski.
+<div align="left">
+  <img src="https://github.com/user-attachments/assets/25181e6c-d4bd-42f2-bacc-719134e4decb" width="400" alt="Lab Logo/>
+</div>
 
-  - Run the project and start experimenting!
+---
 
-## Contributors
-- Dr. Brian Thomas- Professor of Psycology, Baldwin Wallace University
+## 📥 Installation & Setup
 
-- John Bacho – Computer Scientist, Baldwin Wallace University
+### Prerequisites
 
-- Lauren Dunlap - Psychologist, Baldwin Wallace University
+- Unity **2023.1.5f1** or newer
+- HTC VIVE Pro Eye or compatible Tobii device
+- SteamVR installed and configured
+- Git installed on your system
 
-- Albert Selby - Data Scientist, Baldwin Wallace University
+### Step 1: Clone the Repository
 
-- Marissa Brigger - Neuroscientist, Baldwin Wallace University
+```bash
+git clone https://github.com/JohnBacho/VIBES-LAB-Project1.git
+cd VIBES-LAB-Project1
+```
 
-- Alexa Gossett - Neuroscientist, Baldwin Wallace University
+### Step 2: Unity Configuration
 
-- Jace Lander - Software Engineer, Baldwin Wallace University
+1. Open Unity Hub and add the project
+2. Ensure Unity **2023.1.5f1** is installed
+3. Open the project and wait for initial import
+4. Download SteamVR
+5. Follow [SimpleOmnia](https://github.com/simpleOmnia/sXR/wiki/Installation) installation instructions (included in project)
 
-## Acknowledgments
 
-- Justin Kasowski – Developer of SimpleOmnia
-  
-- Unity Asset Store for providing high-quality assets that enhance our VR environments.
+### Step 3: Eye-Tracking Setup
 
-## License & Attribution
+#### For HTC VIVE Pro Eye:
+1. Install [SRanipal SDK](https://developer.vive.com/resources/vive-sense/sdk/vive-eye-and-facial-tracking-sdk/) (included in project)
+2. Install [SRanipal runtime](https://docs.vrcft.io/docs/v4.0/hardware/VIVE/sranipal#installation) to calibrate VR eye tracking
 
-This project includes materials licensed under the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0) license.
+#### For Tobii Devices:
+1. Download the **latest stable release** from the [Releases](https://github.com/JohnBacho/VIBES-LAB-Project1/releases) page
+2. Ensure tobii device is connected and recognized
+   
+### Step 4: Verify Installation
 
-    The repository makes use of simpleOmnia by Justin Kasowski, licensed under CC BY-NC 4.0.
-    Original repository: https://github.com/simpleOmnia/sXR?tab=readme-ov-file
+1. Run the demo scene in Unity
+2. Check console for successful SDK initialization
+3. Verify eye-tracking data is being recorded
 
-For more details on the license, see [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.en).
+---
+
+## 📚 Documentation
+
+For detailed documentation, please visit our [Wiki](https://vibes-lab.gitbook.io/vibes-lab-docs/).
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions from the research community! Please see our [Contributing Guidelines](CONTRIBUTING.md) for more information.
+
+---
+
+## 👥 Core Team
+
+| Name                 | Major            |
+| -------------------- | ---------------- |
+| **Dr. Brian Thomas** | Professor of Psycology       |
+| **[John Bacho](https://github.com/JohnBacho)**       | Computer Science |
+| **[Lauren Dunlap](https://github.com/rrenla)**    | Psychology |
+| **[Albert Selby](https://github.com/bertslb)**     | Computer Science, Data Science |
+| **Marissa Brigger**  | Neuroscience     |
+| **Alexa Gossett**    | Neuroscience, Psychology     |
+| **[Jace Lander](https://github.com/JaceLander)**      | Software Engineer |
+
+
+<img src="https://github.com/user-attachments/assets/dc2c4bba-c3f8-4594-aeed-e820d4ed5048" alt="VIBES Group" width="400"/>
+
+
+---
+
+## 🙏 Acknowledgments
+
+- **Justin Kasowski** – Creator of [SimpleOmnia](https://github.com/simpleOmnia/sXR?tab=readme-ov-file)
+- **Unity Asset Store** – For high-quality 3D environmental assets
+- **Baldwin Wallace University** – For institutional support and resources
+- **HTC Vive & Tobii** – For technical documentation and SDK support
+
+---
+
+## 📄 License
+
+This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International License**.
+
+**Includes SimpleOmnia by Justin Kasowski**, licensed under CC BY-NC 4.0.
+
+For more details, see: [https://creativecommons.org/licenses/by-nc/4.0/](https://creativecommons.org/licenses/by-nc/4.0/)
+
+---
+
+## 📧 Contact
+
+For questions, collaborations, or support:
+
+- **Email:** [jbacho22@bw.edu](mailto:jbacho22@bw.edu)
+- **Issues:** [GitHub Issues](https://github.com/JohnBacho/VIBES-LAB-Project1/issues)
+
+---
+
+## 🔗 Related Projects
+
+- [VIBES Lab CSV Formatter](https://johnbacho.github.io/VIBESLab-CSV-Formatter/)
+- [SimpleOmnia Framework](https://github.com/simpleOmnia/sXR?tab=readme-ov-file)
+
+---
+
+<div align="center">
+
+**Made with ❤️ by the VIBES Lab Team**
+
+</div>
