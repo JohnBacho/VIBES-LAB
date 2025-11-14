@@ -95,7 +95,7 @@ Support for standalone Tobii devices:
 
 > **Note:** Tobii External Eye Trackers support is available only in the latest stable release. Please contact for code.
 
-<p align="center">
+<p align="left">
   <img src="https://github.com/user-attachments/assets/f67f041d-40cf-46a4-9fb3-63cfcd494b20" alt="IMG_0024" width="200" style="margin-right:10px;"/>
   <img src="https://github.com/user-attachments/assets/a52553ac-c8fd-4f7f-8226-e9db07bb6143" alt="IMG_0028" width="200"/>
 </p>
