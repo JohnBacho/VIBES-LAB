@@ -180,9 +180,9 @@ We welcome contributions from the research community! Please see our [Contributi
 
 | Name                 | Major            |
 | -------------------- | ---------------- |
-| **Dr. Brian Thomas** | Professor of Psycology       |
+| **[Dr. Brian Thomas](https://www.bw.edu/academics/bios/thomas-brian)** | Professor of Psycology       |
 | **[John Bacho](https://github.com/JohnBacho)**       | Computer Science |
-| **[Lauren Dunlap](https://github.com/rrenla)**    | Psychology |
+| **[Lauren Dunlap](https://github.com/rrenla)**    | Computer Science |
 | **[Albert Selby](https://github.com/bertslb)**     | Computer Science, Data Science |
 | **Marissa Brigger**  | Neuroscience     |
 | **Alexa Gossett**    | Neuroscience, Psychology     |
@@ -218,14 +218,17 @@ For more details, see: [https://creativecommons.org/licenses/by-nc/4.0/](https:/
 For questions, collaborations, or support:
 
 - **Email:** [jbacho22@bw.edu](mailto:jbacho22@bw.edu)
+- **Email** [bthomas@bw.edu](mailto:bthomas@bw.edu)
 - **Issues:** [GitHub Issues](https://github.com/JohnBacho/VIBES-LAB-Project1/issues)
 
 ---
 
 ## 🔗 Related Projects
 
+- [VIBES Lab Project 2](https://github.com/JohnBacho/VIBES-Lab-Project2)
 - [VIBES Lab CSV Formatter](https://johnbacho.github.io/VIBESLab-CSV-Formatter/)
 - [SimpleOmnia Framework](https://github.com/simpleOmnia/sXR?tab=readme-ov-file)
+  
 
 ---
 
