@@ -183,9 +183,9 @@ We welcome contributions from the research community! Please see our [Contributi
 | **[Dr. Brian Thomas](https://www.bw.edu/academics/bios/thomas-brian)** | Professor of Psycology       |
 | **[John Bacho](https://github.com/JohnBacho)**       | Computer Science |
 | **[Lauren Dunlap](https://github.com/rrenla)**    | Computer Science |
-| **[Albert Selby](https://github.com/bertslb)**     | Computer Science, Data Science |
+| **[Albert Selby](https://github.com/bertslb)**     | Computer Science / Data Science |
 | **Marissa Brigger**  | Neuroscience     |
-| **Alexa Gossett**    | Neuroscience, Psychology     |
+| **Alexa Gossett**    | Neuroscience / Psychology     |
 | **[Jace Lander](https://github.com/JaceLander)**      | Software Engineer |
 
 
