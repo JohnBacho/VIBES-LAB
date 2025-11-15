@@ -116,7 +116,7 @@ Support for standalone Tobii devices:
 | **Analysis** | Python (Pandas, Matplotlib) |
 
 <div align="left">
-  <img src="https://github.com/user-attachments/assets/25181e6c-d4bd-42f2-bacc-719134e4decb" width="400" alt="Lab Logo/>
+  <img src="https://github.com/user-attachments/assets/25181e6c-d4bd-42f2-bacc-719134e4decb" width="400" alt="diagram"/>
 </div>
 
 ---
