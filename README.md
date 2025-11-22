@@ -59,7 +59,7 @@ Python-based toolkit for:
 - Behavioral response visualization across trials
 
 ### 🌐 **Web-Based Data Processing**
-Access our online tool: [VIBES Lab CSV Formatter](https://johnbacho.github.io/VIBESLab-CSV-Formatter/)
+Access our online tool: [VIBES Lab CSV Formatter](https://johnbacho.github.io/VIBES-Lab-CSV-Processor)
 
 ---
 
