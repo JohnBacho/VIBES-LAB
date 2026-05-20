@@ -13,9 +13,9 @@
 
 The **Virtual Immersive Behavioral Sciences (VIBES) Lab** is a cutting-edge collaborative research initiative at **Baldwin Wallace University**, bringing together students from:
 
-- 🧠 **Psychology Department**
-- 🔬 **Neuroscience Department**
-- 💻 **Computer Science Department**
+-  **Psychology Department**
+-  **Neuroscience Department**
+-  **Computer Science Department**
 
 ### Mission
 
@@ -23,9 +23,9 @@ We develop **high-fidelity VR experimental environments** that enable researcher
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 🏞️ **Realistic 3D Environments**
+### **Realistic 3D Environments**
 Immersive virtual worlds built in Unity using professional asset packs for maximum ecological validity.
 <div style="display: flex; gap: 10px;">
   <img src="https://github.com/user-attachments/assets/c3185c32-9209-48fe-ac60-05b90b49f913" alt="Screenshot 1" style="width: 45%; height: auto;">
@@ -33,18 +33,18 @@ Immersive virtual worlds built in Unity using professional asset packs for maxim
 </div>
 
 
-### 👁️ **Advanced Eye & Camera Tracking**
+### **Advanced Eye & Camera Tracking**
 - **HTC VIVE Pro Eye** with Tobii integration
 - High-resolution gaze and head-tracking via Custom Scripts & SRanipal + SimpleOmnia
 - Real-time data collection and synchronization
 
-### ⚙️ **SimpleOmnia Integration**
+### **SimpleOmnia Integration**
 Powerful suite by **Justin Kasowski** that streamlines:
 - Data collection workflows
 - Event timing precision
 - VR interaction logging
 
-### 🧠 Project 1 Behavioral Paradigm
+### Project 1 Behavioral Paradigm
 
 For Project 1, participants engage in a single integrated experimental environment that allows researchers to examine:
 
@@ -52,22 +52,22 @@ For Project 1, participants engage in a single integrated experimental environme
 * **Reduction or modulation of emotional responses** over time
 * **Patterns of visual attention and behavioral reactions** during these experiences
 
-### 📊 **Comprehensive Data Analysis**
+### **Comprehensive Data Analysis**
 Python-based toolkit for:
 - Gaze data mapping onto virtual environments
 - Fixation and saccade pattern extraction
 - Behavioral response visualization across trials
 
-### 🌐 **Web-Based Data Processing**
+### **Web-Based Data Processing**
 Access our online tool: [VIBES Lab CSV Formatter](https://johnbacho.github.io/VIBES-Lab-CSV-Processor)
 
 ---
 
-## 👁️ Eye-Tracking Systems
+## Eye-Tracking Systems
 
 The VIBES Lab supports two major eye-tracking configurations:
 
-### 🔷 **HTC VIVE Pro Eye** (Primary System)
+### **HTC VIVE Pro Eye** (Primary System)
 
 **Tobii-powered eye tracking** integrated into the HMD, accessed through:
 - **SRanipal SDK** for real-time gaze data
@@ -81,7 +81,7 @@ The VIBES Lab supports two major eye-tracking configurations:
 - Blink detection
 - Game Object being looked at
 
-### 🔶 **Tobii External Eye Trackers** (Latest Stable Release)
+### **Tobii External Eye Trackers** (Latest Stable Release)
 
 Support for standalone Tobii devices:
 - All Tobii Eye Trackers
@@ -103,7 +103,7 @@ Support for standalone Tobii devices:
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Component | Technology |
 |-----------|-----------|
@@ -170,13 +170,13 @@ For detailed documentation, please visit our [Wiki](https://vibes-lab.gitbook.io
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions from the research community! Please see our [Contributing Guidelines](CONTRIBUTING.md) for more information.
 
 ---
 
-## 👥 Core Team
+## Core Team
 
 | Name                 | Major            |
 | -------------------- | ---------------- |
@@ -194,7 +194,7 @@ We welcome contributions from the research community! Please see our [Contributi
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Justin Kasowski** – Creator of [SimpleOmnia](https://github.com/simpleOmnia/sXR?tab=readme-ov-file)
 - **Unity Asset Store** – For high-quality 3D environmental assets
@@ -213,7 +213,7 @@ For more details, see: [https://creativecommons.org/licenses/by-nc/4.0/](https:/
 
 ---
 
-## 📧 Contact
+## Contact
 
 For questions, collaborations, or support:
 
@@ -223,7 +223,7 @@ For questions, collaborations, or support:
 
 ---
 
-## 🔗 Related Projects
+## Related Projects
 
 - [VIBES Lab Project 2](https://github.com/JohnBacho/VIBES-Lab-Project2)
 - [VIBES Lab CSV Formatter](https://johnbacho.github.io/VIBESLab-CSV-Formatter/)
